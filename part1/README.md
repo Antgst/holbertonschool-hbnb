@@ -54,14 +54,94 @@ The application follows a **layered architecture** and applies the **Facade desi
 
 # 2️⃣ Business Logic Design
 
-*(To be completed in Task 1)*
+## 📊 Detailed Class Diagram
 
-This section will include:
+<p align="center">
+  <img src="./Class_diagram_for_business_Logic_Layer_HBNB.png" alt="Business Logic Class Diagram" width="900"/>
+</p>
 
-- Detailed class diagram
-- Entity attributes
-- Relationships and cardinalities
-- Core methods and constraints
+<p align="center">
+  <a href="./Class_diagram_for_business_Logic_Layer_HBNB.pdf">📄 View Full PDF Version</a>
+</p>
+
+---
+
+## 🧱 Core Entities
+
+### 🔹 BaseModel (Abstract)
+Provides shared attributes for all entities:
+- `id: UUID4`
+- `created_at: datetime`
+- `updated_at: datetime`
+- `update()`
+
+---
+
+### 🔹 User
+Represents a system account (regular or admin).
+
+**Attributes**
+- `first_name: string`
+- `last_name: string`
+- `email: string`
+- `password: string`
+- `is_admin: bool`
+
+**Methods**
+- `update_profile()`
+
+---
+
+### 🔹 Place
+Represents a property listing owned by a user.
+
+**Attributes**
+- `title: string`
+- `description: string`
+- `price: float`
+- `latitude: float`
+- `longitude: float`
+- `owner_id: UUID4`
+
+**Methods**
+- `update()`
+- `add_amenity(amenity: Amenity)`
+- `remove_amenity(amenity: Amenity)`
+
+---
+
+### 🔹 Review
+Represents feedback written by a user for a specific place.
+
+**Attributes**
+- `rating: int`
+- `comment: string`
+- `user_id: UUID4`
+- `place_id: UUID4`
+
+**Methods**
+- `update()`
+
+---
+
+### 🔹 Amenity
+Represents a feature that can be associated with places.
+
+**Attributes**
+- `name: string`
+- `description: string`
+
+**Methods**
+- `update()`
+
+---
+
+## 🔗 Relationships and Cardinalities
+
+- A **User owns 0..*** Places; each Place has **1 owner**.
+- A **Place has 0..*** Reviews; each Review targets **1 Place**.
+- A **User writes 0..*** Reviews; each Review is written by **1 User**.
+- **Places and Amenities are many-to-many (0..* ↔ 0..*)**.
 
 ---
 
@@ -77,7 +157,6 @@ The following API calls will be documented:
 - Fetching places list
 
 Each sequence diagram will illustrate:
-
 - Layer interactions
 - Facade orchestration
 - Repository and database communication
@@ -91,12 +170,13 @@ Each sequence diagram will illustrate:
 - Facade Pattern
 - Dependency Direction Control
 - Database Isolation
+- Entity Inheritance (BaseModel abstraction)
 
 ---
 
-# ✅ Deliverables Summary
+# ✅ Deliverables Status
 
 - ✔ High-Level Package Diagram
-- ⏳ Detailed Class Diagram (Business Layer)
+- ✔ Detailed Class Diagram (Business Layer)
 - ⏳ Sequence Diagrams
 - ⏳ Final Documentation Compilation
