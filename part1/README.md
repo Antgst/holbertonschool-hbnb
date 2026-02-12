@@ -15,7 +15,7 @@ Its objective is to:
 - Explain API interaction flows  
 - Justify design decisions  
 
-This document serves as a **blueprint for implementation** and will guide development phases to ensure architectural consistency and clarity.
+This document serves as a **blueprint for implementation** and ensures architectural consistency throughout development.
 
 ---
 
@@ -28,7 +28,7 @@ HBnB Evolution is a simplified AirBnB-like application that enables:
 - **Review Management** (users can review places)
 - **Amenity Association** (places linked to amenities)
 
-The system follows a **Layered Architecture** and applies the **Facade Design Pattern** to enforce separation of concerns and maintain maintainability.
+The system follows a **Layered Architecture** and applies the **Facade Design Pattern** to enforce separation of concerns and maintainability.
 
 ---
 
@@ -37,20 +37,22 @@ The system follows a **Layered Architecture** and applies the **Facade Design Pa
 ## 📦 High-Level Package Diagram
 
 <p align="center">
-  <img src="./High_level_package_diagram_HBNB.png" width="900"/>
+  <img src="./docs/high_level/High_level_package_diagram_HBNB.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./High_level_package_diagram_HBNB.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/high_level/High_level_package_diagram_HBNB.pdf">📄 View Full PDF Version</a>
 </p>
 
 ---
 
 ## 🎯 Purpose of the Diagram
 
-This diagram presents the global architecture of the application and illustrates the dependency direction between layers.
+This diagram illustrates:
 
-It ensures clear separation of responsibilities and controlled interactions.
+- Global system architecture
+- Dependency direction between layers
+- Clear separation of responsibilities
 
 ---
 
@@ -73,7 +75,7 @@ It ensures clear separation of responsibilities and controlled interactions.
 
 ### Business Logic Layer
 - Contains domain entities
-- Implements business rules and validation
+- Implements business rules
 - Coordinates use cases via the Facade
 
 ### Persistence Layer
@@ -94,149 +96,66 @@ It ensures clear separation of responsibilities and controlled interactions.
 
 ---
 
-## 🏛 Architectural Role
-
-This architecture ensures:
-
-- Maintainability
-- Testability
-- Scalability
-- Clear responsibility boundaries
-
----
-
 # 3️⃣ Business Logic Layer
 
 ## 📊 Detailed Class Diagram
 
 <p align="center">
-  <img src="./Class_diagram_for_business_Logic_Layer_HBNB.png" width="900"/>
+  <img src="./docs/class_diagram/Class_diagram_for_business_Logic_Layer_HBNB.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./Class_diagram_for_business_Logic_Layer_HBNB.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/class_diagram/Class_diagram_for_business_Logic_Layer_HBNB.pdf">📄 View Full PDF Version</a>
 </p>
 
 ---
 
-## 🎯 Purpose of the Diagram
-
-This diagram defines:
-
-- Core domain entities
-- Attributes
-- Relationships
-- Inheritance hierarchy
-- Business constraints
-
-It represents the structural foundation of the domain model.
-
----
-
-## 🔑 Key Classes
+## 🔑 Core Entities
 
 ### BaseModel (Abstract)
-Shared attributes:
-- id
-- created_at
-- updated_at
+- id  
+- created_at  
+- updated_at  
 
-Purpose:
-- Avoid duplication
-- Ensure consistency across entities
-
----
+Ensures consistency and reuse.
 
 ### User
-Attributes:
-- id
-- first_name
-- last_name
-- email
-- is_admin
-
-Responsibilities:
-- Own places
-- Submit reviews
-
----
+- first_name  
+- last_name  
+- email  
+- is_admin  
 
 ### Place
-Attributes:
-- id
-- name
-- description
-- price
-- latitude
-- longitude
-
-Responsibilities:
-- Belongs to a User
-- Linked to Amenities
-- Receives Reviews
-
----
+- name  
+- description  
+- price  
+- latitude  
+- longitude  
 
 ### Review
-Attributes:
-- id
-- rating (1–5)
-- text
-
-Responsibilities:
-- Linked to a User
-- Linked to a Place
-
----
+- rating (1–5)  
+- text  
 
 ### Amenity
-Attributes:
-- id
-- name
-
-Responsibilities:
-- Associated with multiple Places
+- name  
 
 ---
 
-## 🔗 Relationships & Cardinalities
+## 🔗 Relationships
 
-- User (1) → (*) Place
-- Place (1) → (*) Review
-- User (1) → (*) Review
-- Place (*) ↔ (*) Amenity
+- User (1) → (*) Place  
+- User (1) → (*) Review  
+- Place (1) → (*) Review  
+- Place (*) ↔ (*) Amenity  
 
 ---
 
 ## ⚙ Business Rules
 
-- Rating must be between 1 and 5
-- Only registered users can create places
-- Only registered users can write reviews
-- Review must reference an existing place
-
----
-
-## 📐 Design Rationale
-
-- Entities encapsulate business rules
-- Relationships enforce domain integrity
-- Inheritance promotes reuse
-
----
-
-## 🏛 Architectural Role
-
-The Business Logic Layer isolates domain rules from presentation and persistence.
-
----
-
-## 🛠 Implementation Impact
-
-- Entities implemented as Python classes
-- Validation logic resides here
-- Controllers remain thin
-- Facade methods map to use cases
+- Rating must be between 1 and 5  
+- Only registered users can create places  
+- Only registered users can write reviews  
+- Review must reference an existing place  
 
 ---
 
@@ -247,226 +166,79 @@ The Business Logic Layer isolates domain rules from presentation and persistence
 # SD-01 — User Registration (POST `/users`)
 
 <p align="center">
-  <img src="./Sequence_SD01_User_Registration.png" width="900"/>
+  <img src="./docs/sequence_diagrams/Sequence_SD01_User_Registration.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./Sequence_SD01_User_Registration.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/sequence_diagrams/Sequence_SD01_User_Registration.pdf">📄 View Full PDF Version</a>
 </p>
 
-## Purpose
+## Flow Summary
 
-Describes how a new user is registered.
-
----
-
-## Key Components
-
-- Client
-- Controller
-- Facade
-- User Entity
-- Persistence Layer
-
----
-
-## Interaction Flow
-
-1. Client sends POST request
-2. Controller validates request data
-3. Controller calls Facade
-4. Facade creates User entity
-5. Entity validated and stored
-6. Response returned (201 Created)
-
----
-
-## Design Rationale
-
-- Validation separated from domain logic
-- Facade centralizes orchestration
-- Entity enforces business constraints
-
----
-
-## Architectural Role
-
-Demonstrates how layered architecture enforces separation of concerns.
-
----
-
-## Implementation Impact
-
-- Controller handles HTTP concerns
-- Facade exposes `create_user()` method
-- Entity enforces validation rules
+1. Client sends POST request  
+2. Email uniqueness verified  
+3. User entity created  
+4. User persisted  
+5. 201 Created returned  
 
 ---
 
 # SD-02 — Place Creation (POST `/places`)
 
 <p align="center">
-  <img src="./Sequence_SD02_Place_Creation.png" width="900"/>
+  <img src="./docs/sequence_diagrams/Sequence_SD02_Place_Creation.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./Sequence_SD02_Place_Creation.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/sequence_diagrams/Sequence_SD02_Place_Creation.pdf">📄 View Full PDF Version</a>
 </p>
 
-## Purpose
+## Flow Summary
 
-Describes how a new place is created.
-
----
-
-## Key Components
-
-- Client
-- Controller
-- Facade
-- Place Entity
-- Persistence Layer
-
----
-
-## Interaction Flow
-
-1. Client sends POST request
-2. Authentication verified
-3. Controller calls Facade
-4. Owner existence validated
-5. Place created
-6. Response returned
-
----
-
-## Design Rationale
-
-- Ownership validated at business level
-- Facade enforces use case coordination
-
----
-
-## Architectural Role
-
-Shows controlled interaction between presentation and business layers.
-
----
-
-## Implementation Impact
-
-- Requires authenticated user
-- Facade exposes `create_place()`
+1. Authenticated request received  
+2. Owner existence validated  
+3. Place entity created  
+4. Place persisted  
+5. 201 Created returned  
 
 ---
 
 # SD-03 — Review Submission (POST `/places/{id}/reviews`)
 
 <p align="center">
-  <img src="./Sequence_SD03_Review_Submission.png" width="900"/>
+  <img src="./docs/sequence_diagrams/Sequence_SD03_Review_Submission.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./Sequence_SD03_Review_Submission.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/sequence_diagrams/Sequence_SD03_Review_Submission.pdf">📄 View Full PDF Version</a>
 </p>
 
-## Purpose
+## Flow Summary
 
-Describes review creation process.
-
----
-
-## Key Components
-
-- Client
-- Controller
-- Facade
-- Review Entity
-- Persistence Layer
-
----
-
-## Interaction Flow
-
-1. Client sends POST request
-2. Place existence verified
-3. Rating validated
-4. Review created
-5. Response returned
-
----
-
-## Design Rationale
-
-- Domain rules enforced in entity
-- Persistence isolated from controller
-
----
-
-## Architectural Role
-
-Ensures business constraints are centralized in BLL.
-
----
-
-## Implementation Impact
-
-- Facade exposes `create_review()`
-- Validation logic in Review entity
+1. Place existence verified  
+2. User existence verified  
+3. Rating validated  
+4. Review created  
+5. 201 Created returned  
 
 ---
 
 # SD-04 — Fetching Places (GET `/places`)
 
 <p align="center">
-  <img src="./Sequence_SD04_Fetching_Places.png" width="900"/>
+  <img src="./docs/sequence_diagrams/Sequence_SD04_Fetching_Places.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./Sequence_SD04_Fetching_Places.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/sequence_diagrams/Sequence_SD04_Fetching_Places.pdf">📄 View Full PDF Version</a>
 </p>
 
-## Purpose
+## Flow Summary
 
-Describes retrieval of places list.
-
----
-
-## Key Components
-
-- Client
-- Controller
-- Facade
-- Persistence Layer
-
----
-
-## Interaction Flow
-
-1. Client sends GET request
-2. Controller calls Facade
-3. Data retrieved from persistence
-4. Response returned (200 OK)
-
----
-
-## Design Rationale
-
-- Read operations also pass through Facade
-- Ensures architectural consistency
-
----
-
-## Architectural Role
-
-Demonstrates standardized interaction pattern.
-
----
-
-## Implementation Impact
-
-- Facade exposes `get_places()`
-- Persistence layer handles querying
+1. Client sends GET request  
+2. Filters applied  
+3. Data retrieved  
+4. 200 OK returned  
 
 ---
 
@@ -477,7 +249,7 @@ Demonstrates standardized interaction pattern.
 - Facade Pattern  
 - Dependency Direction Control  
 - Database Isolation  
-- Entity Inheritance (BaseModel abstraction)
+- BaseModel Abstraction  
 
 ---
 
@@ -485,12 +257,14 @@ Demonstrates standardized interaction pattern.
 
 This document consolidates the architectural and design foundation of HBnB Evolution.
 
-It defines structure, relationships, responsibilities, and interaction flows, ensuring that the implementation phase proceeds with clarity, consistency, and maintainability.
+It defines structure, relationships, responsibilities, and interaction flows to ensure implementation clarity and maintainability.
+
+---
 
 ## 👥 Authors
-* Antoine Gousset – GitHub: [Antgst](https://github.com/Antgst)
-* Gwendal Boisard - GitHub: [Gwendal-B](https://github.com/Gwendal-B)
-* Yonas Houriez – GitHub: [Ausaryu](https://github.com/Ausaryu)
+
+- Antoine Gousset – GitHub: [Antgst](https://github.com/Antgst)  
+- Gwendal Boisard – GitHub: [Gwendal-B](https://github.com/Gwendal-B)  
+- Yonas Houriez – GitHub: [Ausaryu](https://github.com/Ausaryu)  
 
 See `AUTHORS`.
-
