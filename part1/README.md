@@ -486,3 +486,10 @@ Demonstrates standardized interaction pattern.
 This document consolidates the architectural and design foundation of HBnB Evolution.
 
 It defines structure, relationships, responsibilities, and interaction flows, ensuring that the implementation phase proceeds with clarity, consistency, and maintainability.
+
+## 👥 Authors
+* Antoine Gousset – GitHub: [Antgst](https://github.com/Antgst)
+* Gwendal Boisard - GitHub: [Gwendal-B](https://github.com/Gwendal-B)
+* * Yonas Houriez – GitHub: [Ausaryu](https://github.com/Ausaryu)
+
+See `AUTHORS`.
