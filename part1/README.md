@@ -6,29 +6,29 @@
 
 ## 📌 Purpose of This Document
 
-This document provides a comprehensive technical blueprint for the **HBnB Evolution** application.  
-It consolidates all architectural diagrams and design decisions produced in the previous tasks into a single structured reference.
+This document compiles all architectural diagrams and explanatory notes produced in the previous tasks into a single comprehensive technical reference.
 
-This document will guide the implementation phase by:
+Its objective is to:
 
-- Defining the overall system architecture  
-- Describing the core business entities and their relationships  
-- Explaining API interaction flows  
-- Clarifying key design decisions  
+- Define the overall system architecture  
+- Describe the core business logic structure  
+- Explain API interaction flows  
+- Justify design decisions  
 
-It serves as a **reference document throughout development** to ensure consistency, correctness, and maintainability.
+This document serves as a **blueprint for implementation** and will guide development phases to ensure architectural consistency and clarity.
 
 ---
 
-## 📌 Project Overview
+## 📌 Project Scope
 
 HBnB Evolution is a simplified AirBnB-like application that enables:
 
-- **User Management** (registration, profile updates, administrator roles)
-- **Place Management** (property listing with location, price, amenities)
-- **Review Management** (users can review visited places)
+- **User Management** (registration, profile update, admin role)
+- **Place Management** (property listing with price and geolocation)
+- **Review Management** (users can review places)
+- **Amenity Association** (places linked to amenities)
 
-The system is designed following a **layered architecture** and implements the **Facade design pattern** to ensure proper separation of concerns.
+The system follows a **Layered Architecture** and applies the **Facade Design Pattern** to enforce separation of concerns and maintain maintainability.
 
 ---
 
@@ -48,56 +48,64 @@ The system is designed following a **layered architecture** and implements the *
 
 ## 🎯 Purpose of the Diagram
 
-This diagram illustrates the global architecture of the system and the dependency direction between layers.
+This diagram presents the global architecture of the application and illustrates the dependency direction between layers.
 
-It provides a macro-level view of how components interact while maintaining clear separation of responsibilities.
+It ensures clear separation of responsibilities and controlled interactions.
 
 ---
 
-## 🧱 Architectural Layers
+## 🔑 Key Components
 
-### 🔹 Presentation Layer
-- Exposes REST API endpoints
+- Presentation Layer
+- Business Logic Layer
+- Persistence Layer
+- Facade
+
+---
+
+## 🧱 Layer Responsibilities
+
+### Presentation Layer
 - Handles HTTP requests and responses
 - Performs input validation
-- Contains no business logic
+- Delegates business operations to the Facade
+- Contains no domain logic
 
-### 🔹 Business Logic Layer
-- Contains core entities (User, Place, Review, Amenity)
-- Implements validation rules
-- Applies business constraints
-- Orchestrated through a Facade
+### Business Logic Layer
+- Contains domain entities
+- Implements business rules and validation
+- Coordinates use cases via the Facade
 
-### 🔹 Persistence Layer
-- Handles data storage and retrieval
-- Abstracted from the business layer
-- Ensures database isolation
-
----
-
-## 🧩 Facade Pattern
-
-The Facade acts as a **single entry point** to the Business Logic Layer.
-
-### Why?
-- Reduces coupling between Presentation and Business layers
-- Simplifies controller logic
-- Centralizes orchestration of use cases
+### Persistence Layer
+- Responsible for data storage and retrieval
+- Abstracted from business logic
+- Ensures database independence
 
 ---
 
 ## 📐 Design Decisions & Rationale
 
-| Decision | Rationale |
-|----------|-----------|
-| Layered architecture | Clear separation of responsibilities |
-| Facade pattern | Centralized access to business operations |
-| Dependency direction control | Prevent circular dependencies |
-| Database isolation | Flexibility to change storage technology |
+| Design Choice | Rationale |
+|---------------|-----------|
+| Layered architecture | Clear separation of concerns |
+| Facade pattern | Centralized orchestration of business logic |
+| Dependency control | Prevent circular dependencies |
+| Database isolation | Flexibility for future storage changes |
 
 ---
 
-# 3️⃣ Business Logic Layer Design
+## 🏛 Architectural Role
+
+This architecture ensures:
+
+- Maintainability
+- Testability
+- Scalability
+- Clear responsibility boundaries
+
+---
+
+# 3️⃣ Business Logic Layer
 
 ## 📊 Detailed Class Diagram
 
@@ -115,33 +123,46 @@ The Facade acts as a **single entry point** to the Business Logic Layer.
 
 This diagram defines:
 
-- Core entities
-- Attributes and behaviors
-- Relationships and cardinalities
-- Inheritance structure
+- Core domain entities
+- Attributes
+- Relationships
+- Inheritance hierarchy
+- Business constraints
 
-It represents the heart of the application logic.
+It represents the structural foundation of the domain model.
 
 ---
 
-## 🧍 Core Entities
+## 🔑 Key Classes
+
+### BaseModel (Abstract)
+Shared attributes:
+- id
+- created_at
+- updated_at
+
+Purpose:
+- Avoid duplication
+- Ensure consistency across entities
+
+---
 
 ### User
+Attributes:
 - id
 - first_name
 - last_name
 - email
 - is_admin
 
-**Responsibilities:**
-- Register
-- Update profile
+Responsibilities:
 - Own places
-- Write reviews
+- Submit reviews
 
 ---
 
 ### Place
+Attributes:
 - id
 - name
 - description
@@ -149,72 +170,73 @@ It represents the heart of the application logic.
 - latitude
 - longitude
 
-**Responsibilities:**
+Responsibilities:
 - Belongs to a User
-- Contains Amenities
+- Linked to Amenities
 - Receives Reviews
 
 ---
 
 ### Review
+Attributes:
 - id
 - rating (1–5)
 - text
 
-**Responsibilities:**
+Responsibilities:
 - Linked to a User
 - Linked to a Place
 
 ---
 
 ### Amenity
+Attributes:
 - id
 - name
 
-**Responsibilities:**
+Responsibilities:
 - Associated with multiple Places
-
----
-
-### BaseModel (Abstract)
-
-Provides:
-- id
-- created_at
-- updated_at
-
-Purpose:
-- Promote consistency
-- Avoid duplication
-- Centralize shared attributes
 
 ---
 
 ## 🔗 Relationships & Cardinalities
 
-- A **User** can own multiple Places (1 → *)
-- A **Place** belongs to exactly one User
-- A **Place** can have multiple Reviews (1 → *)
-- A **Review** belongs to one User and one Place
-- A **Place** can have multiple Amenities (* ↔ *)
+- User (1) → (*) Place
+- Place (1) → (*) Review
+- User (1) → (*) Review
+- Place (*) ↔ (*) Amenity
 
 ---
 
-## ⚙ Business Constraints
+## ⚙ Business Rules
 
 - Rating must be between 1 and 5
 - Only registered users can create places
 - Only registered users can write reviews
-- A review must reference an existing place
+- Review must reference an existing place
 
 ---
 
-## 📐 Design Impact on Implementation
+## 📐 Design Rationale
 
-- Entities will be implemented as Python classes
-- Validation logic resides in Business Layer
-- Controllers must not contain business rules
-- Facade methods correspond to use cases
+- Entities encapsulate business rules
+- Relationships enforce domain integrity
+- Inheritance promotes reuse
+
+---
+
+## 🏛 Architectural Role
+
+The Business Logic Layer isolates domain rules from presentation and persistence.
+
+---
+
+## 🛠 Implementation Impact
+
+- Entities implemented as Python classes
+- Validation logic resides here
+- Controllers remain thin
+- Facade methods map to use cases
 
 ---
 
@@ -234,22 +256,50 @@ Purpose:
 
 ## Purpose
 
-Describes how a new user is created in the system.
+Describes how a new user is registered.
+
+---
+
+## Key Components
+
+- Client
+- Controller
+- Facade
+- User Entity
+- Persistence Layer
+
+---
 
 ## Interaction Flow
 
 1. Client sends POST request
-2. Controller validates input
+2. Controller validates request data
 3. Controller calls Facade
 4. Facade creates User entity
 5. Entity validated and stored
 6. Response returned (201 Created)
 
-## Possible Errors
+---
 
-- Missing required fields
-- Invalid email format
-- Duplicate user
+## Design Rationale
+
+- Validation separated from domain logic
+- Facade centralizes orchestration
+- Entity enforces business constraints
+
+---
+
+## Architectural Role
+
+Demonstrates how layered architecture enforces separation of concerns.
+
+---
+
+## Implementation Impact
+
+- Controller handles HTTP concerns
+- Facade exposes `create_user()` method
+- Entity enforces validation rules
 
 ---
 
@@ -265,22 +315,48 @@ Describes how a new user is created in the system.
 
 ## Purpose
 
-Describes how a user creates a new place.
+Describes how a new place is created.
+
+---
+
+## Key Components
+
+- Client
+- Controller
+- Facade
+- Place Entity
+- Persistence Layer
+
+---
 
 ## Interaction Flow
 
 1. Client sends POST request
 2. Authentication verified
 3. Controller calls Facade
-4. Facade validates owner existence
-5. Place entity created
+4. Owner existence validated
+5. Place created
 6. Response returned
 
-## Possible Errors
+---
 
-- Unauthorized user
-- Invalid coordinates
-- Missing required fields
+## Design Rationale
+
+- Ownership validated at business level
+- Facade enforces use case coordination
+
+---
+
+## Architectural Role
+
+Shows controlled interaction between presentation and business layers.
+
+---
+
+## Implementation Impact
+
+- Requires authenticated user
+- Facade exposes `create_place()`
 
 ---
 
@@ -296,21 +372,47 @@ Describes how a user creates a new place.
 
 ## Purpose
 
-Describes how a user submits a review for a place.
+Describes review creation process.
+
+---
+
+## Key Components
+
+- Client
+- Controller
+- Facade
+- Review Entity
+- Persistence Layer
+
+---
 
 ## Interaction Flow
 
 1. Client sends POST request
-2. Controller verifies place existence
-3. Facade validates user and rating
+2. Place existence verified
+3. Rating validated
 4. Review created
 5. Response returned
 
-## Possible Errors
+---
 
-- Invalid rating
-- Place not found
-- Unauthorized user
+## Design Rationale
+
+- Domain rules enforced in entity
+- Persistence isolated from controller
+
+---
+
+## Architectural Role
+
+Ensures business constraints are centralized in BLL.
+
+---
+
+## Implementation Impact
+
+- Facade exposes `create_review()`
+- Validation logic in Review entity
 
 ---
 
@@ -326,15 +428,45 @@ Describes how a user submits a review for a place.
 
 ## Purpose
 
-Describes how the system retrieves a list of places.
+Describes retrieval of places list.
+
+---
+
+## Key Components
+
+- Client
+- Controller
+- Facade
+- Persistence Layer
+
+---
 
 ## Interaction Flow
 
 1. Client sends GET request
 2. Controller calls Facade
-3. Facade queries persistence layer
-4. Places returned
-5. Response returned (200 OK)
+3. Data retrieved from persistence
+4. Response returned (200 OK)
+
+---
+
+## Design Rationale
+
+- Read operations also pass through Facade
+- Ensures architectural consistency
+
+---
+
+## Architectural Role
+
+Demonstrates standardized interaction pattern.
+
+---
+
+## Implementation Impact
+
+- Facade exposes `get_places()`
+- Persistence layer handles querying
 
 ---
 
@@ -349,19 +481,8 @@ Describes how the system retrieves a list of places.
 
 ---
 
-# 6️⃣ Final Review Checklist
+# 6️⃣ Conclusion
 
-✔ All diagrams included (PNG + PDF links)  
-✔ Each diagram explained  
-✔ Clear architecture description  
-✔ Consistent terminology  
-✔ Business rules identified  
-✔ Implementation impact clarified  
+This document consolidates the architectural and design foundation of HBnB Evolution.
 
----
-
-# 📌 Conclusion
-
-This document consolidates the architectural foundation of HBnB Evolution.
-
-It defines structure, responsibilities, and interaction flows, ensuring that the implementation phase can proceed with clarity and consistency.
+It defines structure, relationships, responsibilities, and interaction flows, ensuring that the implementation phase proceeds with clarity, consistency, and maintainability.
