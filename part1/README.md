@@ -13,7 +13,7 @@ It consolidates:
 - API interaction sequence diagrams
 - Design decisions and applied principles
 
-The objective is to ensure clarity, structural consistency, and readiness for implementation.
+The objective is to ensure clarity, structural consistency, and strict compliance with the project requirements before implementation.
 
 ---
 
@@ -21,16 +21,18 @@ The objective is to ensure clarity, structural consistency, and readiness for im
 
 HBnB Evolution is a simplified AirBnB-like application allowing:
 
-- **User Management** (registration, profile updates, admin role)
-- **Place Management** (listing properties with price and geolocation)
-- **Review Management** (users reviewing places)
-- **Amenity Association** (places linked to amenities)
+- **User Management** (registration, update, deletion, admin role)
+- **Place Management** (creation, update, deletion, listing)
+- **Review Management** (creation, update, deletion, listing by place)
+- **Amenity Management** (creation, update, deletion, listing)
 
 The system follows:
 
 - **Layered Architecture**
 - **Facade Design Pattern**
-- Strict dependency direction control
+- Controlled dependency direction between layers
+
+All entities are uniquely identified using **UUID4** and include audit fields (`created_at`, `updated_at`).
 
 ---
 
@@ -52,13 +54,15 @@ This diagram illustrates:
 
 - The three architectural layers
 - Controlled dependency direction
-- The Facade as orchestration layer
+- The Facade as the single entry point to the Business Logic Layer
 
 ### Layers
 
-- **Presentation Layer**
-- **Business Logic Layer**
-- **Persistence Layer**
+- **Presentation Layer** (API, Services)
+- **Business Logic Layer** (Models, Core Logic, Facade)
+- **Persistence Layer** (Repositories, Database Access)
+
+The Presentation Layer communicates exclusively with the Business Logic Layer through the **Facade**.
 
 ---
 
@@ -79,8 +83,9 @@ This diagram illustrates:
 Defines:
 
 - Core domain entities
-- Attributes and inheritance
-- Relationships and cardinalities
+- Attributes (strictly aligned with requirements)
+- Inheritance hierarchy
+- Relationships and multiplicities
 - Business constraints
 
 ---
@@ -88,54 +93,85 @@ Defines:
 ## 🔑 Core Entities
 
 ### BaseModel (Abstract)
-- id
-- created_at
-- updated_at
 
-Ensures attribute consistency and reuse.
+Shared attributes for all entities:
+
+- `id: UUID4`
+- `created_at: datetime`
+- `updated_at: datetime`
+
+Ensures:
+- Unique identification
+- Audit tracking
+- Reusability across domain models
 
 ---
 
 ### User
-- first_name
-- last_name
-- email
-- is_admin
 
-Relationships:
+Attributes:
+
+- `first_name: string`
+- `last_name: string`
+- `email: string`
+- `password: string`
+- `is_admin: bool`
+
+Responsibilities:
+
+- Can create, update, and delete their profile
 - Owns multiple Places
 - Writes multiple Reviews
 
 ---
 
 ### Place
-- name
-- description
-- price
-- latitude
-- longitude
 
-Relationships:
-- Belongs to a User
-- Has multiple Reviews
+Attributes:
+
+- `title: string`
+- `description: string`
+- `price: float`
+- `latitude: float`
+- `longitude: float`
+- `owner_id: UUID4`
+
+Responsibilities:
+
+- Belongs to a User (owner)
+- Can be created, updated, deleted, and listed
 - Linked to multiple Amenities
+- Receives multiple Reviews
 
 ---
 
 ### Review
-- rating (1–5)
-- text
 
-Relationships:
-- Linked to a User
-- Linked to a Place
+Attributes:
+
+- `rating: int`
+- `comment: string`
+- `user_id: UUID4`
+- `place_id: UUID4`
+
+Responsibilities:
+
+- Linked to a specific User
+- Linked to a specific Place
+- Can be created, updated, deleted, and listed by place
 
 ---
 
 ### Amenity
-- name
 
-Relationships:
+Attributes:
+
+- `name: string`
+- `description: string`
+
+Responsibilities:
+
+- Can be created, updated, deleted, and listed
 - Associated with multiple Places
 
 ---
@@ -151,10 +187,13 @@ Relationships:
 
 ## ⚙ Business Rules
 
+- Each entity must have a unique UUID4 identifier
+- All entities track creation and update timestamps
 - Rating must be between 1 and 5
 - Only registered users can create places
 - Only registered users can write reviews
-- Review must reference an existing place
+- Each review must reference an existing place
+- Each place must reference a valid owner (User)
 
 ---
 
@@ -216,7 +255,7 @@ Relationships:
 
 1. Place existence verified
 2. User existence verified
-3. Rating validated
+3. Rating validated (1–5)
 4. Review persisted
 5. 201 Created returned
 
@@ -236,7 +275,7 @@ Relationships:
 
 1. GET request received
 2. Filters applied
-3. Data retrieved from persistence
+3. Data retrieved from persistence layer
 4. 200 OK returned
 
 ---
@@ -246,22 +285,23 @@ Relationships:
 - Layered Architecture
 - Separation of Concerns
 - Facade Pattern
-- Controlled Dependency Direction
+- Dependency Direction Control
 - Database Isolation
 - Inheritance via BaseModel
+- UUID-based entity identification
 
 ---
 
 # 6️⃣ Conclusion
 
-This documentation defines the structural and architectural foundation of HBnB Evolution.
+This document defines the complete architectural and structural foundation of HBnB Evolution.
 
 It ensures:
 
 - Maintainability
-- Testability
 - Scalability
-- Clear responsibility boundaries
+- Traceability of business rules
+- Strict alignment with project requirements
 
 ---
 
