@@ -2,33 +2,35 @@
 
 ---
 
-# 1️⃣ Introduction
+# 📘 Overview
 
-## 📌 Purpose of This Document
+This document provides the complete architectural and technical foundation of the **HBnB Evolution** application.
 
-This document compiles all architectural diagrams and explanatory notes produced in the previous tasks into a single comprehensive technical reference.
+It consolidates:
 
-Its objective is to:
+- High-level architecture
+- Business Logic design
+- API interaction sequence diagrams
+- Design decisions and applied principles
 
-- Define the overall system architecture  
-- Describe the core business logic structure  
-- Explain API interaction flows  
-- Justify design decisions  
-
-This document serves as a **blueprint for implementation** and ensures architectural consistency throughout development.
+The objective is to ensure clarity, structural consistency, and readiness for implementation.
 
 ---
 
-## 📌 Project Scope
+# 1️⃣ Project Scope
 
-HBnB Evolution is a simplified AirBnB-like application that enables:
+HBnB Evolution is a simplified AirBnB-like application allowing:
 
-- **User Management** (registration, profile update, admin role)
-- **Place Management** (property listing with price and geolocation)
-- **Review Management** (users can review places)
+- **User Management** (registration, profile updates, admin role)
+- **Place Management** (listing properties with price and geolocation)
+- **Review Management** (users reviewing places)
 - **Amenity Association** (places linked to amenities)
 
-The system follows a **Layered Architecture** and applies the **Facade Design Pattern** to enforce separation of concerns and maintainability.
+The system follows:
+
+- **Layered Architecture**
+- **Facade Design Pattern**
+- Strict dependency direction control
 
 ---
 
@@ -44,61 +46,25 @@ The system follows a **Layered Architecture** and applies the **Facade Design Pa
   <a href="./docs/high_level/High_level_package_diagram_HBNB.pdf">📄 View Full PDF Version</a>
 </p>
 
----
-
-## 🎯 Purpose of the Diagram
+## 🎯 Purpose
 
 This diagram illustrates:
 
-- Global system architecture
-- Dependency direction between layers
-- Clear separation of responsibilities
+- The three architectural layers
+- Controlled dependency direction
+- The Facade as orchestration layer
 
----
+### Layers
 
-## 🔑 Key Components
-
-- Presentation Layer
-- Business Logic Layer
-- Persistence Layer
-- Facade
-
----
-
-## 🧱 Layer Responsibilities
-
-### Presentation Layer
-- Handles HTTP requests and responses
-- Performs input validation
-- Delegates business operations to the Facade
-- Contains no domain logic
-
-### Business Logic Layer
-- Contains domain entities
-- Implements business rules
-- Coordinates use cases via the Facade
-
-### Persistence Layer
-- Responsible for data storage and retrieval
-- Abstracted from business logic
-- Ensures database independence
-
----
-
-## 📐 Design Decisions & Rationale
-
-| Design Choice | Rationale |
-|---------------|-----------|
-| Layered architecture | Clear separation of concerns |
-| Facade pattern | Centralized orchestration of business logic |
-| Dependency control | Prevent circular dependencies |
-| Database isolation | Flexibility for future storage changes |
+- **Presentation Layer**
+- **Business Logic Layer**
+- **Persistence Layer**
 
 ---
 
 # 3️⃣ Business Logic Layer
 
-## 📊 Detailed Class Diagram
+## 📊 Class Diagram
 
 <p align="center">
   <img src="./docs/class_diagram/Class_diagram_for_business_Logic_Layer_HBNB.png" width="900"/>
@@ -108,163 +74,201 @@ This diagram illustrates:
   <a href="./docs/class_diagram/Class_diagram_for_business_Logic_Layer_HBNB.pdf">📄 View Full PDF Version</a>
 </p>
 
+## 🎯 Purpose
+
+Defines:
+
+- Core domain entities
+- Attributes and inheritance
+- Relationships and cardinalities
+- Business constraints
+
 ---
 
 ## 🔑 Core Entities
 
 ### BaseModel (Abstract)
-- id  
-- created_at  
-- updated_at  
+- id
+- created_at
+- updated_at
 
-Ensures consistency and reuse.
-
-### User
-- first_name  
-- last_name  
-- email  
-- is_admin  
-
-### Place
-- name  
-- description  
-- price  
-- latitude  
-- longitude  
-
-### Review
-- rating (1–5)  
-- text  
-
-### Amenity
-- name  
+Ensures attribute consistency and reuse.
 
 ---
 
-## 🔗 Relationships
+### User
+- first_name
+- last_name
+- email
+- is_admin
 
-- User (1) → (*) Place  
-- User (1) → (*) Review  
-- Place (1) → (*) Review  
-- Place (*) ↔ (*) Amenity  
+Relationships:
+- Owns multiple Places
+- Writes multiple Reviews
+
+---
+
+### Place
+- name
+- description
+- price
+- latitude
+- longitude
+
+Relationships:
+- Belongs to a User
+- Has multiple Reviews
+- Linked to multiple Amenities
+
+---
+
+### Review
+- rating (1–5)
+- text
+
+Relationships:
+- Linked to a User
+- Linked to a Place
+
+---
+
+### Amenity
+- name
+
+Relationships:
+- Associated with multiple Places
+
+---
+
+## 🔗 Cardinalities
+
+- User (1) → (*) Place
+- User (1) → (*) Review
+- Place (1) → (*) Review
+- Place (*) ↔ (*) Amenity
 
 ---
 
 ## ⚙ Business Rules
 
-- Rating must be between 1 and 5  
-- Only registered users can create places  
-- Only registered users can write reviews  
-- Review must reference an existing place  
+- Rating must be between 1 and 5
+- Only registered users can create places
+- Only registered users can write reviews
+- Review must reference an existing place
 
 ---
 
-# 4️⃣ API Interaction Flow
+# 4️⃣ API Interaction Sequence Diagrams
 
 ---
 
 # SD-01 — User Registration (POST `/users`)
 
 <p align="center">
-  <img src="./docs/sequence_diagrams/Sequence_SD01_User_Registration.png" width="900"/>
+  <img src="./docs/sequence_diagram/Sequence_SD01_User_Registration.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./docs/sequence_diagrams/Sequence_SD01_User_Registration.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/sequence_diagram/Sequence_SD01_User_Registration.pdf">📄 View Full PDF Version</a>
 </p>
 
-## Flow Summary
+### Flow Summary
 
-1. Client sends POST request  
-2. Email uniqueness verified  
-3. User entity created  
-4. User persisted  
-5. 201 Created returned  
+1. POST request received
+2. Email uniqueness verified
+3. User entity created
+4. Persisted in database
+5. 201 Created returned
 
 ---
 
 # SD-02 — Place Creation (POST `/places`)
 
 <p align="center">
-  <img src="./docs/sequence_diagrams/Sequence_SD02_Place_Creation.png" width="900"/>
+  <img src="./docs/sequence_diagram/Sequence_SD02_Place_Creation.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./docs/sequence_diagrams/Sequence_SD02_Place_Creation.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/sequence_diagram/Sequence_SD02_Place_Creation.pdf">📄 View Full PDF Version</a>
 </p>
 
-## Flow Summary
+### Flow Summary
 
-1. Authenticated request received  
-2. Owner existence validated  
-3. Place entity created  
-4. Place persisted  
-5. 201 Created returned  
+1. Authenticated request received
+2. Owner existence verified
+3. Place entity created
+4. Persisted
+5. 201 Created returned
 
 ---
 
 # SD-03 — Review Submission (POST `/places/{id}/reviews`)
 
 <p align="center">
-  <img src="./docs/sequence_diagrams/Sequence_SD03_Review_Submission.png" width="900"/>
+  <img src="./docs/sequence_diagram/Sequence_SD03_Review_Submission.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./docs/sequence_diagrams/Sequence_SD03_Review_Submission.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/sequence_diagram/Sequence_SD03_Review_Submission.pdf">📄 View Full PDF Version</a>
 </p>
 
-## Flow Summary
+### Flow Summary
 
-1. Place existence verified  
-2. User existence verified  
-3. Rating validated  
-4. Review created  
-5. 201 Created returned  
+1. Place existence verified
+2. User existence verified
+3. Rating validated
+4. Review persisted
+5. 201 Created returned
 
 ---
 
 # SD-04 — Fetching Places (GET `/places`)
 
 <p align="center">
-  <img src="./docs/sequence_diagrams/Sequence_SD04_Fetching_Places.png" width="900"/>
+  <img src="./docs/sequence_diagram/Sequence_SD04_Fetching_Places.png" width="900"/>
 </p>
 
 <p align="center">
-  <a href="./docs/sequence_diagrams/Sequence_SD04_Fetching_Places.pdf">📄 View Full PDF Version</a>
+  <a href="./docs/sequence_diagram/Sequence_SD04_Fetching_Places.pdf">📄 View Full PDF Version</a>
 </p>
 
-## Flow Summary
+### Flow Summary
 
-1. Client sends GET request  
-2. Filters applied  
-3. Data retrieved  
-4. 200 OK returned  
+1. GET request received
+2. Filters applied
+3. Data retrieved from persistence
+4. 200 OK returned
 
 ---
 
-# 5️⃣ Design Principles Applied
+# 5️⃣ Architectural Principles Applied
 
-- Layered Architecture  
-- Separation of Concerns  
-- Facade Pattern  
-- Dependency Direction Control  
-- Database Isolation  
-- BaseModel Abstraction  
+- Layered Architecture
+- Separation of Concerns
+- Facade Pattern
+- Controlled Dependency Direction
+- Database Isolation
+- Inheritance via BaseModel
 
 ---
 
 # 6️⃣ Conclusion
 
-This document consolidates the architectural and design foundation of HBnB Evolution.
+This documentation defines the structural and architectural foundation of HBnB Evolution.
 
-It defines structure, relationships, responsibilities, and interaction flows to ensure implementation clarity and maintainability.
+It ensures:
+
+- Maintainability
+- Testability
+- Scalability
+- Clear responsibility boundaries
 
 ---
 
 ## 👥 Authors
 
-- Antoine Gousset – GitHub: [Antgst](https://github.com/Antgst)  
-- Gwendal Boisard – GitHub: [Gwendal-B](https://github.com/Gwendal-B)  
-- Yonas Houriez – GitHub: [Ausaryu](https://github.com/Ausaryu)  
+- Antoine Gousset – GitHub: [Antgst](https://github.com/Antgst)
+- Gwendal Boisard – GitHub: [Gwendal-B](https://github.com/Gwendal-B)
+- Yonas Houriez – GitHub: [Ausaryu](https://github.com/Ausaryu)
 
 See `AUTHORS`.
