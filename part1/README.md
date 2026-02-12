@@ -490,6 +490,7 @@ It defines structure, relationships, responsibilities, and interaction flows, en
 ## 👥 Authors
 * Antoine Gousset – GitHub: [Antgst](https://github.com/Antgst)
 * Gwendal Boisard - GitHub: [Gwendal-B](https://github.com/Gwendal-B)
-* * Yonas Houriez – GitHub: [Ausaryu](https://github.com/Ausaryu)
+* Yonas Houriez – GitHub: [Ausaryu](https://github.com/Ausaryu)
 
 See `AUTHORS`.
+
