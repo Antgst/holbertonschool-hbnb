@@ -1,6 +1,7 @@
 from app.persistence.repository import InMemoryRepository
 from app.models.user import User
 from app.models.amenity import Amenity
+from app.models.place import Place
 
 
 class HBnBFacade:
@@ -49,3 +50,36 @@ class HBnBFacade:
 
     def update_amenity(self, amenity_id, amenity_data):
         return self.amenity_repo.update(amenity_id, amenity_data)
+
+    def create_place(self, place_data):
+        owner = self.user_repo.get(place_data['owner_id'])
+        if not owner:
+            raise ValueError("Owner not found")
+
+        amenity_ids = place_data.pop('amenities', [])
+
+        new_place = Place(
+            title=place_data['title'],
+            description=place_data.get('description', ""),
+            price=place_data['price'],
+            latitude=place_data['latitude'],
+            longitude=place_data['longitude'],
+            owner=owner
+        )
+
+        for amenity_id in amenity_ids:
+            amenity = self.amenity_repo.get(amenity_id)
+            if amenity:
+                new_place.add_amenity(amenity)
+
+        self.place_repo.add(new_place)
+        return new_place
+
+    def get_place(self, place_id):
+        return self.place_repo.get(place_id)
+
+    def get_all_places(self):
+        return self.place_repo.get_all()
+
+    def update_place(self, place_id, place_data):
+        return self.place_repo.update(place_id, place_data)
