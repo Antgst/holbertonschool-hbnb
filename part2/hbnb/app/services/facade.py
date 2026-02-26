@@ -98,8 +98,7 @@ class HBnBFacade:
                             rating=review_data['rating'],
                             place=place, user=user)
 
-        place.reviews.append(new_review.id)
-        user.reviews.append(new_review.id)
+        place.reviews.append(new_review)
 
         return new_review
 
