@@ -66,7 +66,8 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     def delete(self, review_id):
         """Delete a review"""
-        delete_review = facade.delete_review(review_id)
-        if not delete_review:
+        review = facade.get_review(review_id)
+        if not review:
             api.abort(404, "Review not found")
-        return ReviewList()._marshal_review(delete_review), 200
+        facade.delete_review(review_id)
+        return f"Review {review_id} is deleted", 200
