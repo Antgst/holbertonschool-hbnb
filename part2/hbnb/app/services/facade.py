@@ -90,7 +90,11 @@ class HBnBFacade:
         return self.place_repo.get_all()
 
     def update_place(self, place_id, place_data):
-        return self.place_repo.update(place_id, place_data)
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+        place.update(place_data)
+        return self.place_repo.get(place_id)
 
     def create_review(self, review_data):
         user = self.get_user(review_data['user_id'])
