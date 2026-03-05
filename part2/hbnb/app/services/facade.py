@@ -45,7 +45,7 @@ class HBnBFacade:
 
     def get_amenity(self, amenity_id):
         return self.amenity_repo.get(amenity_id)
-    
+
     def get_amenity_by_name(self, name):
         return self.amenity_repo.get_by_attribute('name', name)
 
@@ -63,6 +63,9 @@ class HBnBFacade:
         owner = self.user_repo.get(place_data['owner_id'])
         if not owner:
             raise ValueError("Owner not found")
+
+        if not place_data.get('title'):
+            raise ValueError("Title is required")
 
         amenity_ids = place_data.pop('amenities', [])
 
