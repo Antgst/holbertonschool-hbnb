@@ -1,7 +1,23 @@
+import re
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
 api = Namespace('users', description='User operations')
+
+# Validation email
+email_validation = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+
+def validate_user_payload(data):
+    """Validate the mandatory fields of the user"""
+    if not data:
+        return "Payload is empty"
+    for field in ('first_name', 'last_name', 'email', 'password'):
+        value = data.get(field)
+        if not value or not str(value).strip():
+            return f"'{field}' is required and cannot be empty"
+    if not email_validation.match(data['email']):
+        return "Invalid email format"
+    return None
 
 # Define the user model for input validation and documentation
 user_model = api.model('User', {
