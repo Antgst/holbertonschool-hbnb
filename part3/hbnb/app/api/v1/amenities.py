@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -10,15 +11,25 @@ amenity_model = api.model('Amenity', {
 
 @api.route('/')
 class AmenityList(Resource):
+    @api.response(200, 'List of amenities retrieved successfully')
+    def get(self):
+        """Retrieve a list of all amenities"""
+        amenities = facade.get_all_amenities()
+        return [{'id': a.id, 'name': a.name} for a in amenities], 200
+
+    @jwt_required()
+    @api.doc(security='BearerAuth')
     @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
-        """Register a new amenity"""
-        amenity_data = api.payload
+        """Create an amenity — admin only"""
+        claims = get_jwt()
+        if not claims.get('is_admin', False):
+            return {'error': 'Admin privileges required'}, 403
 
-        if (not amenity_data or not amenity_data.get('name') or
-                not str(amenity_data['name']).strip()):
+        amenity_data = api.payload
+        if not amenity_data or not amenity_data.get('name') or not str(amenity_data['name']).strip():
             return {'error': "'name' is required and cannot be empty"}, 400
 
         if facade.get_amenity_by_name(amenity_data['name']):
@@ -31,34 +42,34 @@ class AmenityList(Resource):
 
         return {'id': new_amenity.id, 'name': new_amenity.name}, 201
 
-    @api.response(200, 'List of amenities retrieved successfully')
-    def get(self):
-        """Retrieve a list of all amenities"""
-        amenities = facade.get_all_amenities()
-        return [{'id': a.id, 'name': a.name} for a in amenities], 200
-
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
     @api.response(200, 'Amenity details retrieved successfully')
     @api.response(404, 'Amenity not found')
     def get(self, amenity_id):
-        """Get amenity details by ID"""
+        """Get amenity by ID (public)"""
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             api.abort(404, f"Amenity {amenity_id} not found")
         return {"id": amenity.id, "name": amenity.name}, 200
 
+    @jwt_required()
+    @api.doc(security='BearerAuth')
     @api.expect(amenity_model)
     @api.response(200, 'Amenity updated successfully')
-    @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
+    @api.response(401, 'Authentication required')
+    @api.response(403, 'Admin privileges required')
+    @api.response(404, 'Amenity not found')
     def put(self, amenity_id):
-        """Update an amenity's information"""
-        amenity_data = api.payload
+        """Update an amenity — admin only"""
+        claims = get_jwt()
+        if not claims.get('is_admin', False):
+            return {'error': 'Admin privileges required'}, 403
 
-        if (not amenity_data or not amenity_data.get('name') or
-                not str(amenity_data['name']).strip()):
+        amenity_data = api.payload
+        if not amenity_data or not amenity_data.get('name') or not str(amenity_data['name']).strip():
             return {'error': "'name' is required and cannot be empty"}, 400
 
         try:
