@@ -1,5 +1,6 @@
 import re
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 
 api = Namespace('users', description='User operations')
@@ -55,7 +56,6 @@ def user_to_dict(user):
 class UserList(Resource):
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created', user_response_model)
-    @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new user"""
@@ -92,12 +92,23 @@ class UserResource(Resource):
             return {'error': 'User not found'}, 404
         return user_to_dict(user), 200
 
+    @jwt_required()
+    @api.doc(security='BearerAuth')
     @api.expect(user_model, validate=True)
     @api.response(200, 'User successfully updated', user_response_model)
-    @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
+    @api.response(401, 'Authentication required')
+    @api.response(403, 'Unauthorized action')
+    @api.response(404, 'User not found')
     def put(self, user_id):
         """Update user information"""
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+
+        # Seul l'utilisateur lui-même ou un admin peut modifier
+        if current_user_id != user_id and not claims.get('is_admin', False):
+            return {'error': 'Unauthorized action'}, 403
+
         user_data = api.payload
 
         error = validate_user_payload(user_data, require_password=False)
