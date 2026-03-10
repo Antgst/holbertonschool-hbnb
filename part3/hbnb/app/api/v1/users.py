@@ -7,7 +7,6 @@ api = Namespace('users', description='User operations')
 
 email_validation = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
 
-
 def validate_user_payload(data, require_password=True):
     """Valide les champs obligatoires pour la création. Retourne un message d'erreur ou None."""
     if not data:
@@ -40,19 +39,47 @@ def validate_user_update_payload(data):
             return f"'{field}' cannot be empty"
     return None
 
+def validate_admin_update_payload(data):
+    """Valide le payload de mise à jour (first_name, last_name)."""
+    if not data:
+        return "Payload is empty"
+    if 'email' in data:
+        email = data["email"]
+        if not email_validation.match(data['email']):
+            return "Invalid email format"
+        if not str(email).strip():
+            return "'email' cannot be empty"
+    if 'password' in data:
+        password = data["password"]
+        if not str(password).strip():
+            return "'password' cannot be empty"
+    for field in ('first_name', 'last_name'):
+        value = data.get(field)
+        if value is not None and not str(value).strip():
+            return f"'{field}' cannot be empty"
+    return None
 
 # Modèle d'entrée pour la création (inclut email + password)
 user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name':  fields.String(required=True, description='Last name of the user'),
     'email':      fields.String(required=True, description='Email of the user'),
-    'password':   fields.String(required=True, description='Password of the user')
+    'password':   fields.String(required=True, description='Password of the user'),
+    'is_admin':   fields.Boolean(required=True, description='Status admin of the user'),
 })
 
 # Modèle d'entrée pour la mise à jour (first_name et last_name seulement)
 user_update_model = api.model('UserUpdate', {
     'first_name': fields.String(description='First name of the user'),
     'last_name':  fields.String(description='Last name of the user')
+})
+
+# Modèle d'entrée pour la mise à jour admin
+admin_update_model = api.model('UserUpdate', {
+    'first_name': fields.String(description='First name of the user'),
+    'last_name':  fields.String(description='Last name of the user'),
+    'email':      fields.String(description='Email of the user'),
+    'password':   fields.String(description='Password of the user')
 })
 
 # Modèle de sortie (sans password)
@@ -76,13 +103,18 @@ def user_to_dict(user):
 
 @api.route('/')
 class UserList(Resource):
+    @jwt_required()
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created', user_response_model)
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new user (public endpoint)"""
         user_data = api.payload
+        claims = get_jwt()
 
+        if not claims.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
+        
         error = validate_user_payload(user_data, require_password=True)
         if error:
             return {'error': error}, 400
@@ -126,14 +158,19 @@ class UserResource(Resource):
         """Update user first/last name — email and password cannot be changed here"""
         current_user_id = get_jwt_identity()
         claims = get_jwt()
-
+        
+        is_admin = claims.get('is_admin', False)
         # Seul l'utilisateur lui-même ou un admin peut modifier
-        if current_user_id != user_id and not claims.get('is_admin', False):
+        if current_user_id != user_id and not is_admin:
             return {'error': 'Unauthorized action'}, 403
 
         user_data = api.payload
 
-        error = validate_user_update_payload(user_data)
+        if is_admin:
+            error = validate_admin_update_payload(user_data)
+        else: 
+            error = validate_user_update_payload(user_data)
+            
         if error:
             return {'error': error}, 400
 
@@ -145,3 +182,5 @@ class UserResource(Resource):
             return {'error': 'User not found'}, 404
 
         return user_to_dict(updated_user), 200
+
+
