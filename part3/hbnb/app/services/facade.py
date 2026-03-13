@@ -1,9 +1,4 @@
-from app.persistence.repository import SQLAlchemyRepository, InMemoryRepository
-from app.models.user import User
-from app.models.amenity import Amenity
-from app.models.place import Place
-from app.models.review import Review
-from app.persistence.repository import UserRepository
+from app.persistence.repository import SQLAlchemyRepository, UserRepository
 
 
 class HBnBFacade:
@@ -66,6 +61,7 @@ class HBnBFacade:
 
     def create_user(self, user_data):
         """Crée un utilisateur — le password est hashé dans le modèle User."""
+        from app.models.user import User
         user = User(**user_data)
         self.user_repo.add(user)
         return user
@@ -74,7 +70,7 @@ class HBnBFacade:
         return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
-        return self.user_repo.get_by_attribute('email', email)
+        return self.user_repo.get_by_attribute(email)
 
     def get_all_users(self):
         return self.user_repo.get_all()
@@ -84,15 +80,19 @@ class HBnBFacade:
         if not user:
             return None
 
-        if "email" in user_data and user_data["email"] != user.email:
-            if self.get_user_by_email(user_data["email"]):
+        if "email" in user_data and user_data['email'] != user.email:
+            if self.get_user_by_email(user_data['email']):
                 raise ValueError("Email already registered")
 
         # Si un nouveau password est fourni, le hacher via la méthode du modèle
         if "password" in user_data:
             user.hash_password(user_data.pop("password"))
+            from app import db
+            db.session.commit()
 
-        self.user_repo.update(user_id, user_data)
+        if user_data:
+            self.user_repo.update(user_id, user_data)
+
         return self.user_repo.get(user_id)
 
     # ------------------------------------------------------------------ #
@@ -100,6 +100,7 @@ class HBnBFacade:
     # ------------------------------------------------------------------ #
 
     def create_amenity(self, amenity_data):
+        from app.models.amenity import Amenity
         amenity = Amenity(**amenity_data)
         self.amenity_repo.add(amenity)
         return amenity
@@ -134,6 +135,7 @@ class HBnBFacade:
 
         amenity_ids = place_data.pop('amenities', [])
 
+        from app.models.place import Place
         new_place = Place(
             title=place_data['title'],
             description=place_data.get('description', ""),
@@ -180,13 +182,13 @@ class HBnBFacade:
         if not place:
             raise ValueError("Place not found")
 
+        from app.models.review import Review
         new_review = Review(
             text=review_data['text'],
             rating=review_data['rating'],
             place=place,
             user=user
         )
-        place.reviews.append(new_review)
         self.review_repo.add(new_review)
         return new_review
 
@@ -197,14 +199,17 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id):
-        return [r for r in self.get_all_reviews() if r.place.id == place_id]
+        """Requête SQL directe — plus efficace qu'une boucle Python."""
+        from app.models.review import Review
+        return Review.query.filter_by(place_id=place_id).all()
 
     def get_review_by_user_and_place(self, user_id, place_id):
-        """Retourne la review d'un user pour une place donnée, ou None."""
-        for r in self.get_all_reviews():
-            if r.user.id == user_id and r.place.id == place_id:
-                return r
-        return None
+        """Requête SQL directe sur les deux foreign keys."""
+        from app.models.review import Review
+        return Review.query.filter_by(
+            user_id=user_id,
+            place_id=place_id
+        ).first()
 
     def update_review(self, review_id, review_data):
         review = self.review_repo.get(review_id)

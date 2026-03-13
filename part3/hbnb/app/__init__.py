@@ -5,18 +5,8 @@ from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 
 jwt = JWTManager()
-
 bcrypt = Bcrypt()
-
 db = SQLAlchemy()
-
-from app.api.v1.users import api as users_ns
-from app.api.v1.amenities import api as amenities_ns
-from app.api.v1.places import api as places_ns
-from app.api.v1.reviews import api as reviews_ns
-from app.api.v1.auth import api as auth_ns
-from app.services import facade
-from app.persistence.repository import InMemoryRepository
 
 
 def create_app(config_class="config.DevelopmentConfig"):
@@ -28,11 +18,12 @@ def create_app(config_class="config.DevelopmentConfig"):
     jwt.init_app(app)
     db.init_app(app)
 
-
-    # On réinitialise seulement les repos encore en mémoire
-    facade.amenity_repo = InMemoryRepository()
-    facade.place_repo = InMemoryRepository()
-    facade.review_repo = InMemoryRepository()
+    # Imports déférés — évite les imports circulaires au niveau module
+    from app.api.v1.users import api as users_ns
+    from app.api.v1.amenities import api as amenities_ns
+    from app.api.v1.places import api as places_ns
+    from app.api.v1.reviews import api as reviews_ns
+    from app.api.v1.auth import api as auth_ns
 
     api = Api(
         app, version='1.0',
@@ -57,6 +48,9 @@ def create_app(config_class="config.DevelopmentConfig"):
 
     # Crée les tables SQLAlchemy si elles n'existent pas encore
     with app.app_context():
+        # Import explicite de tous les modèles avant db.create_all()
+        # pour que SQLAlchemy enregistre leurs tables dans les métadonnées
+        from app.models import user, place, review, amenity
         db.create_all()
 
     return app

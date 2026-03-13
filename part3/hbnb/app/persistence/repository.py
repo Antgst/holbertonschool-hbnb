@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from app import db
-from app.models.user import User
 
 
 class Repository(ABC):
@@ -95,7 +94,15 @@ class SQLAlchemyRepository(Repository):
 
 class UserRepository(SQLAlchemyRepository):
     def __init__(self):
+        # Import déféré — évite le circulaire au chargement du module
+        from app.models.user import User
         super().__init__(User)
 
     def get_user_by_email(self, email):
-        return self.model.query.filter_by(email=email).first()
+        from app.models.user import User
+        return User.query.filter_by(email=email).first()
+
+    def get_by_attribute(self, attr_name, attr_value):
+        if attr_name == 'email':
+            return self.get_by_email(attr_value)
+        return super().get_by_attribute(attr_name, attr_value)
