@@ -14,7 +14,6 @@ class Review(BaseModel):
     place = db.relationship('Place', back_populates='reviews')
     user = db.relationship('User', back_populates='reviews')
 
-
     def __init__(self, text, rating, place, user):
         super().__init__()
         if not text or not str(text).strip():

@@ -8,10 +8,57 @@ from app.persistence.repository import UserRepository
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo = UserRepository()
-        self.amenity_repo = InMemoryRepository()
-        self.place_repo = InMemoryRepository()
-        self.review_repo = InMemoryRepository()
+        self._user_repo_instance    = None
+        self._amenity_repo_instance = None
+        self._place_repo_instance   = None
+        self._review_repo_instance  = None
+
+    # ------------------------------------------------------------------ #
+    #  Lazy repo properties
+    # ------------------------------------------------------------------ #
+
+    @property
+    def user_repo(self):
+        if self._user_repo_instance is None:
+            self._user_repo_instance = UserRepository()
+        return self._user_repo_instance
+
+    @user_repo.setter
+    def user_repo(self, value):
+        self._user_repo_instance = value
+
+    @property
+    def amenity_repo(self):
+        if self._amenity_repo_instance is None:
+            from app.models.amenity import Amenity
+            self._amenity_repo_instance = SQLAlchemyRepository(Amenity)
+        return self._amenity_repo_instance
+
+    @amenity_repo.setter
+    def amenity_repo(self, value):
+        self._amenity_repo_instance = value
+
+    @property
+    def place_repo(self):
+        if self._place_repo_instance is None:
+            from app.models.place import Place
+            self._place_repo_instance = SQLAlchemyRepository(Place)
+        return self._place_repo_instance
+
+    @place_repo.setter
+    def place_repo(self, value):
+        self._place_repo_instance = value
+
+    @property
+    def review_repo(self):
+        if self._review_repo_instance is None:
+            from app.models.review import Review
+            self._review_repo_instance = SQLAlchemyRepository(Review)
+        return self._review_repo_instance
+
+    @review_repo.setter
+    def review_repo(self, value):
+        self._review_repo_instance = value
 
     # ------------------------------------------------------------------ #
     #  Users

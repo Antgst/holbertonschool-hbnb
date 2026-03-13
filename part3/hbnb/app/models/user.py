@@ -14,6 +14,21 @@ class User(BaseModel):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
+    # Relations
+    places = db.relationship(
+        'Place',
+        back_populates='owner',
+        cascade='all, delete-orphan',
+        lazy='select'
+    )
+
+    reviews = db.relationship(
+        'Review',
+        back_populates='user',
+        cascade='all, delete-orphan',
+        lazy='select'
+    )
+
     def __init__(self, first_name, last_name, email, password, is_admin=False):
         super().__init__()
         self.first_name = self._validate_non_empty(
