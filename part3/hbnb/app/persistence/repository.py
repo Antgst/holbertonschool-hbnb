@@ -104,5 +104,5 @@ class UserRepository(SQLAlchemyRepository):
 
     def get_by_attribute(self, attr_name, attr_value):
         if attr_name == 'email':
-            return self.get_by_email(attr_value)
+            return self.get_user_by_email(attr_value)
         return super().get_by_attribute(attr_name, attr_value)
