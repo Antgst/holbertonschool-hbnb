@@ -81,6 +81,7 @@ class SQLAlchemyRepository(Repository):
             for key, value in data.items():
                 setattr(obj, key, value)
             db.session.commit()
+        return obj
 
     def delete(self, obj_id):
         obj = self.get(obj_id)
@@ -98,7 +99,7 @@ class UserRepository(SQLAlchemyRepository):
         from app.models.user import User
         super().__init__(User)
 
-    def get_user_by_email(self, email):
+    def get_by_email(self, email):
         from app.models.user import User
         return User.query.filter_by(email=email).first()
 
