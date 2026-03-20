@@ -12,6 +12,12 @@ review_model = api.model('Review', {
 })
 
 
+review_update_model = api.model('ReviewUpdate', {
+    'text':   fields.String(description='Text of the review'),
+    'rating': fields.Integer(description='Rating of the place (1-5)')
+})
+
+
 def marshal_review(review):
     return {
         "id":       review.id,
@@ -32,6 +38,20 @@ def validate_review_payload(data):
     rating = data['rating']
     if not isinstance(rating, int) or not (1 <= rating <= 5):
         return "Rating must be an integer between 1 and 5"
+    return None
+
+
+def validate_review_update_payload(data):
+    if not data:
+        return "Payload is empty"
+    if 'text' in data and (not data['text'] or not str(data['text']).strip()):
+        return "'text' is required and cannot be empty"
+    if 'rating' in data:
+        rating = data['rating']
+        if not isinstance(rating, int) or not (1 <= rating <= 5):
+            return "Rating must be an integer between 1 and 5"
+    if any(f in data for f in ('user_id', 'place_id')):
+        return "You cannot modify 'user_id' or 'place_id'"
     return None
 
 
@@ -96,7 +116,7 @@ class ReviewResource(Resource):
 
     @jwt_required()
     @api.doc(security='BearerAuth')
-    @api.expect(review_model)
+    @api.expect(review_update_model)
     @api.response(200, 'Review updated successfully')
     @api.response(400, 'Invalid input data')
     @api.response(401, 'Authentication required')
@@ -115,12 +135,15 @@ class ReviewResource(Resource):
             return {'error': 'Unauthorized action'}, 403
 
         data = api.payload
-        error = validate_review_payload(data)
+        error = validate_review_update_payload(data)
         if error:
             return {"error": error}, 400
 
+        allowed_fields = {'text', 'rating'}
+        filtered_data = {key: value for key, value in data.items() if key in allowed_fields}
+
         try:
-            updated_review = facade.update_review(review_id, data)
+            updated_review = facade.update_review(review_id, filtered_data)
         except ValueError as e:
             return {"error": str(e)}, 400
         if not updated_review:

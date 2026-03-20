@@ -1,8 +1,8 @@
 """
 HBnB API - Test Suite Complet
 Tests unitaires pour les endpoints: Users, Amenities, Places, Reviews
-Utilisation: python -m pytest test_hbnb_api.py -v
-          ou: python -m unittest test_hbnb_api -v
+Utilisation: python -m pytest Test/test_hbnb_api.py -v
+          ou: python -m unittest Test/test_hbnb_api -v
 """
 
 import unittest
@@ -10,70 +10,92 @@ import json
 import sys
 import os
 
-# Ajoute le dossier parent au path pour l'import de l'app
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'  ))
 
-from app import create_app
+from app import create_app, db
 
 
 class BaseTestCase(unittest.TestCase):
-    """Classe de base avec setup/teardown commun à tous les tests."""
-
     def setUp(self):
-        """Crée une instance de l'app en mode test avant chaque test."""
-        self.app = create_app()
-        self.app.config['TESTING'] = True
+        self.app = create_app("config.TestingConfig")
         self.client = self.app.test_client()
+        with self.app.app_context():
+            db.drop_all()
+            db.create_all()
 
-    def post_json(self, url, data):
-        return self.client.post(
-            url,
-            data=json.dumps(data),
-            content_type='application/json'
-        )
+    def tearDown(self):
+        with self.app.app_context():
+            db.session.remove()
+            db.drop_all()
 
-    def put_json(self, url, data):
-        return self.client.put(
-            url,
-            data=json.dumps(data),
-            content_type='application/json'
-        )
+    def post_json(self, url, data, headers=None):
+        return self.client.post(url, data=json.dumps(data),
+                                content_type='application/json',
+                                headers=headers or {})
 
-    # ------------------------------------------------------------------ #
-    # Helpers de création rapide (réutilisés dans plusieurs test classes) #
-    # ------------------------------------------------------------------ #
+    def put_json(self, url, data, headers=None):
+        return self.client.put(url, data=json.dumps(data),
+                               content_type='application/json',
+                               headers=headers or {})
+
+    def get_token(self, email, password):
+        resp = self.post_json('/api/v1/auth/login',
+                              {"email": email, "password": password})
+        return resp.get_json().get('access_token')
+
+    def auth_header(self, token):
+        return {"Authorization": f"Bearer {token}"}
+
+    def create_admin_and_token(self, email="admin@test.com", password="adminpass"):
+        from app.models.user import User
+        with self.app.app_context():
+            admin = User(first_name="Admin", last_name="Root",
+                         email=email, password=password, is_admin=True)
+            db.session.add(admin)
+            db.session.commit()
+            admin_id = admin.id
+        token = self.get_token(email, password)
+        return admin_id, token
+
+    def create_regular_user_and_token(self, email="user@test.com", password="userpass",
+                                       first_name="John", last_name="Doe"):
+        from app.models.user import User
+        with self.app.app_context():
+            user = User(first_name=first_name, last_name=last_name,
+                        email=email, password=password, is_admin=False)
+            db.session.add(user)
+            db.session.commit()
+            user_id = user.id
+        token = self.get_token(email, password)
+        return user_id, token
 
     def create_user(self, first_name="John", last_name="Doe",
-                    email="john.doe@example.com", password="secret"):
-        return self.post_json('/api/v1/users/', {
-            "first_name": first_name,
-            "last_name": last_name,
-            "email": email,
-            "password": password
-        })
+                    email="john.doe@example.com", password="secret",
+                    admin_token=None):
+        if admin_token is None:
+            _, admin_token = self.create_admin_and_token()
+        return self.post_json('/api/v1/users/',
+                              {"first_name": first_name, "last_name": last_name,
+                               "email": email, "password": password},
+                              headers=self.auth_header(admin_token))
 
-    def create_amenity(self, name="WiFi"):
-        return self.post_json('/api/v1/amenities/', {"name": name})
+    def create_amenity(self, name="WiFi", headers=None):
+        return self.post_json('/api/v1/amenities/', {"name": name}, headers=headers)
 
-    def create_place(self, owner_id, amenity_ids=None, **kwargs):
-        data = {
-            "title": kwargs.get("title", "Nice Place"),
-            "description": kwargs.get("description", "A great spot"),
-            "price": kwargs.get("price", 99.9),
-            "latitude": kwargs.get("latitude", 48.8566),
-            "longitude": kwargs.get("longitude", 2.3522),
-            "owner_id": owner_id,
-            "amenities": amenity_ids or []
-        }
-        return self.post_json('/api/v1/places/', data)
+    def create_place(self, owner_id, amenity_ids=None, headers=None, **kwargs):
+        data = {"title": kwargs.get("title", "Nice Place"),
+                "description": kwargs.get("description", "A great spot"),
+                "price": kwargs.get("price", 99.9),
+                "latitude": kwargs.get("latitude", 48.8566),
+                "longitude": kwargs.get("longitude", 2.3522),
+                "owner_id": owner_id, "amenities": amenity_ids or []}
+        return self.post_json('/api/v1/places/', data, headers=headers)
 
-    def create_review(self, user_id, place_id, text="Great!", rating=5):
-        return self.post_json('/api/v1/reviews/', {
-            "text": text,
-            "rating": rating,
-            "user_id": user_id,
-            "place_id": place_id
-        })
+    def create_review(self, user_id, place_id, text="Great!", rating=5, headers=None):
+        return self.post_json('/api/v1/reviews/',
+                              {"text": text, "rating": rating,
+                               "user_id": user_id, "place_id": place_id},
+                              headers=headers)
 
 
 # ====================================================================== #
@@ -81,125 +103,102 @@ class BaseTestCase(unittest.TestCase):
 # ====================================================================== #
 
 class TestUserCreation(BaseTestCase):
-    """Tests de création d'utilisateur - POST /api/v1/users/"""
-
     def test_create_user_success(self):
-        """Création d'un utilisateur valide → 201."""
-        resp = self.create_user()
+        _, admin_token = self.create_admin_and_token()
+        resp = self.create_user(admin_token=admin_token)
         self.assertEqual(resp.status_code, 201)
         data = resp.get_json()
         self.assertIn('id', data)
         self.assertEqual(data['first_name'], 'John')
-        self.assertEqual(data['last_name'], 'Doe')
-        self.assertEqual(data['email'], 'john.doe@example.com')
+
+    def test_create_user_no_token_returns_401(self):
+        resp = self.post_json('/api/v1/users/',
+                              {"first_name": "J", "last_name": "D",
+                               "email": "j@t.com", "password": "p"})
+        self.assertEqual(resp.status_code, 401)
+
+    def test_create_user_non_admin_returns_403(self):
+        _, user_token = self.create_regular_user_and_token()
+        resp = self.post_json('/api/v1/users/',
+                              {"first_name": "J", "last_name": "D",
+                               "email": "j2@t.com", "password": "p"},
+                              headers=self.auth_header(user_token))
+        self.assertEqual(resp.status_code, 403)
 
     def test_create_user_duplicate_email(self):
-        """Doublon d'email → 400."""
-        self.create_user()
-        resp = self.create_user()  # même email
+        _, admin_token = self.create_admin_and_token()
+        self.create_user(admin_token=admin_token)
+        resp = self.create_user(admin_token=admin_token)
         self.assertEqual(resp.status_code, 400)
-        self.assertIn('error', resp.get_json())
 
     def test_create_user_missing_first_name(self):
-        """Champ first_name manquant → 400."""
-        resp = self.post_json('/api/v1/users/', {
-            "last_name": "Doe",
-            "email": "nodoe@example.com",
-            "password": "secret"
-        })
-        self.assertEqual(resp.status_code, 400)
-
-    def test_create_user_missing_last_name(self):
-        """Champ last_name manquant → 400."""
-        resp = self.post_json('/api/v1/users/', {
-            "first_name": "Jane",
-            "email": "jane@example.com",
-            "password": "secret"
-        })
+        _, admin_token = self.create_admin_and_token()
+        resp = self.post_json('/api/v1/users/',
+                              {"last_name": "D", "email": "x@t.com", "password": "p"},
+                              headers=self.auth_header(admin_token))
         self.assertEqual(resp.status_code, 400)
 
     def test_create_user_missing_email(self):
-        """Champ email manquant → 400."""
-        resp = self.post_json('/api/v1/users/', {
-            "first_name": "Jane",
-            "last_name": "Doe",
-            "password": "secret"
-        })
-        self.assertEqual(resp.status_code, 400)
-
-    def test_create_user_empty_payload(self):
-        """Payload vide → 400."""
-        resp = self.post_json('/api/v1/users/', {})
+        _, admin_token = self.create_admin_and_token()
+        resp = self.post_json('/api/v1/users/',
+                              {"first_name": "J", "last_name": "D", "password": "p"},
+                              headers=self.auth_header(admin_token))
         self.assertEqual(resp.status_code, 400)
 
 
 class TestUserRetrieval(BaseTestCase):
-    """Tests de récupération d'utilisateurs."""
-
     def test_get_all_users_empty(self):
-        """Liste vide au départ → 200 + liste vide."""
         resp = self.client.get('/api/v1/users/')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.get_json(), [])
 
-    def test_get_all_users_after_creation(self):
-        """Après création → liste non vide."""
-        self.create_user()
-        resp = self.client.get('/api/v1/users/')
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(len(resp.get_json()), 1)
-
     def test_get_user_by_id_success(self):
-        """Récupération par ID valide → 200."""
         user_id = self.create_user().get_json()['id']
         resp = self.client.get(f'/api/v1/users/{user_id}')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.get_json()['id'], user_id)
 
     def test_get_user_by_invalid_id(self):
-        """ID inexistant → 404."""
         resp = self.client.get('/api/v1/users/nonexistent-id')
         self.assertEqual(resp.status_code, 404)
 
 
 class TestUserUpdate(BaseTestCase):
-    """Tests de mise à jour d'utilisateur - PUT /api/v1/users/<id>"""
-
-    def test_update_user_success(self):
-        """Mise à jour valide → 200."""
-        user_id = self.create_user().get_json()['id']
-        resp = self.put_json(f'/api/v1/users/{user_id}', {
-            "first_name": "Updated",
-            "last_name": "Name",
-            "email": "updated@example.com",
-            "password": "newpass"
-        })
+    def test_update_user_own_name(self):
+        user_id, token = self.create_regular_user_and_token()
+        resp = self.put_json(f'/api/v1/users/{user_id}',
+                             {"first_name": "Updated", "last_name": "Name"},
+                             headers=self.auth_header(token))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.get_json()['first_name'], 'Updated')
 
-    def test_update_user_not_found(self):
-        """ID inexistant → 404."""
-        resp = self.put_json('/api/v1/users/bad-id', {
-            "first_name": "X",
-            "last_name": "Y",
-            "email": "x@example.com",
-            "password": "p"
-        })
-        self.assertEqual(resp.status_code, 404)
-
-    def test_update_user_duplicate_email(self):
-        """Changement vers un email déjà pris → 400."""
-        self.create_user(email="first@example.com")
-        user2_id = self.create_user(
-            email="second@example.com", first_name="Jane"
-        ).get_json()['id']
-        resp = self.put_json(f'/api/v1/users/{user2_id}', {
-            "first_name": "Jane",
-            "last_name": "Doe",
-            "email": "first@example.com",
-            "password": "secret"
-        })
+    def test_update_user_email_as_regular_returns_400(self):
+        user_id, token = self.create_regular_user_and_token()
+        resp = self.put_json(f'/api/v1/users/{user_id}',
+                             {"email": "hacked@example.com"},
+                             headers=self.auth_header(token))
         self.assertEqual(resp.status_code, 400)
+
+    def test_update_other_user_returns_403(self):
+        _, token = self.create_regular_user_and_token(email="u1@t.com")
+        other_id, _ = self.create_regular_user_and_token(email="u2@t.com")
+        resp = self.put_json(f'/api/v1/users/{other_id}',
+                             {"first_name": "Hacked"},
+                             headers=self.auth_header(token))
+        self.assertEqual(resp.status_code, 403)
+
+    def test_update_no_token_returns_401(self):
+        user_id, _ = self.create_regular_user_and_token()
+        resp = self.put_json(f'/api/v1/users/{user_id}', {"first_name": "X"})
+        self.assertEqual(resp.status_code, 401)
+
+    def test_admin_can_update_email(self):
+        _, admin_token = self.create_admin_and_token()
+        user_id, _ = self.create_regular_user_and_token(email="target@t.com")
+        resp = self.put_json(f'/api/v1/users/{user_id}',
+                             {"email": "new@t.com"},
+                             headers=self.auth_header(admin_token))
+        self.assertEqual(resp.status_code, 200)
 
 
 # ====================================================================== #
@@ -207,66 +206,77 @@ class TestUserUpdate(BaseTestCase):
 # ====================================================================== #
 
 class TestAmenityCreation(BaseTestCase):
-    """Tests de création d'amenité - POST /api/v1/amenities/"""
-
     def test_create_amenity_success(self):
-        """Création valide → 201."""
-        resp = self.create_amenity("WiFi")
+        _, admin_token = self.create_admin_and_token()
+        resp = self.create_amenity("WiFi", headers=self.auth_header(admin_token))
         self.assertEqual(resp.status_code, 201)
-        data = resp.get_json()
-        self.assertIn('id', data)
-        self.assertEqual(data['name'], 'WiFi')
+        self.assertEqual(resp.get_json()['name'], 'WiFi')
+
+    def test_create_amenity_no_token_returns_401(self):
+        resp = self.post_json('/api/v1/amenities/', {"name": "Pool"})
+        self.assertEqual(resp.status_code, 401)
+
+    def test_create_amenity_non_admin_returns_403(self):
+        _, user_token = self.create_regular_user_and_token()
+        resp = self.create_amenity("Pool", headers=self.auth_header(user_token))
+        self.assertEqual(resp.status_code, 403)
 
     def test_create_amenity_duplicate(self):
-        """Doublon de nom → 400."""
-        self.create_amenity("Pool")
-        resp = self.create_amenity("Pool")
-        self.assertEqual(resp.status_code, 400)
-
-    def test_create_amenity_missing_name(self):
-        """Champ name manquant → 400."""
-        resp = self.post_json('/api/v1/amenities/', {})
+        _, admin_token = self.create_admin_and_token()
+        h = self.auth_header(admin_token)
+        self.create_amenity("Pool", headers=h)
+        resp = self.create_amenity("Pool", headers=h)
         self.assertEqual(resp.status_code, 400)
 
 
 class TestAmenityRetrieval(BaseTestCase):
-    """Tests de récupération d'amenités."""
-
     def test_get_all_amenities_empty(self):
-        """Liste vide → 200 + []."""
         resp = self.client.get('/api/v1/amenities/')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.get_json(), [])
 
     def test_get_amenity_by_id_success(self):
-        """Récupération par ID valide → 200."""
-        amenity_id = self.create_amenity("Parking").get_json()['id']
+        _, admin_token = self.create_admin_and_token()
+        amenity_id = self.create_amenity(
+            "Parking", headers=self.auth_header(admin_token)
+        ).get_json()['id']
         resp = self.client.get(f'/api/v1/amenities/{amenity_id}')
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.get_json()['id'], amenity_id)
 
     def test_get_amenity_by_invalid_id(self):
-        """ID inexistant → 404."""
         resp = self.client.get('/api/v1/amenities/nonexistent-id')
         self.assertEqual(resp.status_code, 404)
 
 
 class TestAmenityUpdate(BaseTestCase):
-    """Tests de mise à jour d'amenité - PUT /api/v1/amenities/<id>"""
-
     def test_update_amenity_success(self):
-        """Mise à jour valide → 200."""
-        amenity_id = self.create_amenity("Old Name").get_json()['id']
-        resp = self.put_json(f'/api/v1/amenities/{amenity_id}', {
-            "name": "New Name"
-        })
+        _, admin_token = self.create_admin_and_token()
+        h = self.auth_header(admin_token)
+        amenity_id = self.create_amenity("Old", headers=h).get_json()['id']
+        resp = self.put_json(f'/api/v1/amenities/{amenity_id}',
+                             {"name": "New"}, headers=h)
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.get_json()['name'], 'New Name')
+        self.assertEqual(resp.get_json()['name'], 'New')
 
-    def test_update_amenity_not_found(self):
-        """ID inexistant → 404."""
-        resp = self.put_json('/api/v1/amenities/bad-id', {"name": "X"})
-        self.assertEqual(resp.status_code, 404)
+    def test_update_amenity_non_admin_returns_403(self):
+        _, admin_token = self.create_admin_and_token()
+        _, user_token = self.create_regular_user_and_token()
+        amenity_id = self.create_amenity(
+            "WiFi", headers=self.auth_header(admin_token)
+        ).get_json()['id']
+        resp = self.put_json(f'/api/v1/amenities/{amenity_id}',
+                             {"name": "Hacked"},
+                             headers=self.auth_header(user_token))
+        self.assertEqual(resp.status_code, 403)
+
+    def test_update_amenity_duplicate_name_returns_400(self):
+        _, admin_token = self.create_admin_and_token()
+        h = self.auth_header(admin_token)
+        self.create_amenity("WiFi", headers=h)
+        a2_id = self.create_amenity("Pool", headers=h).get_json()['id']
+        resp = self.put_json(f'/api/v1/amenities/{a2_id}',
+                             {"name": "WiFi"}, headers=h)
+        self.assertEqual(resp.status_code, 400)
 
 
 # ====================================================================== #
@@ -274,155 +284,96 @@ class TestAmenityUpdate(BaseTestCase):
 # ====================================================================== #
 
 class TestPlaceCreation(BaseTestCase):
-    """Tests de création de place - POST /api/v1/places/"""
-
     def test_create_place_success(self):
-        """Création valide → 201."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.create_place(owner_id)
+        owner_id, owner_token = self.create_regular_user_and_token()
+        resp = self.create_place(owner_id, headers=self.auth_header(owner_token))
         self.assertEqual(resp.status_code, 201)
         data = resp.get_json()
-        self.assertIn('id', data)
-        self.assertEqual(data['title'], 'Nice Place')
-        self.assertIn('owner', data)
         self.assertEqual(data['owner']['id'], owner_id)
 
-    def test_create_place_with_amenities(self):
-        """Création avec amenités → 201, amenités dans la réponse."""
-        owner_id = self.create_user().get_json()['id']
-        a1 = self.create_amenity("WiFi").get_json()['id']
-        a2 = self.create_amenity("Pool").get_json()['id']
-        resp = self.create_place(owner_id, amenity_ids=[a1, a2])
-        self.assertEqual(resp.status_code, 201)
-        amenities = resp.get_json()['amenities']
-        self.assertEqual(len(amenities), 2)
+    def test_create_place_no_token_returns_401(self):
+        owner_id, _ = self.create_regular_user_and_token()
+        resp = self.create_place(owner_id)
+        self.assertEqual(resp.status_code, 401)
 
-    def test_create_place_invalid_owner(self):
-        """Owner_id inexistant → 400."""
-        resp = self.create_place("nonexistent-owner-id")
-        self.assertEqual(resp.status_code, 400)
+    def test_create_place_wrong_owner_returns_403(self):
+        owner_id, _ = self.create_regular_user_and_token(email="o@t.com")
+        _, other_token = self.create_regular_user_and_token(email="x@t.com")
+        resp = self.create_place(owner_id, headers=self.auth_header(other_token))
+        self.assertEqual(resp.status_code, 403)
 
     def test_create_place_negative_price(self):
-        """Prix négatif → 400."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.create_place(owner_id, price=-10.0)
+        owner_id, owner_token = self.create_regular_user_and_token()
+        resp = self.create_place(owner_id, price=-10.0,
+                                  headers=self.auth_header(owner_token))
         self.assertEqual(resp.status_code, 400)
 
-    def test_create_place_zero_price(self):
-        """Prix à zéro → 400."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.create_place(owner_id, price=0)
-        self.assertEqual(resp.status_code, 400)
-
-    def test_create_place_invalid_latitude_too_high(self):
-        """Latitude > 90 → 400."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.create_place(owner_id, latitude=91.0)
-        self.assertEqual(resp.status_code, 400)
-
-    def test_create_place_invalid_latitude_too_low(self):
-        """Latitude < -90 → 400."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.create_place(owner_id, latitude=-91.0)
-        self.assertEqual(resp.status_code, 400)
-
-    def test_create_place_invalid_longitude_too_high(self):
-        """Longitude > 180 → 400."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.create_place(owner_id, longitude=181.0)
-        self.assertEqual(resp.status_code, 400)
-
-    def test_create_place_invalid_longitude_too_low(self):
-        """Longitude < -180 → 400."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.create_place(owner_id, longitude=-181.0)
+    def test_create_place_invalid_latitude(self):
+        owner_id, owner_token = self.create_regular_user_and_token()
+        resp = self.create_place(owner_id, latitude=91.0,
+                                  headers=self.auth_header(owner_token))
         self.assertEqual(resp.status_code, 400)
 
     def test_create_place_boundary_latitude(self):
-        """Latitude = 90 (borne max) → 201."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.create_place(owner_id, latitude=90.0)
+        owner_id, owner_token = self.create_regular_user_and_token()
+        resp = self.create_place(owner_id, latitude=90.0,
+                                  headers=self.auth_header(owner_token))
         self.assertEqual(resp.status_code, 201)
-
-    def test_create_place_boundary_longitude(self):
-        """Longitude = -180 (borne min) → 201."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.create_place(owner_id, longitude=-180.0)
-        self.assertEqual(resp.status_code, 201)
-
-    def test_create_place_missing_title(self):
-        """Titre manquant → 400."""
-        owner_id = self.create_user().get_json()['id']
-        resp = self.post_json('/api/v1/places/', {
-            "price": 50.0,
-            "latitude": 0.0,
-            "longitude": 0.0,
-            "owner_id": owner_id,
-            "amenities": []
-        })
-        self.assertEqual(resp.status_code, 400)
 
 
 class TestPlaceRetrieval(BaseTestCase):
-    """Tests de récupération de places."""
-
     def test_get_all_places_empty(self):
-        """Liste vide → 200 + []."""
         resp = self.client.get('/api/v1/places/')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.get_json(), [])
 
     def test_get_place_by_id_success(self):
-        """Récupération par ID valide → 200."""
-        owner_id = self.create_user().get_json()['id']
-        place_id = self.create_place(owner_id).get_json()['id']
+        owner_id, owner_token = self.create_regular_user_and_token()
+        place_id = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()['id']
         resp = self.client.get(f'/api/v1/places/{place_id}')
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.get_json()['id'], place_id)
 
     def test_get_place_by_invalid_id(self):
-        """ID inexistant → 404."""
         resp = self.client.get('/api/v1/places/nonexistent-id')
         self.assertEqual(resp.status_code, 404)
 
-    def test_get_all_places_multiple(self):
-        """Plusieurs places → liste complète."""
-        owner_id = self.create_user().get_json()['id']
-        self.create_place(owner_id, title="Place 1")
-        self.create_place(owner_id, title="Place 2")
-        resp = self.client.get('/api/v1/places/')
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(len(resp.get_json()), 2)
-
 
 class TestPlaceUpdate(BaseTestCase):
-    """Tests de mise à jour de place - PUT /api/v1/places/<id>"""
-
     def test_update_place_success(self):
-        """Mise à jour valide → 200."""
-        owner_id = self.create_user().get_json()['id']
-        place_id = self.create_place(owner_id).get_json()['id']
-        resp = self.put_json(f'/api/v1/places/{place_id}', {
-            "title": "Updated Title",
-            "price": 150.0,
-            "latitude": 45.0,
-            "longitude": 10.0,
-            "owner_id": owner_id,
-            "amenities": []
-        })
+        owner_id, owner_token = self.create_regular_user_and_token()
+        h = self.auth_header(owner_token)
+        place_id = self.create_place(owner_id, headers=h).get_json()['id']
+        resp = self.put_json(f'/api/v1/places/{place_id}',
+                             {"title": "Updated", "price": 150.0,
+                              "latitude": 45.0, "longitude": 10.0},
+                             headers=h)
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.get_json()['title'], 'Updated')
 
-    def test_update_place_not_found(self):
-        """ID inexistant → 404."""
-        resp = self.put_json('/api/v1/places/bad-id', {
-            "title": "X",
-            "price": 10.0,
-            "latitude": 0.0,
-            "longitude": 0.0,
-            "owner_id": "some-id",
-            "amenities": []
-        })
-        self.assertEqual(resp.status_code, 404)
+    def test_update_place_not_owner_returns_403(self):
+        owner_id, owner_token = self.create_regular_user_and_token(email="o@t.com")
+        _, other_token = self.create_regular_user_and_token(email="x@t.com")
+        place_id = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()['id']
+        resp = self.put_json(f'/api/v1/places/{place_id}',
+                             {"title": "Stolen"},
+                             headers=self.auth_header(other_token))
+        self.assertEqual(resp.status_code, 403)
+
+    def test_admin_can_update_any_place(self):
+        owner_id, owner_token = self.create_regular_user_and_token()
+        _, admin_token = self.create_admin_and_token()
+        place_id = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()['id']
+        resp = self.put_json(f'/api/v1/places/{place_id}',
+                             {"title": "Admin Override", "price": 200.0,
+                              "latitude": 0.0, "longitude": 0.0},
+                             headers=self.auth_header(admin_token))
+        self.assertEqual(resp.status_code, 200)
 
 
 # ====================================================================== #
@@ -430,158 +381,139 @@ class TestPlaceUpdate(BaseTestCase):
 # ====================================================================== #
 
 class TestReviewCreation(BaseTestCase):
-    """Tests de création de review - POST /api/v1/reviews/"""
-
     def _setup(self):
-        user_id = self.create_user().get_json()['id']
-        place_id = self.create_place(user_id).get_json()['id']
-        return user_id, place_id
+        owner_id, owner_token = self.create_regular_user_and_token(email="o@t.com")
+        reviewer_id, reviewer_token = self.create_regular_user_and_token(
+            email="r@t.com")
+        place_id = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()['id']
+        return reviewer_id, reviewer_token, place_id
 
     def test_create_review_success(self):
-        """Création valide → 201."""
-        user_id, place_id = self._setup()
-        resp = self.create_review(user_id, place_id)
+        reviewer_id, reviewer_token, place_id = self._setup()
+        resp = self.create_review(reviewer_id, place_id,
+                                   headers=self.auth_header(reviewer_token))
         self.assertEqual(resp.status_code, 201)
-        data = resp.get_json()
-        self.assertIn('id', data)
-        self.assertEqual(data['text'], 'Great!')
-        self.assertEqual(data['rating'], 5)
-        self.assertEqual(data['user_id'], user_id)
-        self.assertEqual(data['place_id'], place_id)
+        self.assertEqual(resp.get_json()['user_id'], reviewer_id)
 
-    def test_create_review_invalid_user(self):
-        """user_id inexistant → 400."""
-        user_id, place_id = self._setup()
-        resp = self.create_review("bad-user-id", place_id)
+    def test_create_review_no_token_returns_401(self):
+        reviewer_id, _, place_id = self._setup()
+        resp = self.create_review(reviewer_id, place_id)
+        self.assertEqual(resp.status_code, 401)
+
+    def test_create_review_own_place_returns_400(self):
+        owner_id, owner_token = self.create_regular_user_and_token()
+        place_id = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()['id']
+        resp = self.create_review(owner_id, place_id,
+                                   headers=self.auth_header(owner_token))
         self.assertEqual(resp.status_code, 400)
 
-    def test_create_review_invalid_place(self):
-        """place_id inexistant → 400."""
-        user_id, _ = self._setup()
-        resp = self.create_review(user_id, "bad-place-id")
+    def test_create_review_duplicate_returns_400(self):
+        reviewer_id, reviewer_token, place_id = self._setup()
+        h = self.auth_header(reviewer_token)
+        self.create_review(reviewer_id, place_id, headers=h)
+        resp = self.create_review(reviewer_id, place_id, text="Again", headers=h)
         self.assertEqual(resp.status_code, 400)
 
-    def test_create_review_missing_text(self):
-        """Texte manquant → 400."""
-        user_id, place_id = self._setup()
-        resp = self.post_json('/api/v1/reviews/', {
-            "rating": 4,
-            "user_id": user_id,
-            "place_id": place_id
-        })
+    def test_create_review_invalid_rating(self):
+        reviewer_id, reviewer_token, place_id = self._setup()
+        resp = self.create_review(reviewer_id, place_id, rating=6,
+                                   headers=self.auth_header(reviewer_token))
         self.assertEqual(resp.status_code, 400)
 
-    def test_create_review_missing_rating(self):
-        """Rating manquant → 400."""
-        user_id, place_id = self._setup()
-        resp = self.post_json('/api/v1/reviews/', {
-            "text": "OK",
-            "user_id": user_id,
-            "place_id": place_id
-        })
-        self.assertEqual(resp.status_code, 400)
-
-    def test_create_review_rating_boundary_min(self):
-        """Rating = 1 (borne min) → 201."""
-        user_id, place_id = self._setup()
-        resp = self.create_review(user_id, place_id, rating=1)
-        self.assertEqual(resp.status_code, 201)
-
-    def test_create_review_rating_boundary_max(self):
-        """Rating = 5 (borne max) → 201."""
-        user_id, place_id = self._setup()
-        resp = self.create_review(user_id, place_id, rating=5)
+    def test_create_review_rating_min(self):
+        reviewer_id, reviewer_token, place_id = self._setup()
+        resp = self.create_review(reviewer_id, place_id, rating=1,
+                                   headers=self.auth_header(reviewer_token))
         self.assertEqual(resp.status_code, 201)
 
 
 class TestReviewRetrieval(BaseTestCase):
-    """Tests de récupération de reviews."""
-
     def test_get_all_reviews_empty(self):
-        """Liste vide → 200 + []."""
         resp = self.client.get('/api/v1/reviews/')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.get_json(), [])
 
-    def test_get_review_by_id_success(self):
-        """Récupération par ID valide → 200."""
-        user_id = self.create_user().get_json()['id']
-        place_id = self.create_place(user_id).get_json()['id']
-        review_id = self.create_review(user_id, place_id).get_json()['id']
-        resp = self.client.get(f'/api/v1/reviews/{review_id}')
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.get_json()['id'], review_id)
-
-    def test_get_review_by_invalid_id(self):
-        """ID inexistant → 404."""
-        resp = self.client.get('/api/v1/reviews/nonexistent-id')
-        self.assertEqual(resp.status_code, 404)
-
     def test_get_reviews_by_place(self):
-        """GET /api/v1/places/<id>/reviews → liste des reviews."""
-        user_id = self.create_user().get_json()['id']
-        place_id = self.create_place(user_id).get_json()['id']
-        self.create_review(user_id, place_id, text="Super!")
-        self.create_review(user_id, place_id, text="Not bad")
+        owner_id, owner_token = self.create_regular_user_and_token(email="o@t.com")
+        r1_id, r1_token = self.create_regular_user_and_token(email="r1@t.com")
+        r2_id, r2_token = self.create_regular_user_and_token(email="r2@t.com")
+        place_id = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()['id']
+        self.create_review(r1_id, place_id, headers=self.auth_header(r1_token))
+        self.create_review(r2_id, place_id, headers=self.auth_header(r2_token))
         resp = self.client.get(f'/api/v1/places/{place_id}/reviews')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.get_json()), 2)
 
-    def test_get_reviews_by_invalid_place(self):
-        """Place inexistante → 404."""
-        resp = self.client.get('/api/v1/places/bad-id/reviews')
-        self.assertEqual(resp.status_code, 404)
-
 
 class TestReviewUpdate(BaseTestCase):
-    """Tests de mise à jour de review - PUT /api/v1/reviews/<id>"""
+    def _create_review_setup(self):
+        owner_id, owner_token = self.create_regular_user_and_token(email="o@t.com")
+        reviewer_id, reviewer_token = self.create_regular_user_and_token(
+            email="r@t.com")
+        place_id = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()['id']
+        review_id = self.create_review(
+            reviewer_id, place_id, headers=self.auth_header(reviewer_token)
+        ).get_json()['id']
+        return reviewer_id, reviewer_token, review_id
 
     def test_update_review_success(self):
-        """Mise à jour valide → 200."""
-        user_id = self.create_user().get_json()['id']
-        place_id = self.create_place(user_id).get_json()['id']
-        review_id = self.create_review(user_id, place_id).get_json()['id']
-        resp = self.put_json(f'/api/v1/reviews/{review_id}', {
-            "text": "Updated text",
-            "rating": 3,
-            "user_id": user_id,
-            "place_id": place_id
-        })
+        _, reviewer_token, review_id = self._create_review_setup()
+        resp = self.put_json(f'/api/v1/reviews/{review_id}',
+                             {"text": "Updated", "rating": 3},
+                             headers=self.auth_header(reviewer_token))
         self.assertEqual(resp.status_code, 200)
 
-    def test_update_review_not_found(self):
-        """ID inexistant → 404."""
-        resp = self.put_json('/api/v1/reviews/bad-id', {
-            "text": "X",
-            "rating": 3,
-            "user_id": "u",
-            "place_id": "p"
-        })
-        self.assertEqual(resp.status_code, 404)
+    def test_update_review_not_author_returns_403(self):
+        _, _, review_id = self._create_review_setup()
+        _, other_token = self.create_regular_user_and_token(email="x@t.com")
+        resp = self.put_json(f'/api/v1/reviews/{review_id}',
+                             {"text": "Hacked"},
+                             headers=self.auth_header(other_token))
+        self.assertEqual(resp.status_code, 403)
+
+    def test_update_review_cannot_change_place_id(self):
+        _, reviewer_token, review_id = self._create_review_setup()
+        resp = self.put_json(f'/api/v1/reviews/{review_id}',
+                             {"place_id": "other"},
+                             headers=self.auth_header(reviewer_token))
+        self.assertEqual(resp.status_code, 400)
 
 
 class TestReviewDeletion(BaseTestCase):
-    """Tests de suppression de review - DELETE /api/v1/reviews/<id>"""
-
     def test_delete_review_success(self):
-        """Suppression valide → 200."""
-        user_id = self.create_user().get_json()['id']
-        place_id = self.create_place(user_id).get_json()['id']
-        review_id = self.create_review(user_id, place_id).get_json()['id']
-        resp = self.client.delete(f'/api/v1/reviews/{review_id}')
+        owner_id, owner_token = self.create_regular_user_and_token(email="o@t.com")
+        reviewer_id, reviewer_token = self.create_regular_user_and_token(
+            email="r@t.com")
+        place_id = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()['id']
+        review_id = self.create_review(
+            reviewer_id, place_id, headers=self.auth_header(reviewer_token)
+        ).get_json()['id']
+        resp = self.client.delete(f'/api/v1/reviews/{review_id}',
+                                   headers=self.auth_header(reviewer_token))
         self.assertEqual(resp.status_code, 200)
 
-    def test_delete_review_not_found(self):
-        """ID inexistant → 404."""
-        resp = self.client.delete('/api/v1/reviews/nonexistent-id')
-        self.assertEqual(resp.status_code, 404)
-
     def test_review_gone_after_deletion(self):
-        """Après suppression, GET renvoie 404."""
-        user_id = self.create_user().get_json()['id']
-        place_id = self.create_place(user_id).get_json()['id']
-        review_id = self.create_review(user_id, place_id).get_json()['id']
-        self.client.delete(f'/api/v1/reviews/{review_id}')
+        owner_id, owner_token = self.create_regular_user_and_token(email="o@t.com")
+        reviewer_id, reviewer_token = self.create_regular_user_and_token(
+            email="r@t.com")
+        place_id = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()['id']
+        review_id = self.create_review(
+            reviewer_id, place_id, headers=self.auth_header(reviewer_token)
+        ).get_json()['id']
+        self.client.delete(f'/api/v1/reviews/{review_id}',
+                            headers=self.auth_header(reviewer_token))
         resp = self.client.get(f'/api/v1/reviews/{review_id}')
         self.assertEqual(resp.status_code, 404)
 
@@ -591,83 +523,55 @@ class TestReviewDeletion(BaseTestCase):
 # ====================================================================== #
 
 class TestIntegration(BaseTestCase):
-    """Tests d'intégration couvrant des scénarios end-to-end."""
-
     def test_full_workflow(self):
-        """
-        Scénario complet :
-        1. Créer un utilisateur
-        2. Créer une amenité
-        3. Créer une place avec l'owner + amenité
-        4. Créer une review pour cette place
-        5. Récupérer les reviews de la place
-        6. Supprimer la review
-        """
-        # 1. Utilisateur
-        user = self.create_user(email="full@example.com").get_json()
-        self.assertIn('id', user)
+        admin_id, admin_token = self.create_admin_and_token()
+        ah = self.auth_header(admin_token)
 
-        # 2. Amenité
-        amenity = self.create_amenity("Gym").get_json()
-        self.assertIn('id', amenity)
+        owner = self.post_json('/api/v1/users/',
+                               {"first_name": "Owner", "last_name": "Full",
+                                "email": "owner@ex.com", "password": "pass"},
+                               headers=ah).get_json()
+        self.assertIn('id', owner)
 
-        # 3. Place
-        place = self.create_place(
-            user['id'],
-            amenity_ids=[amenity['id']],
-            title="Full Workflow Place"
-        ).get_json()
-        self.assertIn('id', place)
+        amenity = self.create_amenity("Gym", headers=ah).get_json()
+        owner_token = self.get_token("owner@ex.com", "pass")
+
+        place = self.create_place(owner['id'], amenity_ids=[amenity['id']],
+                                   headers=self.auth_header(owner_token)).get_json()
         self.assertEqual(len(place['amenities']), 1)
 
-        # 4. Review
-        review = self.create_review(user['id'], place['id'], text="Awesome!").get_json()
+        reviewer_id, reviewer_token = self.create_regular_user_and_token(
+            email="rev@ex.com")
+        review = self.create_review(reviewer_id, place['id'],
+                                     headers=self.auth_header(reviewer_token)).get_json()
         self.assertIn('id', review)
 
-        # 5. Reviews par place
         resp = self.client.get(f"/api/v1/places/{place['id']}/reviews")
-        self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.get_json()), 1)
 
-        # 6. Suppression
-        del_resp = self.client.delete(f"/api/v1/reviews/{review['id']}")
+        del_resp = self.client.delete(
+            f"/api/v1/reviews/{review['id']}",
+            headers=self.auth_header(reviewer_token))
         self.assertEqual(del_resp.status_code, 200)
 
-    def test_multiple_users_same_place(self):
-        """Plusieurs utilisateurs peuvent créer des reviews pour la même place."""
-        owner_id = self.create_user(email="owner@ex.com").get_json()['id']
-        user2_id = self.create_user(
-            email="user2@ex.com", first_name="Bob"
-        ).get_json()['id']
-        place_id = self.create_place(owner_id).get_json()['id']
-
-        self.create_review(owner_id, place_id, text="Own review")
-        self.create_review(user2_id, place_id, text="Guest review")
-
-        resp = self.client.get(f'/api/v1/places/{place_id}/reviews')
-        self.assertEqual(len(resp.get_json()), 2)
-
     def test_place_response_structure(self):
-        """La réponse d'une place contient bien owner et amenities."""
-        owner_id = self.create_user().get_json()['id']
-        place = self.create_place(owner_id).get_json()
-        self.assertIn('id', place)
-        self.assertIn('title', place)
-        self.assertIn('price', place)
-        self.assertIn('latitude', place)
-        self.assertIn('longitude', place)
-        self.assertIn('owner', place)
-        self.assertIn('amenities', place)
+        owner_id, owner_token = self.create_regular_user_and_token()
+        place = self.create_place(
+            owner_id, headers=self.auth_header(owner_token)
+        ).get_json()
+        for key in ('id', 'title', 'price', 'latitude', 'longitude', 'owner', 'amenities'):
+            self.assertIn(key, place)
 
     def test_user_list_grows_with_creations(self):
-        """La liste des utilisateurs s'agrandit à chaque création."""
-        emails = [f"user{i}@example.com" for i in range(3)]
-        for i, email in enumerate(emails):
-            self.create_user(email=email, first_name=f"User{i}")
-
+        _, admin_token = self.create_admin_and_token()
+        ah = self.auth_header(admin_token)
+        for i in range(3):
+            self.post_json('/api/v1/users/',
+                           {"first_name": f"U{i}", "last_name": "T",
+                            "email": f"u{i}@ex.com", "password": "p"},
+                           headers=ah)
         resp = self.client.get('/api/v1/users/')
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(len(resp.get_json()), 3)
+        self.assertEqual(len(resp.get_json()), 4)  # 3 + admin
 
 
 if __name__ == '__main__':

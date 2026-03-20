@@ -27,6 +27,15 @@ place_model = api.model('Place', {
 })
 
 
+place_update_model = api.model('PlaceUpdate', {
+    'title':       fields.String(description='Title of the place'),
+    'description': fields.String(description='Description of the place'),
+    'price':       fields.Float(description='Price per night'),
+    'latitude':    fields.Float(description='Latitude of the place'),
+    'longitude':   fields.Float(description='Longitude of the place'),
+})
+
+
 def marshal_place(place):
     """Sérialise un objet Place en dict JSON."""
     return {
@@ -90,7 +99,7 @@ class PlaceResource(Resource):
 
     @jwt_required()
     @api.doc(security='BearerAuth')
-    @api.expect(place_model)
+    @api.expect(place_update_model)
     @api.response(200, 'Place updated successfully')
     @api.response(400, 'Invalid input data')
     @api.response(401, 'Authentication required')
@@ -108,8 +117,11 @@ class PlaceResource(Resource):
         if place.owner.id != current_user_id and not claims.get('is_admin', False):
             return {'error': 'Unauthorized action'}, 403
 
+        allowed_fields = {'title', 'description', 'price', 'latitude', 'longitude'}
+        data = {key: value for key, value in api.payload.items() if key in allowed_fields}
+
         try:
-            updated_place = facade.update_place(place_id, api.payload)
+            updated_place = facade.update_place(place_id, data)
         except ValueError as e:
             return {"error": str(e)}, 400
         if not updated_place:

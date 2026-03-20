@@ -4,6 +4,10 @@ from app import db
 
 class Review(BaseModel):
     __tablename__ = 'reviews'
+    __table_args__ = (
+        db.CheckConstraint('rating BETWEEN 1 AND 5', name='check_review_rating'),
+        db.UniqueConstraint('user_id', 'place_id', name='uq_review_user_place'),
+        )
 
     text = db.Column(db.String(1024), nullable=False)
     rating = db.Column(db.Integer, nullable=False)

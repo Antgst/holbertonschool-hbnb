@@ -118,6 +118,12 @@ class HBnBFacade:
         amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
             return None
+
+        if 'name' in amenity_data:
+            existing = self.get_amenity_by_name(amenity_data['name'])
+            if existing and existing.id != amenity_id:
+                raise ValueError("Amenity already registered")
+
         self.amenity_repo.update(amenity_id, amenity_data)
         return self.amenity_repo.get(amenity_id)
 
@@ -163,7 +169,11 @@ class HBnBFacade:
         place = self.place_repo.get(place_id)
         if not place:
             return None
-        place.update(place_data)
+
+        allowed_fields = {'title', 'description', 'price', 'latitude', 'longitude'}
+        filtered_data = {key: value for key, value in place_data.items() if key in allowed_fields}
+
+        place.update(filtered_data)
         return self.place_repo.get(place_id)
 
     def delete_place(self, place_id):
@@ -215,7 +225,11 @@ class HBnBFacade:
         review = self.review_repo.get(review_id)
         if not review:
             return None
-        review.update(review_data)
+
+        allowed_fields = {'text', 'rating'}
+        filtered_data = {key: value for key, value in review_data.items() if key in allowed_fields}
+
+        review.update(filtered_data)
         return self.review_repo.get(review_id)
 
     def delete_review(self, review_id):

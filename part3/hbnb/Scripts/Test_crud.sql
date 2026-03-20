@@ -22,7 +22,7 @@ VALUES (
     'john.doe@example.com',
     '$2b$12$placeholder_hash_for_test',
     FALSE,
-    NOW(), NOW()
+    CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 );
 
 INSERT INTO places (id, title, description, price, latitude, longitude, owner_id, created_at, updated_at)
@@ -34,7 +34,7 @@ VALUES (
     48.8566,
     2.3522,
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    NOW(), NOW()
+    CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 );
 
 INSERT INTO place_amenity (place_id, amenity_id) VALUES
@@ -48,7 +48,7 @@ VALUES (
     5,
     '36c9050e-ddd3-4c3b-9731-9f487208bbc1',
     'cccccccc-cccc-cccc-cccc-cccccccccccc',
-    NOW(), NOW()
+    CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 );
 
 -- =============================================================================
@@ -75,11 +75,11 @@ WHERE p.id = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
 -- =============================================================================
 
 UPDATE places
-SET price = 90.00, updated_at = NOW()
+SET price = 90.00, updated_at = CURRENT_TIMESTAMP
 WHERE id = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
 
 UPDATE reviews
-SET text = 'Excellent stay, would come back!', rating = 5, updated_at = NOW()
+SET text = 'Excellent stay, would come back!', rating = 5, updated_at = CURRENT_TIMESTAMP
 WHERE id = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
 
 SELECT id, title, price FROM places WHERE id = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
@@ -92,19 +92,19 @@ SELECT id, text, rating  FROM reviews WHERE id = 'dddddddd-dddd-dddd-dddd-dddddd
 -- Duplicate email → UNIQUE on users.email
 INSERT INTO users (id, first_name, last_name, email, password, is_admin, created_at, updated_at)
 VALUES ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'Jane', 'Doe',
-        'john.doe@example.com', 'hash', FALSE, NOW(), NOW());
+         'john.doe@example.com', 'hash', FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Duplicate review (same user + same place) → UNIQUE(user_id, place_id)
 INSERT INTO reviews (id, text, rating, user_id, place_id, created_at, updated_at)
 VALUES ('ffffffff-ffff-ffff-ffff-ffffffffffff', 'Second review', 3,
         '36c9050e-ddd3-4c3b-9731-9f487208bbc1',
-        'cccccccc-cccc-cccc-cccc-cccccccccccc', NOW(), NOW());
+        'cccccccc-cccc-cccc-cccc-cccccccccccc', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Invalid rating → CHECK(rating BETWEEN 1 AND 5)
 INSERT INTO reviews (id, text, rating, user_id, place_id, created_at, updated_at)
 VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Bad rating', 6,
         'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        'cccccccc-cccc-cccc-cccc-cccccccccccc', NOW(), NOW());
+        'cccccccc-cccc-cccc-cccc-cccccccccccc', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- =============================================================================
 -- DELETE

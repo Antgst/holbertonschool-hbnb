@@ -17,8 +17,8 @@ VALUES (
     'admin@hbnb.io',
     '$2b$12$uEBHs3MpPsEMTkouANxwJ.4s1QHFDpJ8sUGAmgB5e5K9MNqMkJxkS',
     TRUE,
-    NOW(),
-    NOW()
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
 );
 
 -- -----------------------------------------------------------------------------
@@ -26,6 +26,6 @@ VALUES (
 -- UUIDs generated with: python3 -c "import uuid; print(uuid.uuid4())"
 -- -----------------------------------------------------------------------------
 INSERT INTO amenities (id, name, created_at, updated_at) VALUES
-    ('9f17bfdd-36f3-40b9-b4b7-3a09a96ea9c5', 'WiFi',            NOW(), NOW()),
-    ('a57e9ed8-f74d-4337-919d-94caf9968897', 'Swimming Pool',   NOW(), NOW()),
-    ('2ac77957-57c3-4404-9f0b-0a28811a3119', 'Air Conditioning',NOW(), NOW());
+    ('9f17bfdd-36f3-40b9-b4b7-3a09a96ea9c5', 'WiFi',            CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('a57e9ed8-f74d-4337-919d-94caf9968897', 'Swimming Pool',   CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('2ac77957-57c3-4404-9f0b-0a28811a3119', 'Air Conditioning',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

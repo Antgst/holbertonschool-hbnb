@@ -77,10 +77,16 @@ class SQLAlchemyRepository(Repository):
 
     def update(self, obj_id, data):
         obj = self.get(obj_id)
-        if obj:
+        if not obj:
+            return None
+
+        if hasattr(obj, 'update'):
+            obj.update(data)
+        else:
             for key, value in data.items():
                 setattr(obj, key, value)
             db.session.commit()
+
         return obj
 
     def delete(self, obj_id):
@@ -105,5 +111,5 @@ class UserRepository(SQLAlchemyRepository):
 
     def get_by_attribute(self, attr_name, attr_value):
         if attr_name == 'email':
-            return self.get_user_by_email(attr_value)
+            return self.get_by_email(attr_value)
         return super().get_by_attribute(attr_name, attr_value)
