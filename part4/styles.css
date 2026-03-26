@@ -6,14 +6,13 @@
 }
 
 body {
-  background-color: #f4f4f4;
-  color: #333;
+  background-color: #ffffff;
+  color: #000000;
   min-height: 100vh;
 }
 
 header {
-  background-color: #333;
-  color: #fff;
+  background-color: #d41212;
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
@@ -29,16 +28,16 @@ header {
 nav {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 nav a {
-  color: #fff;
+  color: #ffffff;
   text-decoration: none;
 }
 
 .login-button {
-  color: #fff;
+  color: #ffffff;
   text-decoration: none;
   font-weight: bold;
 }
@@ -48,8 +47,8 @@ main {
 }
 
 footer {
-  background-color: #333;
-  color: #fff;
+  background-color: #d41212;
+  color: #ffffff;
   padding: 1rem;
   text-align: center;
 }
@@ -59,9 +58,9 @@ footer {
 .review-card {
   margin: 20px;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #000000;
   border-radius: 10px;
-  background-color: #fff;
+  background-color: #f3f3ee;
 }
 
 /* Optional shared button style */
@@ -72,7 +71,7 @@ button,
   padding: 10px 16px;
   border: none;
   border-radius: 6px;
-  background-color: #333;
+  background-color: #000000;
   color: #ffffff;
   text-decoration: none;
   cursor: pointer;
@@ -92,8 +91,8 @@ button,
 
 .place-summary,
 .review-form {
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: #f3f3ee;
+  border: 1px solid #000000;
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
@@ -118,7 +117,7 @@ button,
   width: 100%;
   padding: 10px;
   margin-bottom: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid #000000;
   border-radius: 6px;
   font-size: 1rem;
 }
