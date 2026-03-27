@@ -1,33 +1,35 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
 
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
+  if (!loginForm) {
+    return;
+  }
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-      try {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
       const response = await fetch("http://127.0.0.1:5000/api/v1/auth/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password})
+        body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
         document.cookie = `token=${data.access_token}; path=/`;
         window.location.href = "index.html";
       } else {
-        alert("Login failed");
+        alert(`Login failed: ${data.error || response.statusText}`);
       }
     } catch (error) {
-      alert("An error occured while trying to log in.");
+      alert("An error occurred while trying to log in.");
     }
   });
-  }
 });
