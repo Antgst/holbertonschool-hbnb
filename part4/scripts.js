@@ -88,6 +88,12 @@ function setupPriceFilter() {
 
     for (const placeCard of placeCards) {
       const placePrice = Number(placeCard.dataset.price);
+
+      if (selectedPrice === "All" || placePrice <= Number(selectedPrice)) {
+        placeCard.style.display = "block";
+      } else {
+        placeCard.style.display = "none";
+      }
     }
   });
 }
