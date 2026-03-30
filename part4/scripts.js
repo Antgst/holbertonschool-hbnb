@@ -13,13 +13,13 @@ function getCookie(name) {
 }
 
 function checkAuthentication() {
-  const token = getCookie('token');
-  const loginLink = document.getElementById('login-link');
+  const token = getCookie("token");
+  const loginLink = document.getElementById("login-link");
 
   if (!token) {
-    loginLink.style.display = 'block';
+    loginLink.style.display = "block";
   } else {
-    loginLink.style.display = 'none';
+    loginLink.style.display = "none";
     // Fetch places data if the user is authenticated
     fetchPlaces(token);
   }
@@ -113,13 +113,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("password").value;
 
       try {
-        const response = await fetch("http://127.0.0.1:5000/api/v1/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          "http://127.0.0.1:5000/api/v1/auth/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
           },
-          body: JSON.stringify({ email, password }),
-        });
+        );
 
         const data = await response.json();
 
