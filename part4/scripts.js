@@ -68,7 +68,7 @@ function populatePriceFilter() {
     return;
   }
 
-  const prices = ["10", "50", "100", "All"];
+  const prices = ["All", "10", "50", "100"];
 
   for (const price of prices) {
     const option = document.createElement("option");
