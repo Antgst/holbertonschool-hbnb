@@ -16,11 +16,14 @@ function checkAuthentication() {
   const token = getCookie("token");
   const loginLink = document.getElementById("login-link");
 
+  if (!loginLink) {
+    return;
+  }
+
   if (!token) {
     loginLink.style.display = "block";
   } else {
     loginLink.style.display = "none";
-    // Fetch places data if the user is authenticated
     fetchPlaces(token);
   }
 }
