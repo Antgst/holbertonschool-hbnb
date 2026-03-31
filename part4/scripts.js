@@ -12,27 +12,44 @@ function getCookie(name) {
   return null;
 }
 
+function getPlaceIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id");
+}
+
 function checkAuthentication() {
   const token = getCookie("token");
   const loginLink = document.getElementById("login-link");
+  const addReviewSection = document.getElementById("add-review");
 
-  if (!loginLink) {
-    return;
+  if (loginLink) {
+    if (token) {
+      loginLink.style.display = "none";
+    } else {
+      loginLink.style.display = "block";
+    }
   }
 
-  if (!token) {
-    loginLink.style.display = "block";
-  } else {
-    loginLink.style.display = "none";
-    fetchPlaces(token);
+  if (addReviewSection) {
+    if (token) {
+      addReviewSection.style.display = "block";
+    } else {
+      addReviewSection.style.display = "none";
+    }
   }
+
+  return token;
 }
 
 async function fetchPlaces(token) {
+  const headers = {};
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch("http://127.0.0.1:5000/api/v1/places/", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: headers,
   });
 
   if (!response.ok) {
@@ -41,6 +58,34 @@ async function fetchPlaces(token) {
 
   const places = await response.json();
   displayPlaces(places);
+}
+
+async function fetchPlaceDetails(token, placeId) {
+  if (!placeId) {
+    throw new Error("Place ID not found in URL");
+  }
+
+  const headers = {};
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(
+    `http://127.0.0.1:5000/api/v1/places/${placeId}`,
+    {
+      headers: headers,
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch place details");
+  }
+
+  const place = await response.json();
+  window.currentPlace = place;
+  console.log("Place details:", place);
+  displayPlaceDetails(place);
 }
 
 function displayPlaces(places) {
@@ -52,12 +97,126 @@ function displayPlaces(places) {
     placeElement.classList.add("place-card");
     placeElement.dataset.price = place.price;
     placeElement.innerHTML = `
-      <h2>${place.name}</h2>
+      <h2>${place.title}</h2>
       <p>Price per night: $${place.price}</p>
-      <a href="place.html" class="details-button">View details</a>
+      <a href="place.html?id=${place.id}" class="details-button">View details</a>
       `;
 
     placesList.appendChild(placeElement);
+  }
+}
+
+function displayPlaceDetails(place) {
+  const placeDetailsSection = document.getElementById("place-details");
+  const reviewsSection = document.getElementById("reviews");
+
+  if (!placeDetailsSection || !reviewsSection) {
+    return;
+  }
+
+  placeDetailsSection.innerHTML = "";
+  reviewsSection.innerHTML = "<h2>Reviews</h2>";
+
+  const title = document.createElement("h1");
+  title.textContent = place.title;
+
+  const hostInfo = document.createElement("div");
+  hostInfo.classList.add("place-info");
+
+  const hostTitle = document.createElement("h2");
+  hostTitle.textContent = "Host";
+
+  const hostText = document.createElement("p");
+
+  if (place.owner && place.owner.first_name && place.owner.last_name) {
+    hostText.textContent = `${place.owner.first_name} ${place.owner.last_name}`;
+  } else if (place.owner && place.owner.first_name) {
+    hostText.textContent = place.owner.first_name;
+  } else {
+    hostText.textContent = "Unknown host";
+  }
+
+  hostInfo.appendChild(hostTitle);
+  hostInfo.appendChild(hostText);
+
+  const priceInfo = document.createElement("div");
+  priceInfo.classList.add("place-info");
+
+  const priceTitle = document.createElement("h2");
+  priceTitle.textContent = "Price";
+
+  const priceText = document.createElement("p");
+  priceText.textContent = `$${place.price} per night`;
+
+  priceInfo.appendChild(priceTitle);
+  priceInfo.appendChild(priceText);
+
+  const descriptionInfo = document.createElement("div");
+  descriptionInfo.classList.add("place-info");
+
+  const descriptionTitle = document.createElement("h2");
+  descriptionTitle.textContent = "Description";
+
+  const descriptionText = document.createElement("p");
+  descriptionText.textContent =
+    place.description || "No description available.";
+
+  descriptionInfo.appendChild(descriptionTitle);
+  descriptionInfo.appendChild(descriptionText);
+
+  const amenitiesInfo = document.createElement("div");
+  amenitiesInfo.classList.add("place-info");
+
+  const amenitiesTitle = document.createElement("h2");
+  amenitiesTitle.textContent = "Amenities";
+
+  const amenitiesList = document.createElement("ul");
+
+  if (place.amenities && place.amenities.length > 0) {
+    for (const amenity of place.amenities) {
+      const amenityItem = document.createElement("li");
+      amenityItem.textContent = amenity.name || amenity;
+      amenitiesList.appendChild(amenityItem);
+    }
+  } else {
+    const amenityItem = document.createElement("li");
+    amenityItem.textContent = "No amenities available.";
+    amenitiesList.appendChild(amenityItem);
+  }
+
+  amenitiesInfo.appendChild(amenitiesTitle);
+  amenitiesInfo.appendChild(amenitiesList);
+
+  placeDetailsSection.appendChild(title);
+  placeDetailsSection.appendChild(hostInfo);
+  placeDetailsSection.appendChild(priceInfo);
+  placeDetailsSection.appendChild(descriptionInfo);
+  placeDetailsSection.appendChild(amenitiesInfo);
+
+  if (place.reviews && place.reviews.length > 0) {
+    for (const review of place.reviews) {
+      const reviewCard = document.createElement("article");
+      reviewCard.classList.add("review-card");
+
+      const reviewer = document.createElement("h3");
+      reviewer.textContent = review.user || "Anonymous";
+
+      const rating = document.createElement("p");
+      rating.textContent = `Rating: ${review.rating}/5`;
+
+      const comment = document.createElement("p");
+      comment.textContent = review.text || "No comment.";
+
+      reviewCard.appendChild(reviewer);
+      reviewCard.appendChild(rating);
+      reviewCard.appendChild(comment);
+
+      reviewsSection.appendChild(reviewCard);
+    }
+  } else {
+    const noReviews = document.createElement("p");
+    noReviews.textContent = "No reviews yet.";
+    reviewsSection.appendChild(noReviews);
   }
 }
 
@@ -104,7 +263,22 @@ function setupPriceFilter() {
 document.addEventListener("DOMContentLoaded", () => {
   populatePriceFilter();
   setupPriceFilter();
-  checkAuthentication();
+
+  const token = checkAuthentication();
+  const placeId = getPlaceIdFromURL();
+  const placesList = document.getElementById("places-list");
+
+  if (placesList) {
+    fetchPlaces(token).catch((error) => {
+      console.error("Error fetching places:", error);
+    });
+  }
+
+  if (placeId) {
+    fetchPlaceDetails(token, placeId).catch((error) => {
+      console.error("Error fetching place details:", error);
+    });
+  }
 
   const loginForm = document.getElementById("login-form");
 
