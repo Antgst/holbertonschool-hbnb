@@ -22,6 +22,7 @@ def marshal_review(review):
         "id":       review.id,
         "text":     review.text,
         "rating":   review.rating,
+        "user":     f"{review.user.first_name} {review.user.last_name}".strip(),
         "user_id":  review.user.id,
         "place_id": review.place.id
     }

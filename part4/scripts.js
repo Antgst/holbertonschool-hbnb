@@ -86,6 +86,7 @@ async function fetchPlaceDetails(token, placeId) {
 
   const place = await response.json();
   displayPlaceDetails(place);
+  await fetchPlaceReviews(token, placeId);
   displayPlaceSummary(place);
 }
 
@@ -193,32 +194,6 @@ function displayPlaceDetails(place) {
   placeDetailsSection.appendChild(priceInfo);
   placeDetailsSection.appendChild(descriptionInfo);
   placeDetailsSection.appendChild(amenitiesInfo);
-
-  if (place.reviews && place.reviews.length > 0) {
-    for (const review of place.reviews) {
-      const reviewCard = document.createElement("article");
-      reviewCard.classList.add("review-card");
-
-      const reviewer = document.createElement("h3");
-      reviewer.textContent = review.user || "Anonymous";
-
-      const rating = document.createElement("p");
-      rating.textContent = `Rating: ${review.rating}/5`;
-
-      const comment = document.createElement("p");
-      comment.textContent = review.text || "No comment.";
-
-      reviewCard.appendChild(reviewer);
-      reviewCard.appendChild(rating);
-      reviewCard.appendChild(comment);
-
-      reviewsSection.appendChild(reviewCard);
-    }
-  } else {
-    const noReviews = document.createElement("p");
-    noReviews.textContent = "No reviews yet.";
-    reviewsSection.appendChild(noReviews);
-  }
 }
 
 function displayPlaceSummary(place) {
@@ -284,6 +259,84 @@ function setupPriceFilter() {
   });
 }
 
+function renderAddReviewAccess(token, placeId) {
+  const addReviewSection = document.getElementById("add-review");
+
+  if (!addReviewSection) {
+    return;
+  }
+
+  if (!token) {
+    addReviewSection.style.display = "none";
+    return;
+  }
+
+  addReviewSection.style.display = "block";
+  addReviewSection.innerHTML = `
+    <h2>Add a Review</h2>
+    <a href="add_review.html?id=${placeId}" class="details-button">Add Review</a>
+  `;
+}
+
+async function fetchPlaceReviews(token, placeId) {
+  const headers = {};
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(
+    `http://127.0.0.1:5000/api/v1/places/${placeId}/reviews`,
+    {
+      headers: headers,
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch place reviews");
+  }
+
+  const reviews = await response.json();
+  displayPlaceReviews(reviews);
+}
+
+function displayPlaceReviews(reviews) {
+  const reviewsSection = document.getElementById("reviews");
+
+  if (!reviewsSection) {
+    return;
+  }
+
+  reviewsSection.innerHTML = "<h2>Reviews</h2>";
+
+  if (reviews.length === 0) {
+    const noReviews = document.createElement("p");
+    noReviews.textContent = "No reviews yet.";
+    reviewsSection.appendChild(noReviews);
+    return;
+  }
+
+  for (const review of reviews) {
+    const reviewCard = document.createElement("article");
+    reviewCard.classList.add("review-card");
+
+    const reviewer = document.createElement("h3");
+    reviewer.textContent = review.user || "Anonymous";
+
+    const rating = document.createElement("p");
+    rating.textContent = `Rating: ${review.rating}/5`;
+
+    const comment = document.createElement("p");
+    comment.textContent = review.text || "No comment.";
+
+    reviewCard.appendChild(reviewer);
+    reviewCard.appendChild(rating);
+    reviewCard.appendChild(comment);
+
+    reviewsSection.appendChild(reviewCard);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   populatePriceFilter();
   setupPriceFilter();
@@ -305,6 +358,10 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchPlaceDetails(token, placeId).catch((error) => {
       console.error("Error fetching place details:", error);
     });
+  }
+
+  if (placeId && placeDetailsSection) {
+    renderAddReviewAccess(token, placeId);
   }
 
   const loginForm = document.getElementById("login-form");
@@ -343,7 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (reviewForm) {
+  if (reviewForm && placeSummarySection) {
     const reviewToken = requireAuthentication();
 
     if (!reviewToken) {

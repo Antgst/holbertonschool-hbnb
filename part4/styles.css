@@ -58,15 +58,14 @@ footer {
 .review-card {
   margin: 20px;
   padding: 10px;
-  border: 1px solid #000000;
+  border: 1px solid #ddd;
   border-radius: 10px;
   background-color: #f3f3ee;
 }
 
 /* Optional shared button style */
 .details-button,
-button,
-.add-review {
+button {
   display: inline-block;
   padding: 10px 16px;
   border: none;
@@ -75,6 +74,18 @@ button,
   color: #ffffff;
   text-decoration: none;
   cursor: pointer;
+}
+
+.details-button {
+  margin: 20px;
+}
+
+.review-form button {
+  width: 100%;
+}
+
+.add-review {
+  margin: 20px;
 }
 
 /* Add Review page */
@@ -125,8 +136,4 @@ button,
 .review-form textarea {
   resize: vertical;
   min-height: 120px;
-}
-
-.review-form button {
-  width: 100%;
 }

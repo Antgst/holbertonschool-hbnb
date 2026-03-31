@@ -163,6 +163,7 @@ class PlaceReviewList(Resource):
             "id": r.id,
             "text": r.text,
             "rating": r.rating,
+            "user": f"{r.user.first_name} {r.user.last_name}".strip(),
             "user_id": r.user.id,
             "place_id": r.place.id
         } for r in reviews], 200
