@@ -117,10 +117,15 @@ function displayPlaces(places) {
     placeCard.dataset.price = place.price;
 
     placeCard.innerHTML = `
-      <h2>${place.title}</h2>
-      <p>Price per night: $${place.price}</p>
-      <a href="place.html?id=${place.id}" class="details-button">View details</a>
-    `;
+  ${
+    place.images && place.images.length > 0
+      ? `<img src="${place.images[0]}" alt="${place.title}" class="place-card-image">`
+      : ""
+  }
+  <h2>${place.title}</h2>
+  <p>Price per night: $${place.price}</p>
+  <a href="place.html?id=${place.id}" class="details-button">View details</a>
+`;
 
     placesList.appendChild(placeCard);
   }
@@ -140,6 +145,19 @@ function displayPlaceDetails(place) {
   const title = document.createElement("h1");
   title.textContent = place.title;
 
+  const gallery = document.createElement("div");
+  gallery.classList.add("place-gallery");
+
+  if (place.images && place.images.length > 0) {
+    for (const imageUrl of place.images) {
+      const image = document.createElement("img");
+      image.src = imageUrl;
+      image.alt = place.title;
+      image.classList.add("place-gallery-image");
+      gallery.appendChild(image);
+    }
+  }
+
   const hostInfo = createPlaceInfoBlock("Host", getHostName(place));
   const priceInfo = createPlaceInfoBlock("Price", `$${place.price} per night`);
   const descriptionInfo = createPlaceInfoBlock(
@@ -149,6 +167,7 @@ function displayPlaceDetails(place) {
   const amenitiesInfo = createAmenitiesBlock(place.amenities);
 
   placeDetailsSection.appendChild(title);
+  placeDetailsSection.appendChild(gallery);
   placeDetailsSection.appendChild(hostInfo);
   placeDetailsSection.appendChild(priceInfo);
   placeDetailsSection.appendChild(descriptionInfo);
