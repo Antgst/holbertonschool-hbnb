@@ -20,21 +20,12 @@ function getPlaceIdFromURL() {
 function checkAuthentication() {
   const token = getCookie("token");
   const loginLink = document.getElementById("login-link");
-  const addReviewSection = document.getElementById("add-review");
 
   if (loginLink) {
     if (token) {
       loginLink.style.display = "none";
     } else {
       loginLink.style.display = "block";
-    }
-  }
-
-  if (addReviewSection) {
-    if (token) {
-      addReviewSection.style.display = "block";
-    } else {
-      addReviewSection.style.display = "none";
     }
   }
 
