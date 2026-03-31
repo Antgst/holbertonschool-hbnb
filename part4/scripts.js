@@ -83,8 +83,6 @@ async function fetchPlaceDetails(token, placeId) {
   }
 
   const place = await response.json();
-  window.currentPlace = place;
-  console.log("Place details:", place);
   displayPlaceDetails(place);
 }
 
