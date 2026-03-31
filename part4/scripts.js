@@ -116,15 +116,32 @@ function displayPlaces(places) {
     placeCard.classList.add("place-card");
     placeCard.dataset.price = place.price;
 
+    const firstImage =
+      place.images && place.images.length > 0
+        ? `<img src="${place.images[0]}" alt="${place.title}" class="place-card-image">`
+        : `<div class="place-card-placeholder">No image available</div>`;
+
+    const shortDescription = place.description
+      ? place.description.slice(0, 90) +
+        (place.description.length > 90 ? "..." : "")
+      : "Elegant stay, premium comfort, and carefully selected amenities.";
+
     placeCard.innerHTML = `
-  ${
-    place.images && place.images.length > 0
-      ? `<img src="${place.images[0]}" alt="${place.title}" class="place-card-image">`
-      : ""
-  }
-  <h2>${place.title}</h2>
-  <p>Price per night: $${place.price}</p>
-  <a href="place.html?id=${place.id}" class="details-button">View details</a>
+  <div class="place-card-media">
+    ${firstImage}
+    <span class="place-card-price">€${place.price} / night</span>
+  </div>
+
+  <div class="place-card-body">
+    <h2>${place.title}</h2>
+    <p class="place-card-text">
+      ${shortDescription}
+    </p>
+  </div>
+
+  <div class="place-card-footer">
+    <a href="place.html?id=${place.id}" class="details-button">View details</a>
+  </div>
 `;
 
     placesList.appendChild(placeCard);
@@ -249,18 +266,13 @@ function displayPlaceReviews(reviews) {
     const reviewCard = document.createElement("article");
     reviewCard.classList.add("review-card");
 
-    const reviewer = document.createElement("h3");
-    reviewer.textContent = review.user || "Anonymous";
-
-    const rating = document.createElement("p");
-    rating.textContent = `Rating: ${review.rating}/5`;
-
-    const comment = document.createElement("p");
-    comment.textContent = review.text || "No comment.";
-
-    reviewCard.appendChild(reviewer);
-    reviewCard.appendChild(rating);
-    reviewCard.appendChild(comment);
+    reviewCard.innerHTML = `
+      <div class="review-card-header">
+        <h3>${review.user || "Anonymous"}</h3>
+        <span class="review-rating">${review.rating}/5</span>
+      </div>
+      <p class="review-comment">${review.text || "No comment."}</p>
+    `;
 
     reviewsSection.appendChild(reviewCard);
   }
@@ -314,7 +326,7 @@ function setupPriceFilter() {
       const shouldDisplay =
         selectedPrice === "All" || placePrice <= Number(selectedPrice);
 
-      placeCard.style.display = shouldDisplay ? "block" : "none";
+      placeCard.style.display = shouldDisplay ? "" : "none";
     }
   });
 }
