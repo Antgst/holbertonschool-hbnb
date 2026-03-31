@@ -7,7 +7,6 @@ api = Namespace('reviews', description='Review operations')
 review_model = api.model('Review', {
     'text':     fields.String(required=True,  description='Text of the review'),
     'rating':   fields.Integer(required=True, description='Rating of the place (1-5)'),
-    'user_id':  fields.String(required=True,  description='ID of the user'),
     'place_id': fields.String(required=True,  description='ID of the place')
 })
 
@@ -31,13 +30,20 @@ def marshal_review(review):
 def validate_review_payload(data):
     if not data:
         return "Payload is empty"
+
     if not data.get('text') or not str(data['text']).strip():
         return "'text' is required and cannot be empty"
+
     if data.get('rating') is None:
         return "'rating' is required"
+
     rating = data['rating']
     if not isinstance(rating, int) or not (1 <= rating <= 5):
         return "Rating must be an integer between 1 and 5"
+
+    if not data.get('place_id') or not str(data['place_id']).strip():
+        return "'place_id' is required and cannot be empty"
+
     return None
 
 
@@ -69,35 +75,37 @@ class ReviewList(Resource):
     @api.response(400, 'Invalid input data')
     @api.response(401, 'Authentication required')
     @api.response(403, 'Unauthorized action')
+    @api.response(404, 'Place not found')
     def post(self):
-        """Create a review — authenticated users only, user_id must match token"""
+        """Create a review — authenticated users only"""
         current_user_id = get_jwt_identity()
-        claims = get_jwt()
         data = api.payload
 
         error = validate_review_payload(data)
         if error:
             return {"error": error}, 400
 
-        # user_id doit correspondre à l'utilisateur connecté (sauf admin)
-        if data.get('user_id') != current_user_id and not claims.get('is_admin', False):
-            return {'error': 'Unauthorized action — user_id must match your user ID'}, 403
-
         place_id = data.get('place_id')
 
-        # Interdit de reviewer sa propre place
         place = facade.get_place(place_id)
         if not place:
             return {"error": "Place not found"}, 404
+
         if place.owner.id == current_user_id:
             return {"error": "You cannot review your own place"}, 400
 
-        # Interdit de reviewer deux fois la même place
         if facade.get_review_by_user_and_place(current_user_id, place_id):
             return {"error": "You have already reviewed this place"}, 400
 
+        review_data = {
+            "text": data["text"].strip(),
+            "rating": data["rating"],
+            "place_id": place_id,
+            "user_id": current_user_id
+        }
+
         try:
-            new_review = facade.create_review(data)
+            new_review = facade.create_review(review_data)
             return marshal_review(new_review), 201
         except ValueError as e:
             return {"error": str(e)}, 400
