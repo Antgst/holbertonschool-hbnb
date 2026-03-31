@@ -6,13 +6,12 @@ app = create_app()
 
 def seed_demo_data():
     with app.app_context():
-        # Import des modèles avant drop/create
         from app.models.user import User
         from app.models.place import Place
         from app.models.review import Review
         from app.models.amenity import Amenity
+        from app.models.place_image import PlaceImage
 
-        # Reset complet de la base
         db.drop_all()
         db.create_all()
 
@@ -31,11 +30,12 @@ def seed_demo_data():
                 "is_admin": True,
             },
             {
-                "key": "Léa",
+                "key": "lea",
                 "first_name": "Léa",
                 "last_name": "Gousset",
-                "email": "Léa.gousset@hbnb.test",
+                "email": "Lea.gousset@hbnb.test",
                 "password": shared_password,
+                "is_admin": False,
             },
             {
                 "key": "sebastien",
@@ -43,6 +43,7 @@ def seed_demo_data():
                 "last_name": "Vallier",
                 "email": "sebastien.vallier@hbnb.test",
                 "password": shared_password,
+                "is_admin": False,
             },
             {
                 "key": "patricia",
@@ -50,6 +51,7 @@ def seed_demo_data():
                 "last_name": "Le Brun",
                 "email": "patricia.lebrun@hbnb.test",
                 "password": shared_password,
+                "is_admin": False,
             },
             {
                 "key": "benjy",
@@ -57,6 +59,7 @@ def seed_demo_data():
                 "last_name": "Guerin",
                 "email": "benjy.guerin@hbnb.test",
                 "password": shared_password,
+                "is_admin": False,
             },
             {
                 "key": "micael",
@@ -64,6 +67,7 @@ def seed_demo_data():
                 "last_name": "Magalhaes Pinho",
                 "email": "micael.pinho@hbnb.test",
                 "password": shared_password,
+                "is_admin": False,
             },
             {
                 "key": "melissandre",
@@ -71,6 +75,7 @@ def seed_demo_data():
                 "last_name": "Moreau",
                 "email": "melissandre.moreau@hbnb.test",
                 "password": shared_password,
+                "is_admin": False,
             },
             {
                 "key": "brice",
@@ -78,19 +83,21 @@ def seed_demo_data():
                 "last_name": "Travers",
                 "email": "brice.travers@hbnb.test",
                 "password": shared_password,
+                "is_admin": False,
             },
         ]
 
         users = {}
         for user_data in users_data:
-            payload = {
-                "first_name": user_data["first_name"],
-                "last_name": user_data["last_name"],
-                "email": user_data["email"],
-                "password": user_data["password"],
-                "is_admin": user_data.get("is_admin", False),
-            }
-            created_user = facade.create_user(payload)
+            created_user = facade.create_user(
+                {
+                    "first_name": user_data["first_name"],
+                    "last_name": user_data["last_name"],
+                    "email": user_data["email"],
+                    "password": user_data["password"],
+                    "is_admin": user_data["is_admin"],
+                }
+            )
             users[user_data["key"]] = created_user
 
         # -------------------------
@@ -190,7 +197,7 @@ def seed_demo_data():
             {
                 "key": "betton_room",
                 "title": "Betton Room",
-                "description": "A simple, cLéan, and affordable room for short stays, business travel, or practical overnight stops near Rennes.",
+                "description": "A simple, clean, and affordable room for short stays, business travel, or practical overnight stops near Rennes.",
                 "price": 45,
                 "latitude": 48.1818,
                 "longitude": -1.6415,
@@ -201,17 +208,70 @@ def seed_demo_data():
 
         places = {}
         for place_data in places_data:
-            payload = {
-                "title": place_data["title"],
-                "description": place_data["description"],
-                "price": place_data["price"],
-                "latitude": place_data["latitude"],
-                "longitude": place_data["longitude"],
-                "owner_id": users[place_data["owner"]].id,
-                "amenities": [amenities[name].id for name in place_data["amenities"]],
-            }
-            created_place = facade.create_place(payload)
+            created_place = facade.create_place(
+                {
+                    "title": place_data["title"],
+                    "description": place_data["description"],
+                    "price": place_data["price"],
+                    "latitude": place_data["latitude"],
+                    "longitude": place_data["longitude"],
+                    "owner_id": users[place_data["owner"]].id,
+                    "amenities": [amenities[name].id for name in place_data["amenities"]],
+                }
+            )
             places[place_data["key"]] = created_place
+
+        # -------------------------
+        # Images (3 per place)
+        # -------------------------
+        place_images_data = {
+            "rennes_loft": [
+                "hbnb/images/places/rennes-loft-1.jpg",
+                "hbnb/images/places/rennes-loft-2.jpg",
+                "hbnb/images/places/rennes-loft-3.jpg",
+            ],
+            "saint_malo_studio": [
+                "hbnb/images/places/saint-malo-studio-1.jpg",
+                "hbnb/images/places/saint-malo-studio-2.jpg",
+                "hbnb/images/places/saint-malo-studio-3.jpg",
+            ],
+            "cancale_house": [
+                "hbnb/images/places/cancale-house-1.jpg",
+                "hbnb/images/places/cancale-house-2.jpg",
+                "hbnb/images/places/cancale-house-3.jpg",
+            ],
+            "vannes_apartment": [
+                "hbnb/images/places/vannes-apartment-1.jpg",
+                "hbnb/images/places/vannes-apartment-2.jpg",
+                "hbnb/images/places/vannes-apartment-3.jpg",
+            ],
+            "broceliande_cabin": [
+                "hbnb/images/places/broceliande-cabin-1.jpg",
+                "hbnb/images/places/broceliande-cabin-2.jpg",
+                "hbnb/images/places/broceliande-cabin-3.jpg",
+            ],
+            "dinard_villa": [
+                "hbnb/images/places/dinard-villa-1.jpg",
+                "hbnb/images/places/dinard-villa-2.jpg",
+                "hbnb/images/places/dinard-villa-3.jpg",
+            ],
+            "chambord_suite": [
+                "hbnb/images/places/chambord-suite-1.jpg",
+                "hbnb/images/places/chambord-suite-2.jpg",
+                "hbnb/images/places/chambord-suite-3.jpg",
+            ],
+            "betton_room": [
+                "hbnb/images/places/betton-room-1.jpg",
+                "hbnb/images/places/betton-room-2.jpg",
+                "hbnb/images/places/betton-room-3.jpg",
+            ],
+        }
+
+        for place_key, image_urls in place_images_data.items():
+            for image_url in image_urls:
+                db.session.add(PlaceImage(url=image_url, place=places[place_key]))
+
+        db.session.commit()
 
         # -------------------------
         # Reviews (3 per place)
