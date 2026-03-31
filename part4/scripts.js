@@ -41,6 +41,17 @@ function checkAuthentication() {
   return token;
 }
 
+function requireAuthentication() {
+  const token = getCookie("token");
+
+  if (!token) {
+    window.location.href = "index.html";
+    return null;
+  }
+
+  return token;
+}
+
 async function fetchPlaces(token) {
   const headers = {};
 
@@ -265,6 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const token = checkAuthentication();
   const placeId = getPlaceIdFromURL();
   const placesList = document.getElementById("places-list");
+  const placeDetailsSection = document.getElementById("place-details");
 
   if (placesList) {
     fetchPlaces(token).catch((error) => {
@@ -272,13 +284,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (placeId) {
+  if (placeId && placeDetailsSection) {
     fetchPlaceDetails(token, placeId).catch((error) => {
       console.error("Error fetching place details:", error);
     });
   }
 
   const loginForm = document.getElementById("login-form");
+  const reviewForm = document.getElementById("review-form");
 
   if (loginForm) {
     loginForm.addEventListener("submit", async (event) => {
@@ -309,6 +322,58 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         alert("An error occurred while trying to log in.");
+      }
+    });
+  }
+
+  if (reviewForm) {
+    const reviewToken = requireAuthentication();
+
+    if (!reviewToken) {
+      return;
+    }
+
+    const reviewPlaceId = getPlaceIdFromURL();
+
+    reviewForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const reviewText = document.getElementById("review").value.trim();
+      const rating = document.getElementById("rating").value;
+
+      if (!reviewText) {
+        alert("Review cannot be empty.");
+        return;
+      }
+
+      if (!reviewPlaceId) {
+        alert("Place ID not found.");
+        return;
+      }
+
+      const reviewData = {
+        text: reviewText,
+        rating: Number(rating),
+        place_id: reviewPlaceId,
+      };
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/v1/reviews/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${reviewToken}`,
+          },
+          body: JSON.stringify(reviewData),
+        });
+        if (response.ok) {
+          alert("Review submitted successfully!");
+          reviewForm.reset();
+        } else {
+          alert("Failed to submit review.");
+        }
+      } catch (error) {
+        alert("An error occurred while submitting the review.");
       }
     });
   }
