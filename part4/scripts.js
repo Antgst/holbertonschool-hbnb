@@ -355,6 +355,12 @@ async function handleLoginSubmit(event) {
 
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
+  const loginMessage = document.getElementById("login-message");
+
+  if (loginMessage) {
+    loginMessage.textContent = "";
+    loginMessage.className = "form-message";
+  }
 
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -373,9 +379,15 @@ async function handleLoginSubmit(event) {
       return;
     }
 
-    alert(`Login failed: ${data.error || response.statusText}`);
+    if (loginMessage) {
+      loginMessage.textContent = data.error || "Invalid email or password.";
+      loginMessage.classList.add("is-visible", "is-error");
+    }
   } catch (error) {
-    alert("An error occurred while trying to log in.");
+    if (loginMessage) {
+      loginMessage.textContent = "An error occurred while trying to log in.";
+      loginMessage.classList.add("is-visible", "is-error");
+    }
   }
 }
 

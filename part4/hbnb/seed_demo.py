@@ -30,10 +30,10 @@ def seed_demo_data():
                 "is_admin": True,
             },
             {
-                "key": "lea",
-                "first_name": "lea",
+                "key": "Léa",
+                "first_name": "Léa",
                 "last_name": "Gousset",
-                "email": "Lea.gousset@hbnb.test",
+                "email": "Léa.gousset@hbnb.test",
                 "password": shared_password,
                 "is_admin": False,
             },
@@ -181,7 +181,7 @@ def seed_demo_data():
                 "price": 300,
                 "latitude": 48.6329,
                 "longitude": -2.0625,
-                "owner": "lea",
+                "owner": "Léa",
                 "amenities": ["WiFi", "Parking", "Spa", "Garden", "Air Conditioning"],
             },
             {
@@ -285,7 +285,7 @@ def seed_demo_data():
                 "text": "Excellent location, elegant decor, and a very comfortable stay. Everything felt premium and well thought out.",
             },
             {
-                "user": "lea",
+                "user": "Léa",
                 "place": "rennes_loft",
                 "rating": 4,
                 "text": "Very stylish loft with a great atmosphere. A little lively outside at night, but still a very good experience.",
@@ -331,7 +331,7 @@ def seed_demo_data():
                 "text": "Beautiful property with a peaceful atmosphere. The kitchen could be better equipped, but overall excellent.",
             },
             {
-                "user": "lea",
+                "user": "Léa",
                 "place": "cancale_house",
                 "rating": 5,
                 "text": "A truly relaxing house with an amazing view. It felt refined, spacious, and very comfortable.",
@@ -365,7 +365,7 @@ def seed_demo_data():
                 "text": "A peaceful and unique cabin surrounded by nature. Ideal for disconnecting and slowing down.",
             },
             {
-                "user": "lea",
+                "user": "Léa",
                 "place": "broceliande_cabin",
                 "rating": 4,
                 "text": "Warm and charming place with a beautiful natural setting. Very relaxing and cozy.",
@@ -377,7 +377,7 @@ def seed_demo_data():
                 "text": "Excellent experience in the forest. Quiet, original, and perfect for a restful weekend.",
             },
 
-            # Dinard Spa Villa (owner: lea)
+            # Dinard Spa Villa (owner: Léa)
             {
                 "user": "antoine",
                 "place": "dinard_villa",
@@ -419,7 +419,7 @@ def seed_demo_data():
 
             # Betton Room (owner: benjy)
             {
-                "user": "lea",
+                "user": "Léa",
                 "place": "betton_room",
                 "rating": 4,
                 "text": "Simple, clean, and practical. A very good option for a short and affordable stay.",
