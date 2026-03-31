@@ -15,3 +15,6 @@ Tout faire d’un coup
 
 Stopper les serveurs
 ./hbnb.sh stop
+
+URL à ouvrir
+http://127.0.0.1:5500/index.html
