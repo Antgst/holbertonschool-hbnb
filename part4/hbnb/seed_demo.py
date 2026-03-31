@@ -31,7 +31,7 @@ def seed_demo_data():
             },
             {
                 "key": "lea",
-                "first_name": "Léa",
+                "first_name": "lea",
                 "last_name": "Gousset",
                 "email": "Lea.gousset@hbnb.test",
                 "password": shared_password,
@@ -181,7 +181,7 @@ def seed_demo_data():
                 "price": 300,
                 "latitude": 48.6329,
                 "longitude": -2.0625,
-                "owner": "Léa",
+                "owner": "lea",
                 "amenities": ["WiFi", "Parking", "Spa", "Garden", "Air Conditioning"],
             },
             {
@@ -285,7 +285,7 @@ def seed_demo_data():
                 "text": "Excellent location, elegant decor, and a very comfortable stay. Everything felt premium and well thought out.",
             },
             {
-                "user": "Léa",
+                "user": "lea",
                 "place": "rennes_loft",
                 "rating": 4,
                 "text": "Very stylish loft with a great atmosphere. A little lively outside at night, but still a very good experience.",
@@ -314,7 +314,7 @@ def seed_demo_data():
                 "user": "benjy",
                 "place": "saint_malo_studio",
                 "rating": 4,
-                "text": "Very practical and pLéasant place. Good value for money and a warm atmosphere.",
+                "text": "Very practical and pleasant place. Good value for money and a warm atmosphere.",
             },
 
             # Sea View House in Cancale (owner: sebastien)
@@ -331,7 +331,7 @@ def seed_demo_data():
                 "text": "Beautiful property with a peaceful atmosphere. The kitchen could be better equipped, but overall excellent.",
             },
             {
-                "user": "Léa",
+                "user": "lea",
                 "place": "cancale_house",
                 "rating": 5,
                 "text": "A truly relaxing house with an amazing view. It felt refined, spacious, and very comfortable.",
@@ -354,7 +354,7 @@ def seed_demo_data():
                 "user": "micael",
                 "place": "vannes_apartment",
                 "rating": 4,
-                "text": "CLéan, bright, and well located. The decor gives the place a refined and welcoming character.",
+                "text": "Clean, bright, and well located. The decor gives the place a refined and welcoming character.",
             },
 
             # Nature Cabin in Broceliande (owner: melissandre)
@@ -365,7 +365,7 @@ def seed_demo_data():
                 "text": "A peaceful and unique cabin surrounded by nature. Ideal for disconnecting and slowing down.",
             },
             {
-                "user": "Léa",
+                "user": "lea",
                 "place": "broceliande_cabin",
                 "rating": 4,
                 "text": "Warm and charming place with a beautiful natural setting. Very relaxing and cozy.",
@@ -377,7 +377,7 @@ def seed_demo_data():
                 "text": "Excellent experience in the forest. Quiet, original, and perfect for a restful weekend.",
             },
 
-            # Dinard Spa Villa (owner: Léa)
+            # Dinard Spa Villa (owner: lea)
             {
                 "user": "antoine",
                 "place": "dinard_villa",
@@ -408,7 +408,7 @@ def seed_demo_data():
                 "user": "micael",
                 "place": "chambord_suite",
                 "rating": 4,
-                "text": "Beautiful and impressive suite in a unique setting. Expensive, but cLéarly a premium experience.",
+                "text": "Beautiful and impressive suite in a unique setting. Expensive, but clearly a premium experience.",
             },
             {
                 "user": "patricia",
@@ -419,10 +419,10 @@ def seed_demo_data():
 
             # Betton Room (owner: benjy)
             {
-                "user": "Léa",
+                "user": "lea",
                 "place": "betton_room",
                 "rating": 4,
-                "text": "Simple, cLéan, and practical. A very good option for a short and affordable stay.",
+                "text": "Simple, clean, and practical. A very good option for a short and affordable stay.",
             },
             {
                 "user": "brice",
@@ -434,7 +434,7 @@ def seed_demo_data():
                 "user": "melissandre",
                 "place": "betton_room",
                 "rating": 4,
-                "text": "CLéan and functional room with everything needed for a quick stop near Rennes.",
+                "text": "Clean and functional room with everything needed for a quick stop near Rennes.",
             },
         ]
 
