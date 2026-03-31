@@ -52,7 +52,7 @@ def create_app(config_class="config.DevelopmentConfig"):
     with app.app_context():
         # Import explicite de tous les modèles avant db.create_all()
         # pour que SQLAlchemy enregistre leurs tables dans les métadonnées
-        from app.models import user, place, review, amenity
+        from app.models import user, place, review, amenity, place_image
         db.create_all()
 
     return app

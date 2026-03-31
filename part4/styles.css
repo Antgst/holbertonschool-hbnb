@@ -14,7 +14,7 @@
   --surface-soft: #f9f6f1;
   --text: #1f1d1b;
   --text-muted: #6b625a;
-  --border: #ddd;
+  --border: #dddddd;
   --input-border: #d8d1c8;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.05);
@@ -58,13 +58,15 @@ nav a {
   letter-spacing: 0.02em;
   transition:
     opacity 0.2s ease,
-    color 0.2s ease;
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 nav a:hover,
 nav a:focus {
   opacity: 0.95;
   color: #f4e6c9;
+  transform: translateY(-1px);
 }
 
 .login-button {
@@ -121,6 +123,13 @@ p {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+#filter:hover {
+  box-shadow: var(--shadow);
 }
 
 #filter label {
@@ -136,6 +145,10 @@ p {
   background-color: #ffffff;
   color: var(--text);
   font-size: 1rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 /* Places list layout */
@@ -153,11 +166,18 @@ p {
   border-radius: 10px;
   background-color: var(--surface);
   box-shadow: var(--shadow);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  animation: fadeInUp 0.4s ease;
 }
 
-.place-card {
-  position: relative;
-  overflow: hidden;
+.place-card:hover,
+.review-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  border-color: var(--accent);
 }
 
 .place-card::before,
@@ -203,14 +223,15 @@ button {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
-    opacity 0.2s ease;
+    opacity 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .details-button:hover,
 .details-button:focus,
 button:hover,
 button:focus {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(67, 23, 27, 0.22);
   opacity: 0.98;
 }
@@ -229,6 +250,16 @@ button:focus {
   padding: 1.25rem;
   margin-bottom: 1.5rem;
   box-shadow: var(--shadow-soft);
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+  animation: fadeInUp 0.4s ease;
+}
+
+.place-details:hover,
+#reviews:hover,
+.add-review:hover {
+  box-shadow: var(--shadow);
 }
 
 .place-info {
@@ -272,6 +303,15 @@ button:focus {
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: var(--shadow-soft);
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+  animation: fadeInUp 0.4s ease;
+}
+
+.place-summary:hover,
+.review-form:hover {
+  box-shadow: var(--shadow);
 }
 
 .place-summary h2 {
@@ -291,8 +331,7 @@ button:focus {
 
 .review-form textarea,
 .review-form select,
-#login-form input,
-#price-filter {
+#login-form input {
   width: 100%;
   padding: 10px;
   border: 1px solid var(--input-border);
@@ -339,6 +378,7 @@ button:focus {
   border-radius: 14px;
   padding: 2rem;
   box-shadow: var(--shadow);
+  animation: fadeInUp 0.4s ease;
 }
 
 #login-form h2 {
@@ -362,9 +402,28 @@ button:focus {
   margin-top: 0.5rem;
 }
 
-/* Subtle premium section spacing */
-.add-review {
-  margin-top: 0.5rem;
+/* Focus accessibility */
+.details-button:focus,
+button:focus,
+nav a:focus,
+#price-filter:focus,
+#login-form input:focus,
+.review-form textarea:focus,
+.review-form select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive */

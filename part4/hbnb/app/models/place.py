@@ -31,6 +31,12 @@ class Place(BaseModel):
         cascade='all, delete-orphan',
         lazy='select'
     )
+    images = db.relationship(
+        'PlaceImage',
+        back_populates='place',
+        cascade='all, delete-orphan',
+        lazy='select'
+    )
     amenities = db.relationship(
         'Amenity',
         secondary=place_amenity,
