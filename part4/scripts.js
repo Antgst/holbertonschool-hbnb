@@ -95,6 +95,7 @@ async function fetchPlaceDetails(token, placeId) {
 
   const place = await response.json();
   displayPlaceDetails(place);
+  displayPlaceSummary(place);
 }
 
 function displayPlaces(places) {
@@ -229,6 +230,29 @@ function displayPlaceDetails(place) {
   }
 }
 
+function displayPlaceSummary(place) {
+  const placeSummarySection = document.querySelector(".place-summary");
+
+  if (!placeSummarySection) {
+    return;
+  }
+
+  let hostName = "Unknown host";
+
+  if (place.owner && place.owner.first_name && place.owner.last_name) {
+    hostName = `${place.owner.first_name} ${place.owner.last_name}`;
+  } else if (place.owner && place.owner.first_name) {
+    hostName = place.owner.first_name;
+  }
+
+  placeSummarySection.innerHTML = `
+    <h2>Place Summary</h2>
+    <p><strong>Name:</strong> ${place.title}</p>
+    <p><strong>Host:</strong> ${hostName}</p>
+    <p><strong>Price:</strong> $${place.price} per night</p>
+  `;
+}
+
 function populatePriceFilter() {
   const priceFilter = document.getElementById("price-filter");
 
@@ -284,7 +308,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (placeId && placeDetailsSection) {
+  const placeSummarySection = document.querySelector(".place-summary");
+
+  if (placeId && (placeDetailsSection || placeSummarySection)) {
     fetchPlaceDetails(token, placeId).catch((error) => {
       console.error("Error fetching place details:", error);
     });
@@ -366,11 +392,14 @@ document.addEventListener("DOMContentLoaded", () => {
           },
           body: JSON.stringify(reviewData),
         });
+
+        const data = await response.json();
+
         if (response.ok) {
           alert("Review submitted successfully!");
           reviewForm.reset();
         } else {
-          alert("Failed to submit review.");
+          alert(data.error || "Failed to submit review.");
         }
       } catch (error) {
         alert("An error occurred while submitting the review.");
