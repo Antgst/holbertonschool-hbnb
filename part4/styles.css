@@ -5,18 +5,38 @@
   font-family: Arial, sans-serif;
 }
 
+:root {
+  --primary: #5c1f24;
+  --primary-dark: #43171b;
+  --accent: #c9a96e;
+  --background: #f6f2ec;
+  --surface: #ffffff;
+  --surface-soft: #f9f6f1;
+  --text: #1f1d1b;
+  --text-muted: #6b625a;
+  --border: #ddd;
+  --input-border: #d8d1c8;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
 body {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: var(--background);
+  color: var(--text);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
 }
 
 header {
-  background-color: #d41212;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+  border-bottom: 1px solid rgba(201, 169, 110, 0.22);
 }
 
 .logo {
@@ -34,6 +54,17 @@ nav {
 nav a {
   color: #ffffff;
   text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease;
+}
+
+nav a:hover,
+nav a:focus {
+  opacity: 0.95;
+  color: #f4e6c9;
 }
 
 .login-button {
@@ -43,54 +74,187 @@ nav a {
 }
 
 main {
-  padding: 2rem;
+  flex: 1;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
 }
 
 footer {
-  background-color: #d41212;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
   color: #ffffff;
   padding: 1rem;
   text-align: center;
+  margin-top: auto;
+  border-top: 1px solid rgba(201, 169, 110, 0.18);
 }
 
-/* Cards already required by the subject */
+/* Typography */
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+p {
+  color: var(--text-muted);
+}
+
+/* Filter block */
+#filter {
+  background-color: var(--surface);
+  border: 1px solid var(--input-border);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+#filter label {
+  font-weight: 700;
+  color: var(--text);
+}
+
+#price-filter {
+  min-width: 170px;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+/* Places list layout */
+#places-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+}
+
+/* Fixed subject constraints preserved */
 .place-card,
 .review-card {
   margin: 20px;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 10px;
-  background-color: #f3f3ee;
+  background-color: var(--surface);
+  box-shadow: var(--shadow);
 }
 
-/* Optional shared button style */
+.place-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.place-card::before,
+.review-card::before,
+.place-details::before,
+#reviews::before,
+.add-review::before,
+.place-summary::before,
+.review-form::before,
+#login-form::before {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  background-color: var(--accent);
+  border-radius: 999px;
+  margin-bottom: 1rem;
+}
+
+.place-card h2,
+.review-card h3 {
+  margin-bottom: 0.75rem;
+  color: var(--text);
+}
+
+.place-card p {
+  margin-bottom: 1rem;
+}
+
+/* Buttons / action links */
 .details-button,
 button {
   display: inline-block;
   padding: 10px 16px;
   border: none;
-  border-radius: 6px;
-  background-color: #000000;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #ffffff;
   text-decoration: none;
   cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.details-button:hover,
+.details-button:focus,
+button:hover,
+button:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(67, 23, 27, 0.22);
+  opacity: 0.98;
 }
 
 .details-button {
   margin: 20px;
 }
 
-.review-form button {
-  width: 100%;
-}
-
+/* Place details page */
+.place-details,
+#reviews,
 .add-review {
-  margin: 20px;
+  background-color: var(--surface);
+  border: 1px solid var(--input-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-soft);
 }
 
-/* Add Review page */
+.place-info {
+  background-color: var(--surface-soft);
+  border: 1px solid #e7dfd4;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.place-info ul {
+  padding-left: 1.2rem;
+}
+
+.place-info li {
+  margin-bottom: 0.35rem;
+  color: var(--text-muted);
+}
+
+.review-card p + p {
+  margin-top: 0.4rem;
+}
+
+/* Add review page */
 .review-container {
-  max-width: 600px;
+  max-width: 720px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -102,11 +266,12 @@ button {
 
 .place-summary,
 .review-form {
-  background-color: #f3f3ee;
-  border: 1px solid #000000;
-  border-radius: 10px;
+  background-color: var(--surface);
+  border: 1px solid var(--input-border);
+  border-radius: 14px;
   padding: 20px;
   margin-bottom: 20px;
+  box-shadow: var(--shadow-soft);
 }
 
 .place-summary h2 {
@@ -121,19 +286,120 @@ button {
   display: block;
   margin-bottom: 8px;
   font-weight: bold;
+  color: var(--text);
+}
+
+.review-form textarea,
+.review-form select,
+#login-form input,
+#price-filter {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #ffffff;
+  color: var(--text);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .review-form textarea,
 .review-form select {
-  width: 100%;
-  padding: 10px;
   margin-bottom: 15px;
-  border: 1px solid #000000;
-  border-radius: 6px;
-  font-size: 1rem;
+}
+
+.review-form textarea:focus,
+.review-form select:focus,
+#login-form input:focus,
+#price-filter:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.18);
+  background-color: #fffdf9;
 }
 
 .review-form textarea {
   resize: vertical;
   min-height: 120px;
+}
+
+.review-form button {
+  width: 100%;
+}
+
+/* Login page */
+#login-form {
+  max-width: 500px;
+  margin: 2rem auto;
+  background-color: var(--surface);
+  border: 1px solid var(--input-border);
+  border-radius: 14px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+#login-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+#login-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+#login-form input {
+  margin-bottom: 15px;
+}
+
+#login-form button {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* Subtle premium section spacing */
+.add-review {
+  margin-top: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  nav {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  main {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  #filter {
+    align-items: stretch;
+  }
+
+  #price-filter {
+    min-width: 100%;
+  }
+
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  #login-form,
+  .review-container {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
