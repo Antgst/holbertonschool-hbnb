@@ -7,13 +7,16 @@ BACK="$PART4/hbnb"
 FRONT_PORT=5500
 API_PORT=5000
 
-# Choix du venv :
-# 1) si tu as un venv dans part4/.venv
-# 2) sinon si tu as un venv dans part4/venv
-# 3) sinon si tu as un venv à la racine du repo dans ../.venv
-# 4) sinon si tu as un venv à la racine du repo dans ../venv
+# Priority:
+# 1) already active virtual environment
+# 2) part4/.venv
+# 3) part4/venv
+# 4) repo root .venv
+# 5) repo root venv
 
-if [ -f "$PART4/.venv/bin/activate" ]; then
+if [ -n "$VIRTUAL_ENV" ] && [ -f "$VIRTUAL_ENV/bin/activate" ]; then
+  VENV_PATH="$VIRTUAL_ENV"
+elif [ -f "$PART4/.venv/bin/activate" ]; then
   VENV_PATH="$PART4/.venv"
 elif [ -f "$PART4/venv/bin/activate" ]; then
   VENV_PATH="$PART4/venv"
@@ -24,6 +27,7 @@ elif [ -f "$PART4/../venv/bin/activate" ]; then
 else
   echo "No virtual environment found."
   echo "Checked:"
+  echo "  current VIRTUAL_ENV=$VIRTUAL_ENV"
   echo "  $PART4/.venv"
   echo "  $PART4/venv"
   echo "  $PART4/../.venv"
@@ -32,6 +36,10 @@ else
 fi
 
 activate_venv() {
+  if [ -n "$VIRTUAL_ENV" ] && [ "$VIRTUAL_ENV" = "$VENV_PATH" ]; then
+    return
+  fi
+
   # shellcheck disable=SC1090
   source "$VENV_PATH/bin/activate"
 }
