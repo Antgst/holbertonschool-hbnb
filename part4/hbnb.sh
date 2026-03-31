@@ -7,35 +7,32 @@ BACK="$PART4/hbnb"
 FRONT_PORT=5500
 API_PORT=5000
 
-# Priority:
-# 1) already active virtual environment
-# 2) part4/.venv
-# 3) part4/venv
-# 4) repo root .venv
-# 5) repo root venv
-
-if [ -n "$VIRTUAL_ENV" ] && [ -f "$VIRTUAL_ENV/bin/activate" ]; then
-  VENV_PATH="$VIRTUAL_ENV"
-elif [ -f "$PART4/.venv/bin/activate" ]; then
-  VENV_PATH="$PART4/.venv"
-elif [ -f "$PART4/venv/bin/activate" ]; then
-  VENV_PATH="$PART4/venv"
-elif [ -f "$PART4/../.venv/bin/activate" ]; then
-  VENV_PATH="$PART4/../.venv"
-elif [ -f "$PART4/../venv/bin/activate" ]; then
-  VENV_PATH="$PART4/../venv"
-else
-  echo "No virtual environment found."
-  echo "Checked:"
-  echo "  current VIRTUAL_ENV=$VIRTUAL_ENV"
-  echo "  $PART4/.venv"
-  echo "  $PART4/venv"
-  echo "  $PART4/../.venv"
-  echo "  $PART4/../venv"
-  exit 1
-fi
+detect_venv() {
+  if [ -n "$VIRTUAL_ENV" ] && [ -f "$VIRTUAL_ENV/bin/activate" ]; then
+    VENV_PATH="$VIRTUAL_ENV"
+  elif [ -f "$PART4/.venv/bin/activate" ]; then
+    VENV_PATH="$PART4/.venv"
+  elif [ -f "$PART4/venv/bin/activate" ]; then
+    VENV_PATH="$PART4/venv"
+  elif [ -f "$PART4/../.venv/bin/activate" ]; then
+    VENV_PATH="$PART4/../.venv"
+  elif [ -f "$PART4/../venv/bin/activate" ]; then
+    VENV_PATH="$PART4/../venv"
+  else
+    echo "No virtual environment found."
+    echo "Checked:"
+    echo "  current VIRTUAL_ENV=$VIRTUAL_ENV"
+    echo "  $PART4/.venv"
+    echo "  $PART4/venv"
+    echo "  $PART4/../.venv"
+    echo "  $PART4/../venv"
+    exit 1
+  fi
+}
 
 activate_venv() {
+  detect_venv
+
   if [ -n "$VIRTUAL_ENV" ] && [ "$VIRTUAL_ENV" = "$VENV_PATH" ]; then
     return
   fi
@@ -47,11 +44,30 @@ activate_venv() {
 stop_servers() {
   pkill -f "http.server $FRONT_PORT" 2>/dev/null || true
   pkill -f "python3 run.py" 2>/dev/null || true
+  pkill -f "python run.py" 2>/dev/null || true
+}
+
+open_browser() {
+  URL="http://127.0.0.1:$FRONT_PORT/index.html"
+
+  if command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "$URL" >/dev/null 2>&1 &
+  elif command -v gio >/dev/null 2>&1; then
+    gio open "$URL" >/dev/null 2>&1 &
+  else
+    echo "Open this URL manually:"
+    echo "  $URL"
+  fi
 }
 
 reset_demo() {
   echo "Activating virtual environment..."
   activate_venv
+
+  if [ ! -f "$BACK/seed_demo.py" ]; then
+    echo "seed_demo.py not found in $BACK"
+    exit 1
+  fi
 
   echo "Resetting demo data..."
   cd "$BACK"
@@ -82,6 +98,9 @@ start_servers() {
   echo "API running on   http://127.0.0.1:$API_PORT/api/v1/"
   echo "Front running on http://127.0.0.1:$FRONT_PORT/index.html"
   echo ""
+
+  sleep 1
+  open_browser
 
   trap "kill $API_PID $FRONT_PID 2>/dev/null || true" EXIT INT TERM
   wait
