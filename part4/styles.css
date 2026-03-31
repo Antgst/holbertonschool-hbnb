@@ -2,20 +2,21 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-family:
+    Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 }
 
 :root {
   --primary: #5c1f24;
   --primary-dark: #43171b;
   --accent: #c9a96e;
-  --background: #f6f2ec;
-  --surface: #ffffff;
-  --surface-soft: #f9f6f1;
+  --background: #f5efe7;
+  --surface: #fcf8f2;
+  --surface-soft: #f8f1e8;
   --text: #1f1d1b;
   --text-muted: #6b625a;
-  --border: #dddddd;
-  --input-border: #d8d1c8;
+  --border: #e2d7c8;
+  --input-border: #d9cab8;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.05);
 }
@@ -63,21 +64,25 @@ nav {
 }
 
 nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
   color: #fff7e8;
   text-decoration: none;
   font-weight: 800;
   letter-spacing: 0.02em;
-  padding: 0.68rem 1.02rem;
+  padding: 0.78rem 1.15rem;
   border-radius: 999px;
-  border: 1px solid rgba(201, 169, 110, 0.26);
+  border: 1px solid rgba(201, 169, 110, 0.28);
   background: linear-gradient(
     135deg,
-    rgba(31, 29, 27, 0.88),
-    rgba(67, 23, 27, 0.88)
+    rgba(31, 29, 27, 0.92),
+    rgba(67, 23, 27, 0.92)
   );
   backdrop-filter: blur(6px);
   box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.16),
+    0 10px 22px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition:
     background 0.2s ease,
@@ -335,12 +340,18 @@ p {
 /* Fixed subject constraints preserved */
 .place-card,
 .review-card {
-  margin: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: var(--surface);
-  box-shadow: var(--shadow);
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid rgba(201, 169, 110, 0.16);
+  border-radius: 16px;
+  background: linear-gradient(
+    180deg,
+    rgba(252, 248, 242, 0.98),
+    rgba(248, 241, 232, 0.98)
+  );
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
@@ -503,6 +514,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
+  min-height: 44px;
   padding: 0.78rem 1.15rem;
   border: 1px solid rgba(201, 169, 110, 0.28);
   border-radius: 999px;
@@ -514,8 +526,12 @@ button {
   color: #fff7e8;
   text-decoration: none;
   cursor: pointer;
+  font: inherit;
   font-weight: 800;
+  line-height: 1;
   letter-spacing: 0.02em;
+  appearance: none;
+  -webkit-appearance: none;
   box-shadow:
     0 10px 22px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
@@ -879,15 +895,6 @@ button:focus {
   transform: translateY(-1px);
 }
 
-.review-form textarea {
-  resize: vertical;
-  min-height: 120px;
-}
-
-.review-form button {
-  width: 100%;
-}
-
 /* Login page */
 #login-form {
   max-width: 520px;
@@ -975,18 +982,20 @@ button:focus {
 }
 
 #login-form input,
-.review-form textarea,
 .review-form select {
   min-height: 46px;
 }
 
 .review-form textarea {
   min-height: 140px;
+  resize: vertical;
 }
 
 #login-form button,
 .review-form button {
-  margin-top: 0.5rem;
+  display: flex;
+  width: min(100%, 260px);
+  margin: 0.65rem auto 0;
 }
 
 #login-form button:hover,
