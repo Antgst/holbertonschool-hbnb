@@ -91,7 +91,8 @@ header nav {
 
 .logo {
   display: block;
-  width: 60px;
+  width: 130px;
+  max-width: 100%;
   height: auto;
 }
 
@@ -1086,6 +1087,10 @@ nav a:focus,
 
 /* Tablet */
 @media (max-width: 1024px) and (min-width: 769px) {
+  .logo {
+    width: 95px;
+  }
+
   header {
     padding: 1rem 1.4rem;
   }
@@ -1132,6 +1137,10 @@ nav a:focus,
 
 /* Mobile */
 @media (max-width: 768px) {
+  .logo {
+    width: 100px;
+  }
+
   header {
     padding: 1rem;
     flex-direction: column;
