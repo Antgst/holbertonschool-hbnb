@@ -10,6 +10,10 @@ API_PORT=5000
 detect_venv() {
   if [ -n "$VIRTUAL_ENV" ] && [ -f "$VIRTUAL_ENV/bin/activate" ]; then
     VENV_PATH="$VIRTUAL_ENV"
+  elif [ -f "$BACK/.venv/bin/activate" ]; then
+    VENV_PATH="$BACK/.venv"
+  elif [ -f "$BACK/venv/bin/activate" ]; then
+    VENV_PATH="$BACK/venv"
   elif [ -f "$PART4/.venv/bin/activate" ]; then
     VENV_PATH="$PART4/.venv"
   elif [ -f "$PART4/venv/bin/activate" ]; then
@@ -22,6 +26,8 @@ detect_venv() {
     echo "No virtual environment found."
     echo "Checked:"
     echo "  current VIRTUAL_ENV=$VIRTUAL_ENV"
+    echo "  $BACK/.venv"
+    echo "  $BACK/venv"
     echo "  $PART4/.venv"
     echo "  $PART4/venv"
     echo "  $PART4/../.venv"
