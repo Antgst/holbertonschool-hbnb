@@ -381,8 +381,6 @@ function displayPlaceDetails(place) {
   }
 
   const title = escapeHtml(place.title || place.name || "Selected stay");
-  const price = Number(place.price) || 0;
-  const hostName = escapeHtml(getHostName(place));
   const description = escapeHtml(
     place.description ||
       "A refined stay with comfort, character, and carefully selected amenities.",
@@ -411,16 +409,6 @@ function displayPlaceDetails(place) {
       <p class="place-lead">${description}</p>
     </div>
 
-    <div class="place-meta">
-      <span class="place-meta-item">Hosted by ${hostName}</span>
-      <span class="place-meta-item">€${price} / night</span>
-      <span class="place-meta-item">${
-        place.amenities && place.amenities.length > 0
-          ? `${place.amenities.length} amenit${place.amenities.length > 1 ? "ies" : "y"}`
-          : "Amenities available"
-      }</span>
-    </div>
-
     <div class="place-gallery">
       ${galleryMarkup}
     </div>
@@ -430,8 +418,6 @@ function displayPlaceDetails(place) {
 
   const infoGrid = placeDetailsSection.querySelector(".place-info-grid");
 
-  infoGrid.appendChild(createPlaceInfoBlock("Host", hostName));
-  infoGrid.appendChild(createPlaceInfoBlock("Price", `€${price} per night`));
   infoGrid.appendChild(createPlaceInfoBlock("Description", description));
   infoGrid.appendChild(createAmenitiesBlock(place.amenities));
 
@@ -542,6 +528,7 @@ function renderHostCard(place) {
   const hostName = escapeHtml(getHostName(place));
   const initials = escapeHtml(getHostInitials(place));
   const hostImage = getHostImage(place);
+  const price = Number(place.price) || 0;
 
   const amenitiesCount =
     place.amenities && place.amenities.length > 0
@@ -572,8 +559,8 @@ function renderHostCard(place) {
       </p>
 
       <div class="host-card-tags">
+        <span>€${price} / night</span>
         <span>${amenitiesCount}</span>
-        <span>Guest-focused</span>
         <span>${locationLabel}</span>
       </div>
     </div>
