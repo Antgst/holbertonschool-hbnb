@@ -276,7 +276,9 @@ async function fetchPlaceDetails(token, placeId) {
 
   try {
     const reviews = await fetchPlaceReviews(token, placeId);
-    renderHostCard(place, getReviewSummary(reviews));
+    const reviewSummary = getReviewSummary(reviews);
+
+    renderReviewSummaryCard(reviewSummary);
   } catch (error) {
     console.error("Error fetching place reviews:", error);
   }
@@ -296,6 +298,9 @@ async function fetchPlaceReviews(token, placeId) {
 
     const reviews = await response.json();
     const safeReviews = Array.isArray(reviews) ? reviews : [];
+
+    displayPlaceReviews(safeReviews);
+    return safeReviews;
 
     displayPlaceReviews(safeReviews);
     return safeReviews;
@@ -439,6 +444,7 @@ function displayPlaceDetails(place) {
   amenitiesMount.appendChild(createAmenitiesPanel(place.amenities));
 
   renderHostCard(place);
+  renderReviewSummaryCard(null);
   setupRevealAnimations();
 }
 
@@ -871,7 +877,7 @@ function getHostImage(place) {
   return hostImages[hostName] || null;
 }
 
-function renderHostCard(place, reviewSummary = null) {
+function renderHostCard(place) {
   const hostCard = document.getElementById("host-card");
 
   if (!hostCard) {
@@ -885,30 +891,6 @@ function renderHostCard(place, reviewSummary = null) {
   const hostMedia = hostImage
     ? `<img src="${hostImage}" alt="${hostName}" class="host-card-image" loading="lazy">`
     : `<div class="host-card-avatar" aria-hidden="true">${initials}</div>`;
-
-  const reviewSummaryMarkup = reviewSummary
-    ? `
-      <div
-        class="host-card-rating"
-        aria-label="${reviewSummary.averageLabel} out of 5 from ${reviewSummary.count} reviews"
-      >
-        <div class="host-card-rating-top">
-          <span class="host-card-rating-value">${reviewSummary.averageLabel}</span>
-          <span class="host-card-rating-scale">/ 5</span>
-        </div>
-
-        <div class="host-card-rating-stars">
-          ${renderStarRating(reviewSummary.average)}
-        </div>
-
-        <p class="host-card-rating-count">${reviewSummary.countLabel}</p>
-      </div>
-    `
-    : `
-      <div class="host-card-rating-empty">
-        Reviews will appear here once guests start sharing feedback.
-      </div>
-    `;
 
   hostCard.innerHTML = `
     <p class="section-kicker">Host spotlight</p>
@@ -924,8 +906,44 @@ function renderHostCard(place, reviewSummary = null) {
       <p class="host-card-text">
         Thoughtful hosting and carefully prepared stays designed for a smoother guest experience.
       </p>
+    </div>
+  `;
+}
 
-      ${reviewSummaryMarkup}
+function renderReviewSummaryCard(reviewSummary = null) {
+  const reviewSummaryCard = document.getElementById("review-summary-card");
+
+  if (!reviewSummaryCard) {
+    return;
+  }
+
+  if (!reviewSummary) {
+    reviewSummaryCard.innerHTML = `
+      <p class="section-kicker">Guest rating</p>
+      <div class="review-summary-empty">
+        Reviews will appear here once guests start sharing feedback.
+      </div>
+    `;
+    return;
+  }
+
+  reviewSummaryCard.innerHTML = `
+    <p class="section-kicker">Guest rating</p>
+
+    <div
+      class="review-summary-box"
+      aria-label="${reviewSummary.averageLabel} out of 5 from ${reviewSummary.count} reviews"
+    >
+      <div class="review-summary-top">
+        <span class="review-summary-value">${reviewSummary.averageLabel}</span>
+        <span class="review-summary-scale">/ 5</span>
+      </div>
+
+      <div class="review-summary-stars">
+        ${renderStarRating(reviewSummary.average)}
+      </div>
+
+      <p class="review-summary-count">${reviewSummary.countLabel}</p>
     </div>
   `;
 }
@@ -955,6 +973,31 @@ function renderStarRating(rating) {
     const isFilled = index < safeRating;
     return `<span class="review-star${isFilled ? " is-filled" : ""}" aria-hidden="true">★</span>`;
   }).join("");
+}
+
+function getReviewSummary(reviews) {
+  if (!Array.isArray(reviews) || reviews.length === 0) {
+    return null;
+  }
+
+  const ratings = reviews
+    .map((review) => Number(review.rating))
+    .filter((rating) => Number.isFinite(rating) && rating >= 1 && rating <= 5);
+
+  if (ratings.length === 0) {
+    return null;
+  }
+
+  const total = ratings.reduce((sum, rating) => sum + rating, 0);
+  const average = total / ratings.length;
+  const count = ratings.length;
+
+  return {
+    average,
+    averageLabel: average.toFixed(1),
+    count,
+    countLabel: `${count} review${count > 1 ? "s" : ""}`,
+  };
 }
 
 function getReviewSummary(reviews) {
