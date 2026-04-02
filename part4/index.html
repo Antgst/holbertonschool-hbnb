@@ -1,80 +1,78 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>List of Places</title>
+    <link rel="icon" type="image/png" href="hbnb/images/icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>List of Places</title>
-  <link rel="icon" type="image/png" href="hbnb/images/icon.png" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body>
-  <header>
-    <a href="index.html" class="brand" aria-label="Go to HBNB home page">
-      <img src="hbnb/images/logo.png" alt="Application logo" class="logo" />
-      <div class="brand-copy">
-        <span class="brand-name">HBNB</span>
-        <span class="brand-tagline">Where comfort meets elegance</span>
-      </div>
-    </a>
-
-    <nav aria-label="Primary navigation">
-      <a href="index.html">Home</a>
-      <a href="login.html" id="login-link" class="login-button">Login</a>
-    </nav>
-  </header>
-  <main class="home-main">
-    <section class="hero">
-      <div class="hero-content">
-        <p class="hero-kicker">Curated premium stays</p>
-        <h1>Experience refined stays in exceptional places</h1>
-        <p class="hero-text">
-          Discover elegant properties, premium comfort, and carefully selected
-          destinations designed for memorable stays.
-        </p>
-
-        <div class="hero-actions">
-          <a href="#filter" class="hero-button">Explore stays</a>
+  <body>
+    <header>
+      <a href="index.html" class="brand" aria-label="Go to HBNB home page">
+        <img src="hbnb/images/logo.png" alt="Application logo" class="logo" />
+        <div class="brand-copy">
+          <span class="brand-name">HBNB</span>
+          <span class="brand-tagline">Where comfort meets elegance</span>
         </div>
-      </div>
+      </a>
 
-      <aside class="hero-panel" aria-label="Premium selection highlights">
-        <p class="hero-panel-label">Designed for quality stays</p>
-        <ul class="hero-panel-list">
-          <li>Handpicked destinations</li>
-          <li>Elegant interiors and refined comfort</li>
-          <li>Clear pricing and smooth browsing</li>
-        </ul>
-      </aside>
-    </section>
+      <nav aria-label="Primary navigation">
+        <a href="index.html">Home</a>
+        <a href="login.html" id="login-link" class="login-button">Login</a>
+      </nav>
+    </header>
+    <main class="home-main">
+      <section class="hero">
+        <div class="hero-content">
+          <p class="hero-kicker">Curated premium stays</p>
+          <h1>Experience refined stays in exceptional places</h1>
+          <p class="hero-text">
+            Discover elegant properties, premium comfort, and carefully selected
+            destinations designed for memorable stays.
+          </p>
 
-    <section class="catalog-intro">
-      <div class="catalog-intro-copy">
-        <p class="section-kicker">Browse the collection</p>
-        <h2>Find the stay that fits your pace</h2>
-        <p>
-          Use the price filter to narrow the selection and compare properties more
-          easily.
-        </p>
-      </div>
+          <div class="hero-actions">
+            <a href="#filter" class="hero-button">Explore stays</a>
+          </div>
+        </div>
 
-      <section id="filter" aria-label="Filter places by maximum price">
-        <label for="price-filter">Max Price</label>
-        <select id="price-filter">
-          <!-- Options will be populated dynamically -->
-        </select>
+        <aside class="hero-panel" aria-label="Premium selection highlights">
+          <p class="hero-panel-label">Designed for quality stays</p>
+          <ul class="hero-panel-list">
+            <li>Handpicked destinations</li>
+            <li>Elegant interiors and refined comfort</li>
+            <li>Clear pricing and smooth browsing</li>
+          </ul>
+        </aside>
       </section>
-    </section>
 
-    <section id="places-list">
-      <!-- List of places will be populated dynamically -->
-    </section>
-  </main>
-  <script src="scripts.js"></script>
-  <footer>
-    <p>All rights reserved.</p>
-  </footer>
-</body>
+      <section class="catalog-intro">
+        <div class="catalog-intro-copy">
+          <p class="section-kicker">Browse the collection</p>
+          <h2>Find the stay that fits your pace</h2>
+          <p>
+            Use the price filter to narrow the selection and compare properties
+            more easily.
+          </p>
+        </div>
 
+        <section id="filter" aria-label="Filter places by maximum price">
+          <label for="price-filter">Max Price</label>
+          <select id="price-filter">
+            <!-- Options will be populated dynamically -->
+          </select>
+        </section>
+      </section>
+
+      <section id="places-list">
+        <!-- List of places will be populated dynamically -->
+      </section>
+    </main>
+    <script src="scripts.js"></script>
+    <footer>
+      <p>All rights reserved.</p>
+    </footer>
+  </body>
 </html>

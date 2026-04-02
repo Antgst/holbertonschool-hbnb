@@ -514,6 +514,17 @@ function getHostInitials(place) {
   return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
 }
 
+function getHostImage(place) {
+  const hostName = getHostName(place).toLowerCase();
+
+  const hostImages = {
+    "sylvie vasseur": "hbnb/images/hosts/sylvie-vasseur.jpg",
+    "sarah vianney": "hbnb/images/hosts/sarah-vianney.jpg",
+  };
+
+  return hostImages[hostName] || null;
+}
+
 function renderHostCard(place) {
   const hostCard = document.getElementById("host-card");
 
@@ -523,6 +534,8 @@ function renderHostCard(place) {
 
   const hostName = escapeHtml(getHostName(place));
   const initials = escapeHtml(getHostInitials(place));
+  const hostImage = getHostImage(place);
+
   const amenitiesCount =
     place.amenities && place.amenities.length > 0
       ? `${place.amenities.length} amenit${place.amenities.length > 1 ? "ies" : "y"}`
@@ -532,11 +545,15 @@ function renderHostCard(place) {
     place.title || place.name || "Selected stay",
   );
 
+  const hostMedia = hostImage
+    ? `<img src="${hostImage}" alt="${hostName}" class="host-card-image" loading="lazy">`
+    : `<div class="host-card-avatar" aria-hidden="true">${initials}</div>`;
+
   hostCard.innerHTML = `
     <p class="section-kicker">Host spotlight</p>
 
     <div class="host-card-media">
-      <div class="host-card-avatar" aria-hidden="true">${initials}</div>
+      ${hostMedia}
     </div>
 
     <div class="host-card-body">

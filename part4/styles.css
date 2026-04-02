@@ -831,7 +831,7 @@ p {
 }
 
 .place-sidebar {
-  position: sticky;
+  position: static;
   top: 1.25rem;
   display: grid;
   gap: 1rem;
@@ -1087,7 +1087,7 @@ p {
 .host-card-image,
 .host-card-avatar {
   width: 100%;
-  min-height: 210px;
+  height: 210px;
   border-radius: 18px;
 }
 
@@ -1757,163 +1757,6 @@ nav a:focus-visible,
   }
 
   .place-layout {
-  grid-template-columns: 1fr;
-}
-
-.place-sidebar {
-  position: static;
-}
-
-.add-review {
-  position: static;
-}
-
-.review-container {
-  grid-template-columns: 1fr;
-}
-
-  .auth-page {
-    grid-template-columns: 1fr;
-  }
-
-  .auth-page-intro h1 {
-    max-width: none;
-  }
-
-  .host-card-avatar,
-  .host-card-image {
-    min-height: 220px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .logo {
-    width: 88px;
-  }
-
-  header {
-    padding: 1rem;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-
-  .brand {
-    justify-content: center;
-    text-align: left;
-  }
-
-  .brand-copy {
-    gap: 0.15rem;
-  }
-
-  .brand-name {
-    font-size: 1rem;
-    letter-spacing: 0.11em;
-  }
-
-  .brand-tagline {
-    font-size: 0.78rem;
-  }
-
-  nav {
-    gap: 0.85rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    margin-left: 0;
-  }
-
-  main {
-    padding: 1.2rem 1rem 2rem;
-  }
-
-  .home-main {
-    gap: 1.1rem;
-  }
-
-  .hero-content {
-    max-width: none;
-  }
-
-  .hero-panel {
-    align-self: stretch;
-    padding: 1rem 1.05rem;
-    border-radius: 16px;
-  }
-
-  .catalog-intro {
-    grid-template-columns: 1fr;
-    gap: 0.9rem;
-  }
-
-  #filter {
-    align-items: stretch;
-    justify-content: flex-start;
-  }
-
-  #price-filter {
-    min-width: 100%;
-  }
-
-  .review-container {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  #login-form {
-    padding-left: 1.1rem;
-    padding-right: 1.1rem;
-  }
-
-  .hero {
-    grid-template-columns: 1fr;
-    min-height: 340px;
-    padding: 2.4rem 1.25rem 1.6rem;
-    gap: 1rem;
-    align-items: flex-end;
-    border-radius: 20px;
-  }
-
-  .hero h1 {
-    font-size: 1.95rem;
-    line-height: 1.1;
-    max-width: none;
-  }
-
-  .hero-text {
-    font-size: 1rem;
-    margin-bottom: 1.2rem;
-    max-width: 34ch;
-  }
-
-  .place-details h1 {
-    font-size: 1.95rem;
-    margin-bottom: 1.1rem;
-  }
-
-  .place-info,
-  .reviews-section {
-    padding: 1.1rem;
-  }
-
-  #places-list {
-    grid-template-columns: 1fr;
-  }
-
-  .place-card-image,
-  .place-card-placeholder {
-    height: 210px;
-  }
-
-  .place-card-body {
-    padding: 0;
-  }
-
-  .place-layout,
-  .place-info-grid,
-  .review-container {
     grid-template-columns: 1fr;
   }
 
@@ -1921,84 +1764,241 @@ nav a:focus-visible,
     position: static;
   }
 
-  .place-gallery {
-    grid-template-columns: 1fr;
-    grid-auto-rows: 220px;
-  }
-
-  .place-gallery-image:first-child,
-  .place-gallery-placeholder:first-child {
-    grid-row: span 1;
-  }
-
-  .place-details {
-    padding: 1.2rem;
-  }
-
-  .add-review,
-  .reviews-section,
-  .review-form,
-  .place-summary {
-    padding: 1.1rem;
-  }
-
-  .place-meta {
-    gap: 0.6rem;
-  }
-
-  .place-meta-item {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
   .add-review {
     position: static;
   }
 
+  .review-container {
+    grid-template-columns: 1fr;
+  }
+
   .auth-page {
     grid-template-columns: 1fr;
-    gap: 1rem;
   }
 
   .auth-page-intro h1 {
     max-width: none;
-    font-size: 1.95rem;
-  }
-
-  .auth-page-card {
-    padding: 1.1rem;
   }
 
   .host-card-avatar,
   .host-card-image {
-    min-height: 210px;
+    height: 220px;
   }
 
-  .host-card-tags {
-    gap: 0.5rem;
+  /* Mobile */
+  @media (max-width: 768px) {
+    .logo {
+      width: 88px;
+    }
+
+    header {
+      padding: 1rem;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+
+    .brand {
+      justify-content: center;
+      text-align: left;
+    }
+
+    .brand-copy {
+      gap: 0.15rem;
+    }
+
+    .brand-name {
+      font-size: 1rem;
+      letter-spacing: 0.11em;
+    }
+
+    .brand-tagline {
+      font-size: 0.78rem;
+    }
+
+    nav {
+      gap: 0.85rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      margin-left: 0;
+    }
+
+    main {
+      padding: 1.2rem 1rem 2rem;
+    }
+
+    .home-main {
+      gap: 1.1rem;
+    }
+
+    .hero-content {
+      max-width: none;
+    }
+
+    .hero-panel {
+      align-self: stretch;
+      padding: 1rem 1.05rem;
+      border-radius: 16px;
+    }
+
+    .catalog-intro {
+      grid-template-columns: 1fr;
+      gap: 0.9rem;
+    }
+
+    #filter {
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+
+    #price-filter {
+      min-width: 100%;
+    }
+
+    .review-container {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    #login-form {
+      padding-left: 1.1rem;
+      padding-right: 1.1rem;
+    }
+
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: 340px;
+      padding: 2.4rem 1.25rem 1.6rem;
+      gap: 1rem;
+      align-items: flex-end;
+      border-radius: 20px;
+    }
+
+    .hero h1 {
+      font-size: 1.95rem;
+      line-height: 1.1;
+      max-width: none;
+    }
+
+    .hero-text {
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+      max-width: 34ch;
+    }
+
+    .place-details h1 {
+      font-size: 1.95rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .place-info,
+    .reviews-section {
+      padding: 1.1rem;
+    }
+
+    #places-list {
+      grid-template-columns: 1fr;
+    }
+
+    .place-card-image,
+    .place-card-placeholder {
+      height: 210px;
+    }
+
+    .place-card-body {
+      padding: 0;
+    }
+
+    .place-layout,
+    .place-info-grid,
+    .review-container {
+      grid-template-columns: 1fr;
+    }
+
+    .place-sidebar {
+      position: static;
+    }
+
+    .place-gallery {
+      grid-template-columns: 1fr;
+      grid-auto-rows: 220px;
+    }
+
+    .place-gallery-image:first-child,
+    .place-gallery-placeholder:first-child {
+      grid-row: span 1;
+    }
+
+    .place-details {
+      padding: 1.2rem;
+    }
+
+    .add-review,
+    .reviews-section,
+    .review-form,
+    .place-summary {
+      padding: 1.1rem;
+    }
+
+    .place-meta {
+      gap: 0.6rem;
+    }
+
+    .place-meta-item {
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    .add-review {
+      position: static;
+    }
+
+    .auth-page {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .auth-page-intro h1 {
+      max-width: none;
+      font-size: 1.95rem;
+    }
+
+    .auth-page-card {
+      padding: 1.1rem;
+    }
+
+    .host-card-avatar,
+    .host-card-image {
+      height: 210px;
+    }
+
+    .host-card-tags {
+      gap: 0.5rem;
+    }
+
+    .host-card-tags span {
+      width: 100%;
+      justify-content: flex-start;
+    }
   }
 
-  .host-card-tags span {
-    width: 100%;
-    justify-content: flex-start;
-  }
-}
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .reveal,
-  .reveal--left,
-  .reveal--right,
-  .reveal--soft {
-    opacity: 1 !important;
-    transform: none !important;
+    .reveal,
+    .reveal--left,
+    .reveal--right,
+    .reveal--soft {
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 }
