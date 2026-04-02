@@ -423,12 +423,16 @@ function displayPlaceDetails(place) {
     </div>
 
     <div class="place-info-grid"></div>
+    <div class="place-amenities-mount"></div>
   `;
 
   const infoGrid = placeDetailsSection.querySelector(".place-info-grid");
+  const amenitiesMount = placeDetailsSection.querySelector(
+    ".place-amenities-mount",
+  );
 
   infoGrid.appendChild(createPlaceInfoBlock("Description", description));
-  infoGrid.appendChild(createAmenitiesBlock(place.amenities));
+  amenitiesMount.appendChild(createAmenitiesPanel(place.amenities));
 
   renderHostCard(place);
   setupRevealAnimations();
@@ -450,7 +454,121 @@ function createPlaceInfoBlock(titleText, contentText) {
   return container;
 }
 
-function createAmenitiesBlock(amenities) {
+function getAmenityIconMarkup(amenityName) {
+  const name = String(amenityName || "").toLowerCase();
+
+  if (name.includes("wifi")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4.5 9.5a11 11 0 0 1 15 0" />
+        <path d="M7.5 12.5a7 7 0 0 1 9 0" />
+        <path d="M10.5 15.5a3 3 0 0 1 3 0" />
+        <circle cx="12" cy="18.2" r="0.9" fill="currentColor" stroke="none" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("parking")) {
+  return `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="5" y="4.5" width="14" height="15" rx="3" />
+      <path d="M10 16V8h3.2a2.5 2.5 0 1 1 0 5H10" />
+    </svg>
+  `;
+}
+
+  if (
+    name.includes("workspace") ||
+    name.includes("desk") ||
+    name.includes("office")
+  ) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="5" y="6.5" width="14" height="9" rx="1.8" />
+        <path d="M8.5 19h7" />
+        <path d="M12 15.5V19" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("sea") || name.includes("ocean") || name.includes("view")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 16c1.4 1 2.8 1 4.2 0s2.8-1 4.2 0 2.8 1 4.2 0 2.8-1 4.2 0" />
+        <path d="M5 12.5c1-.8 2-.8 3 0s2 .8 3 0 2-.8 3 0 2 .8 3 0" />
+        <path d="M15.5 6.5a2 2 0 1 0 0.01 0" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("garden") || name.includes("outdoor")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 19V11" />
+        <path d="M12 11c0-3.2 2.2-5 5.2-5-.2 3.1-2 5.2-5.2 5Z" />
+        <path d="M12 13c0-2.6-1.8-4.1-4.3-4.1.1 2.6 1.6 4.1 4.3 4.1Z" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("fireplace") || name.includes("fire")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 20c3 0 5-2 5-5 0-3.6-2.2-5-3.4-7.4-.3 1.4-1.1 2.4-2.4 3.2.1-2.4-1.1-4.2-3.2-5.8C7.7 7.7 6 9.8 6 13c0 4 2.3 7 6 7Z" />
+      </svg>
+    `;
+  }
+
+  return `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 4.5l2.2 4.5 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L4.8 9.7l5-.7Z" />
+    </svg>
+  `;
+}
+
+function createAmenitiesPanel(amenities) {
+  const panel = document.createElement("section");
+  panel.classList.add("place-amenities-panel");
+
+  const title = document.createElement("h2");
+  title.textContent = "Amenities";
+
+  const grid = document.createElement("div");
+  grid.classList.add("amenities-grid");
+
+  if (amenities && amenities.length > 0) {
+    for (const amenity of amenities) {
+      const amenityLabel = amenity.name || amenity;
+
+      const card = document.createElement("article");
+      card.classList.add("amenity-card");
+
+      const icon = document.createElement("div");
+      icon.classList.add("amenity-icon");
+      icon.innerHTML = getAmenityIconMarkup(amenityLabel);
+
+      const label = document.createElement("p");
+      label.classList.add("amenity-label");
+      label.textContent = amenityLabel;
+
+      card.appendChild(icon);
+      card.appendChild(label);
+      grid.appendChild(card);
+    }
+  } else {
+    const emptyState = document.createElement("p");
+    emptyState.classList.add("amenities-empty");
+    emptyState.textContent = "No amenities listed yet.";
+    grid.appendChild(emptyState);
+  }
+
+  panel.appendChild(title);
+  panel.appendChild(grid);
+
+  return panel;
+}
+
+/*function createAmenitiesBlock(amenities) {
   const container = document.createElement("article");
   container.classList.add("place-info");
 
@@ -476,7 +594,7 @@ function createAmenitiesBlock(amenities) {
   container.appendChild(list);
 
   return container;
-}
+}*/
 
 function getHostName(place) {
   if (place.owner && place.owner.first_name && place.owner.last_name) {
