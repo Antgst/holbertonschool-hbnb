@@ -518,8 +518,15 @@ function getHostImage(place) {
   const hostName = getHostName(place).toLowerCase();
 
   const hostImages = {
-    "sylvie vasseur": "hbnb/images/hosts/sylvie-vasseur.jpg",
-    "sarah vianney": "hbnb/images/hosts/sarah-vianney.jpg",
+    "antoine gousset": "hbnb/images/hosts/antoine-gousset.jpg",
+    "léa gousset": "hbnb/images/hosts/lea-gousset.jpg",
+    "lea gousset": "hbnb/images/hosts/lea-gousset.jpg",
+    "sebastien vallier": "hbnb/images/hosts/sebastien-vallier.jpg",
+    "patricia le brun": "hbnb/images/hosts/patricia-le-brun.jpg",
+    "benjy guerin": "hbnb/images/hosts/benjy-guerin.jpg",
+    "micael magalhaes pinho": "hbnb/images/hosts/micael-magalhaes-pinho.jpg",
+    "melissandre moreau": "hbnb/images/hosts/melissandre-moreau.jpg",
+    "brice travers": "hbnb/images/hosts/brice-travers.jpg",
   };
 
   return hostImages[hostName] || null;
