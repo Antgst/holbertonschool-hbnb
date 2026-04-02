@@ -25,15 +25,33 @@
     </nav>
   </header>
 
-  <main>
-    <form id="login-form">
+  <main class="auth-page">
+    <section class="auth-page-intro">
+      <p class="section-kicker">Member access</p>
+      <h1>Sign in to continue your experience</h1>
+      <p>
+        Access your account to browse stays, leave reviews, and continue exploring
+        carefully selected places with a smoother experience.
+      </p>
+
+      <div class="auth-page-card">
+        <h2>Why sign in?</h2>
+        <ul class="auth-benefits-list">
+          <li>Leave reviews and share feedback</li>
+          <li>Access a smoother guest experience</li>
+          <li>Keep browsing with a cleaner flow</li>
+        </ul>
+      </div>
+    </section>
+
+    <form id="login-form" class="auth-form">
       <h2>Login</h2>
       <p id="login-message" class="form-message" aria-live="polite"></p>
 
-      <label for="email">Email:</label>
+      <label for="email">Email</label>
       <input type="email" id="email" name="email" placeholder="Enter your email" required />
 
-      <label for="password">Password:</label>
+      <label for="password">Password</label>
       <input type="password" id="password" name="password" placeholder="Enter your password" required />
 
       <button type="submit">Login</button>

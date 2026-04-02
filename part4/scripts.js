@@ -94,6 +94,71 @@ function renderStateCard(title, text, compact = false) {
   `;
 }
 
+function setupRevealAnimations() {
+  const elements = [
+    ...document.querySelectorAll(".hero"),
+    ...document.querySelectorAll(".catalog-intro"),
+    ...document.querySelectorAll(".place-details"),
+    ...document.querySelectorAll(".add-review"),
+    ...document.querySelectorAll(".reviews-section"),
+    ...document.querySelectorAll(".place-summary"),
+    ...document.querySelectorAll(".review-form"),
+    ...document.querySelectorAll("#login-form"),
+    ...document.querySelectorAll(".auth-page-intro"),
+    ...document.querySelectorAll(".auth-page-card"),
+  ];
+
+  if (!elements.length) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (prefersReducedMotion) {
+    for (const element of elements) {
+      element.classList.add("is-visible");
+    }
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      }
+    },
+    {
+      threshold: 0.12,
+      rootMargin: "0px 0px -40px 0px",
+    },
+  );
+
+  for (const element of elements) {
+    if (element.classList.contains("hero")) {
+      element.classList.add("reveal", "is-visible");
+      continue;
+    }
+
+    if (element.classList.contains("add-review")) {
+      element.classList.add("reveal", "reveal--right");
+    } else if (
+      element.classList.contains("auth-page-intro") ||
+      element.classList.contains("place-details")
+    ) {
+      element.classList.add("reveal", "reveal--left");
+    } else {
+      element.classList.add("reveal", "reveal--soft");
+    }
+
+    observer.observe(element);
+  }
+}
+
 function checkAuthentication() {
   const token = getAuthToken();
   const loginLink = document.getElementById("login-link");
@@ -243,9 +308,10 @@ function displayPlaces(places) {
     return;
   }
 
-  for (const place of places) {
+  for (const [index, place] of places.entries()) {
     const placeCard = document.createElement("article");
     placeCard.classList.add("place-card");
+    placeCard.style.setProperty("--card-index", index);
 
     const title = place.title || place.name || "Selected stay";
     const price = Number(place.price) || 0;
@@ -341,6 +407,7 @@ function displayPlaceDetails(place) {
   infoGrid.appendChild(createPlaceInfoBlock("Price", `€${price} per night`));
   infoGrid.appendChild(createPlaceInfoBlock("Description", description));
   infoGrid.appendChild(createAmenitiesBlock(place.amenities));
+  setupRevealAnimations();
 }
 
 function createPlaceInfoBlock(titleText, contentText) {
@@ -462,6 +529,7 @@ function displayPlaceReviews(reviews) {
   }
 
   reviewsSection.appendChild(reviewsList);
+  setupRevealAnimations();
 }
 
 function displayPlaceSummary(place) {
@@ -481,6 +549,7 @@ function displayPlaceSummary(place) {
     <p><strong>Host:</strong> ${getHostName(place)}</p>
     <p><strong>Price:</strong> €${price} per night</p>
   `;
+  setupRevealAnimations();
 }
 
 function populatePriceFilter() {
@@ -742,6 +811,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     reviewForm.addEventListener("submit", (event) => {
       handleReviewSubmit(event, reviewToken, reviewPlaceId, reviewForm);
+      setupRevealAnimations();
     });
   }
 });
