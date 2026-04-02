@@ -735,6 +735,43 @@ p {
     inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
+.place-card-rating {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.34rem;
+  padding: 0.5rem 0.78rem;
+  border-radius: var(--radius-pill, 999px);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 248, 233, 0.96),
+    rgba(245, 230, 203, 0.94)
+  );
+  border: 1px solid rgba(201, 169, 110, 0.42);
+  color: var(--primary);
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(6px);
+}
+
+.place-card-rating-star {
+  color: #c9a96e;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.place-card-rating-value {
+  line-height: 1;
+}
+
 .place-card-price {
   position: absolute;
   right: 14px;

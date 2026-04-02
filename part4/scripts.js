@@ -214,7 +214,15 @@ async function fetchPlaces(token) {
     }
 
     const places = await response.json();
-    displayPlaces(Array.isArray(places) ? places : []);
+    let reviewSummaryMap = new Map();
+
+    try {
+      reviewSummaryMap = await fetchPlaceReviewSummaries(token);
+    } catch (error) {
+      console.error("Error fetching place review summaries:", error);
+    }
+
+    displayPlaces(Array.isArray(places) ? places : [], reviewSummaryMap);
   } catch (error) {
     if (placesList) {
       placesList.innerHTML = renderStateCard(
@@ -225,6 +233,47 @@ async function fetchPlaces(token) {
 
     throw error;
   }
+}
+
+async function fetchPlaceReviewSummaries(token) {
+  const response = await fetch(`${API_BASE_URL}/reviews/`, {
+    headers: buildAuthHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch review summaries");
+  }
+
+  const reviews = await response.json();
+  return buildPlaceReviewSummaryMap(Array.isArray(reviews) ? reviews : []);
+}
+
+function buildPlaceReviewSummaryMap(reviews) {
+  const reviewsByPlace = new Map();
+
+  for (const review of reviews) {
+    if (!review || !review.place_id) {
+      continue;
+    }
+
+    if (!reviewsByPlace.has(review.place_id)) {
+      reviewsByPlace.set(review.place_id, []);
+    }
+
+    reviewsByPlace.get(review.place_id).push(review);
+  }
+
+  const reviewSummaryMap = new Map();
+
+  for (const [placeId, placeReviews] of reviewsByPlace.entries()) {
+    const reviewSummary = getReviewSummary(placeReviews);
+
+    if (reviewSummary) {
+      reviewSummaryMap.set(placeId, reviewSummary);
+    }
+  }
+
+  return reviewSummaryMap;
 }
 
 async function fetchPlaceDetails(token, placeId) {
@@ -301,9 +350,6 @@ async function fetchPlaceReviews(token, placeId) {
 
     displayPlaceReviews(safeReviews);
     return safeReviews;
-
-    displayPlaceReviews(safeReviews);
-    return safeReviews;
   } catch (error) {
     if (reviewsSection) {
       reviewsSection.innerHTML = `
@@ -323,7 +369,7 @@ async function fetchPlaceReviews(token, placeId) {
   }
 }
 
-function displayPlaces(places) {
+function displayPlaces(places, reviewSummaryMap = new Map()) {
   const placesList = document.getElementById("places-list");
 
   if (!placesList) {
@@ -359,10 +405,13 @@ function displayPlaces(places) {
       ? escapeHtml(place.description.slice(0, 105)) +
         (place.description.length > 105 ? "..." : "")
       : "Elegant stay, premium comfort, and carefully selected amenities.";
+    const reviewSummary = reviewSummaryMap.get(place.id) || null;
+    const ratingBadge = renderPlaceCardRatingBadge(reviewSummary);
 
     placeCard.innerHTML = `
       <div class="place-card-media">
         ${firstImage}
+        ${ratingBadge}
         <span class="place-card-price">€${price} / night</span>
       </div>
 
@@ -380,6 +429,23 @@ function displayPlaces(places) {
   }
 
   setupRevealAnimations();
+}
+
+function renderPlaceCardRatingBadge(reviewSummary) {
+  if (!reviewSummary) {
+    return "";
+  }
+
+  return `
+    <span
+      class="place-card-rating"
+      aria-label="Rated ${reviewSummary.averageLabel} out of 5 from ${reviewSummary.countLabel}"
+      title="${reviewSummary.countLabel}"
+    >
+      <span class="place-card-rating-star" aria-hidden="true">★</span>
+      <span class="place-card-rating-value">${reviewSummary.averageLabel}</span>
+    </span>
+  `;
 }
 
 function displayPlaceDetails(place) {
