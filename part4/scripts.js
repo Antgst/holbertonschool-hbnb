@@ -98,11 +98,15 @@ function setupRevealAnimations() {
   const elements = [
     ...document.querySelectorAll(".hero"),
     ...document.querySelectorAll(".catalog-intro"),
+    ...document.querySelectorAll(".place-card"),
     ...document.querySelectorAll(".place-details"),
-    ...document.querySelectorAll(".add-review"),
-    ...document.querySelectorAll(".reviews-section"),
     ...document.querySelectorAll(".place-summary"),
+    ...document.querySelectorAll(".add-review"),
+    ...document.querySelectorAll(".host-card"),
+    ...document.querySelectorAll(".reviews-section"),
     ...document.querySelectorAll(".review-form"),
+    ...document.querySelectorAll(".review-page-intro"),
+    ...document.querySelectorAll(".review-container"),
     ...document.querySelectorAll("#login-form"),
     ...document.querySelectorAll(".auth-page-intro"),
     ...document.querySelectorAll(".auth-page-card"),
@@ -209,12 +213,13 @@ async function fetchPlaces(token) {
 
 async function fetchPlaceDetails(token, placeId) {
   const placeDetailsSection = document.getElementById("place-details");
-  const reviewsSection = document.getElementById("reviews");
   const placeSummarySection = document.querySelector(".place-summary");
 
   if (!placeId) {
     throw new Error("Place ID not found in URL");
   }
+
+  let place;
 
   try {
     const response = await fetch(`${API_BASE_URL}/places/${placeId}`, {
@@ -225,24 +230,12 @@ async function fetchPlaceDetails(token, placeId) {
       throw new Error("Failed to fetch place details");
     }
 
-    const place = await response.json();
-
-    displayPlaceDetails(place);
-    displayPlaceSummary(place);
-    await fetchPlaceReviews(token, placeId);
+    place = await response.json();
   } catch (error) {
     if (placeDetailsSection) {
       placeDetailsSection.innerHTML = renderStateCard(
         "Unable to load this stay",
         "The place details could not be loaded right now.",
-      );
-    }
-
-    if (reviewsSection) {
-      reviewsSection.innerHTML = renderStateCard(
-        "Reviews unavailable",
-        "Guest feedback could not be loaded at the moment.",
-        true,
       );
     }
 
@@ -255,6 +248,15 @@ async function fetchPlaceDetails(token, placeId) {
     }
 
     throw error;
+  }
+
+  displayPlaceDetails(place);
+  displayPlaceSummary(place);
+
+  try {
+    await fetchPlaceReviews(token, placeId);
+  } catch (error) {
+    console.error("Error fetching place reviews:", error);
   }
 }
 
@@ -309,6 +311,7 @@ function displayPlaces(places) {
   }
 
   for (const [index, place] of places.entries()) {
+    setupRevealAnimations();
     const placeCard = document.createElement("article");
     placeCard.classList.add("place-card");
     placeCard.style.setProperty("--card-index", index);
@@ -503,48 +506,8 @@ function renderHostCard(place) {
       : "Well-prepared stay";
 
   const locationLabel = place.title || place.name || "Selected stay";
-  const hostImageSrc = "hbnb/images/hosts/default-host.jpg";
 
   hostCard.innerHTML = `
-    <p class="section-kicker">Host spotlight</p>
-
-    <div class="host-card-media">
-      <img
-        src="${hostImageSrc}"
-        alt="${hostName}"
-        class="host-card-image"
-        loading="lazy"
-        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-      />
-      <div class="host-card-avatar" aria-hidden="true" style="display: none;">${initials}</div>
-    </div>
-
-    <div class="host-card-body">
-      <h2>Meet your host</h2>
-      <p class="host-card-name">${hostName}</p>
-      <p class="host-card-role">Local host</p>
-      <p class="host-card-text">
-        Thoughtful hosting and carefully prepared stays designed for a smoother guest experience.
-      </p>
-
-      <div class="host-card-tags">
-        <span>${amenitiesCount}</span>
-        <span>Guest-focused</span>
-        <span>${locationLabel}</span>
-      </div>
-    </div>
-  `;
-}
-
-const hostName = getHostName(place);
-const initials = getHostInitials(place);
-const amenitiesCount = place.amenities && place.amenities.length > 0
-  ? `${place.amenities.length} amenit${place.amenities.length > 1 ? "ies" : "y"}`
-  : "Well-prepared stay";
-
-const locationLabel = place.title || place.name || "Selected stay";
-
-hostCard.innerHTML = `
     <p class="section-kicker">Host spotlight</p>
 
     <div class="host-card-media">
@@ -566,6 +529,7 @@ hostCard.innerHTML = `
       </div>
     </div>
   `;
+}
 
 function getReviewAuthorName(review) {
   if (review.user && typeof review.user === "object") {
@@ -873,6 +837,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupPriceFilter();
 
   const token = checkAuthentication();
+  setupRevealAnimations();
   const placeId = getPlaceIdFromURL();
 
   const placesList = document.getElementById("places-list");
