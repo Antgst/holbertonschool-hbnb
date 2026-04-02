@@ -381,6 +381,7 @@ function displayPlaceDetails(place) {
   }
 
   const title = escapeHtml(place.title || place.name || "Selected stay");
+  const price = Number(place.price) || 0;
   const description = escapeHtml(
     place.description ||
       "A refined stay with comfort, character, and carefully selected amenities.",
@@ -404,9 +405,17 @@ function displayPlaceDetails(place) {
 
   placeDetailsSection.innerHTML = `
     <div class="place-heading">
-      <p class="section-kicker">Selected stay</p>
-      <h1>${title}</h1>
-      <p class="place-lead">${description}</p>
+      <div class="place-heading-top">
+        <div class="place-heading-copy">
+          <p class="section-kicker">Selected stay</p>
+          <h1>${title}</h1>
+          <p class="place-lead">${description}</p>
+        </div>
+
+        <div class="place-heading-side">
+          <span class="place-price-badge">€${price} / night</span>
+        </div>
+      </div>
     </div>
 
     <div class="place-gallery">
@@ -528,16 +537,6 @@ function renderHostCard(place) {
   const hostName = escapeHtml(getHostName(place));
   const initials = escapeHtml(getHostInitials(place));
   const hostImage = getHostImage(place);
-  const price = Number(place.price) || 0;
-
-  const amenitiesCount =
-    place.amenities && place.amenities.length > 0
-      ? `${place.amenities.length} amenit${place.amenities.length > 1 ? "ies" : "y"}`
-      : "Well-prepared stay";
-
-  const locationLabel = escapeHtml(
-    place.title || place.name || "Selected stay",
-  );
 
   const hostMedia = hostImage
     ? `<img src="${hostImage}" alt="${hostName}" class="host-card-image" loading="lazy">`
@@ -557,12 +556,6 @@ function renderHostCard(place) {
       <p class="host-card-text">
         Thoughtful hosting and carefully prepared stays designed for a smoother guest experience.
       </p>
-
-      <div class="host-card-tags">
-        <span>€${price} / night</span>
-        <span>${amenitiesCount}</span>
-        <span>${locationLabel}</span>
-      </div>
     </div>
   `;
 }

@@ -876,6 +876,46 @@ p {
   margin-bottom: 1.25rem;
 }
 
+.place-heading-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: start;
+}
+
+.place-heading-copy {
+  min-width: 0;
+}
+
+.place-heading-side {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.place-price-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    rgba(31, 29, 27, 0.92),
+    rgba(67, 23, 27, 0.92)
+  );
+  border: 1px solid rgba(201, 169, 110, 0.3);
+  color: #fff7e8;
+  font-size: 0.94rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
 .place-heading .section-kicker {
   margin-bottom: 0.65rem;
 }
@@ -1122,35 +1162,6 @@ p {
   margin-top: 0.2rem;
   color: var(--text-muted);
   line-height: 1.65;
-}
-
-.host-card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 0.35rem;
-}
-
-.host-card-tags span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 36px;
-  padding: 0.5rem 0.8rem;
-  border-radius: 999px;
-  background: linear-gradient(
-    135deg,
-    rgba(92, 31, 36, 0.08),
-    rgba(201, 169, 110, 0.12)
-  );
-  border: 1px solid rgba(201, 169, 110, 0.18);
-  color: var(--primary);
-  font-size: 0.88rem;
-  font-weight: 700;
-  line-height: 1.2;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.56),
-    0 6px 14px rgba(0, 0, 0, 0.04);
 }
 
 .reviews-section-header {
@@ -1727,6 +1738,15 @@ nav a:focus-visible,
     font-size: 2.2rem;
   }
 
+    .place-heading-top {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .place-heading-side {
+    justify-content: flex-start;
+  }
+
   .place-layout {
     grid-template-columns: 1fr;
   }
@@ -1862,6 +1882,19 @@ nav a:focus-visible,
       font-size: 1.95rem;
       margin-bottom: 1.1rem;
     }
+
+      .place-heading-top {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .place-heading-side {
+    justify-content: flex-start;
+  }
+
+  .place-price-badge {
+    width: fit-content;
+  }
 
     .place-info,
     .reviews-section {
