@@ -469,13 +469,13 @@ function getAmenityIconMarkup(amenityName) {
   }
 
   if (name.includes("parking")) {
-  return `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="5" y="4.5" width="14" height="15" rx="3" />
-      <path d="M10 16V8h3.2a2.5 2.5 0 1 1 0 5H10" />
-    </svg>
-  `;
-}
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="5" y="4.5" width="14" height="15" rx="3" />
+        <path d="M10 16V8h3.2a2.5 2.5 0 1 1 0 5H10" />
+      </svg>
+    `;
+  }
 
   if (
     name.includes("workspace") ||
@@ -491,12 +491,32 @@ function getAmenityIconMarkup(amenityName) {
     `;
   }
 
-  if (name.includes("sea") || name.includes("ocean") || name.includes("view")) {
+  if (name.includes("sea view") || name.includes("ocean view")) {
     return `
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M3 16c1.4 1 2.8 1 4.2 0s2.8-1 4.2 0 2.8 1 4.2 0 2.8-1 4.2 0" />
         <path d="M5 12.5c1-.8 2-.8 3 0s2 .8 3 0 2-.8 3 0 2 .8 3 0" />
         <path d="M15.5 6.5a2 2 0 1 0 0.01 0" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("city view")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4.5 19.5h15" />
+        <rect x="6" y="10" width="4" height="9" rx="1" />
+        <rect x="11" y="6" width="4" height="13" rx="1" />
+        <rect x="16" y="12" width="2" height="7" rx="0.8" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("mountain view")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3.5 18.5l5.2-7 3.1 4 3.5-5 5.2 8Z" />
+        <path d="M14.3 10.5l1.2-1.7 1.6 2.2" />
       </svg>
     `;
   }
@@ -515,6 +535,208 @@ function getAmenityIconMarkup(amenityName) {
     return `
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 20c3 0 5-2 5-5 0-3.6-2.2-5-3.4-7.4-.3 1.4-1.1 2.4-2.4 3.2.1-2.4-1.1-4.2-3.2-5.8C7.7 7.7 6 9.8 6 13c0 4 2.3 7 6 7Z" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("spa")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 15c1.1 0 1.7-.8 1.7-1.7S8.1 11.6 7 11.6s-1.7.8-1.7 1.7S5.9 15 7 15Z" />
+        <path d="M12 17c1.2 0 2-.9 2-2s-.8-2-2-2-2 .9-2 2 .8 2 2 2Z" />
+        <path d="M17 15c1.1 0 1.7-.8 1.7-1.7s-.6-1.7-1.7-1.7-1.7.8-1.7 1.7.6 1.7 1.7 1.7Z" />
+        <path d="M8 7.5c0-1 .7-1.8 1.6-2.3" />
+        <path d="M12 7.2c0-1.4.9-2.4 2.1-3" />
+        <path d="M15.8 8.2c0-1 .6-1.8 1.5-2.4" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("hot tub") || name.includes("jacuzzi")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 13.5h14" />
+        <path d="M6.5 13.5v3.2A2.3 2.3 0 0 0 8.8 19h6.4a2.3 2.3 0 0 0 2.3-2.3v-3.2" />
+        <path d="M8.5 10.2c0-.9.6-1.5 1.3-2" />
+        <path d="M12 9.8c0-1 .7-1.7 1.5-2.4" />
+        <path d="M15.3 10.6c0-.8.5-1.4 1.2-1.9" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("breakfast")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5.5 9.5h9a3 3 0 0 1 0 6h-9Z" />
+        <path d="M14.5 11h1.2a2.3 2.3 0 0 1 0 4.6h-1.2" />
+        <path d="M7 18.5h10" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("air conditioning") || name === "ac") {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4.5 9h15" />
+        <path d="M7.5 12.5c.8.5 1.2 1.2 1.2 2.1 0 1-.5 1.8-1.3 2.4" />
+        <path d="M12 12.5c.8.5 1.2 1.2 1.2 2.1 0 1-.5 1.8-1.3 2.4" />
+        <path d="M16.5 12.5c.8.5 1.2 1.2 1.2 2.1 0 1-.5 1.8-1.3 2.4" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("heating")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="6" y="6.5" width="12" height="11" rx="2" />
+        <path d="M9 9.5v5" />
+        <path d="M12 9.5v5" />
+        <path d="M15 9.5v5" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("kitchen")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6.5 5.5v6" />
+        <path d="M8.5 5.5v6" />
+        <path d="M10.5 5.5v6" />
+        <path d="M8.5 11.5v7" />
+        <path d="M15 5.5v13" />
+        <path d="M15 11h2.2a1.8 1.8 0 0 0 1.8-1.8V5.5" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("washer") || name.includes("laundry")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="6" y="5.5" width="12" height="13" rx="2" />
+        <circle cx="12" cy="12.5" r="3.2" />
+        <path d="M9 8h.01" />
+        <path d="M12 8h.01" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("tv") || name.includes("television")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4.5" y="6.5" width="15" height="10" rx="1.8" />
+        <path d="M9.5 19h5" />
+        <path d="M12 16.5V19" />
+      </svg>
+    `;
+  }
+
+  if (
+    name.includes("balcony") ||
+    name.includes("terrace") ||
+    name.includes("patio")
+  ) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 18.5h14" />
+        <path d="M7 18.5v-6h10v6" />
+        <path d="M9.5 12.5V8.5h5v4" />
+        <path d="M9 18.5v-3" />
+        <path d="M12 18.5v-3" />
+        <path d="M15 18.5v-3" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("pool")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6.5 10.5V7.8a2.3 2.3 0 1 1 4.6 0v7.7" />
+        <path d="M3 16c1.4 1 2.8 1 4.2 0s2.8-1 4.2 0 2.8 1 4.2 0 2.8-1 4.2 0" />
+        <path d="M11.1 10.8h3.1" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("pet friendly") || name.includes("pet")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="8" cy="9" r="1.4" />
+        <circle cx="12" cy="7.6" r="1.4" />
+        <circle cx="16" cy="9" r="1.4" />
+        <path d="M9 15.5c0-1.8 1.2-3 3-3s3 1.2 3 3c0 1.4-1 2.5-3 2.5s-3-1.1-3-2.5Z" />
+      </svg>
+    `;
+  }
+
+  if (
+    name.includes("self check-in") ||
+    name.includes("self checkin") ||
+    name.includes("check-in")
+  ) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8 11.5V8.8A3.8 3.8 0 0 1 11.8 5h.4A3.8 3.8 0 0 1 16 8.8v2.7" />
+        <rect x="6.5" y="11.5" width="11" height="8" rx="2" />
+        <path d="M12 14.5v2.5" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("beach access") || name.includes("beach")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 18.5h12" />
+        <path d="M7 15.5c1.3-2.2 3-3.4 5-3.4s3.7 1.2 5 3.4" />
+        <path d="M12 6v9.5" />
+        <path d="M12 6c-1.6 0-3 .8-4 2.1 1 .8 2.4 1.3 4 1.3" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("bbq") || name.includes("grill")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 11.5h10" />
+        <path d="M8 11.5a4 4 0 1 0 8 0" />
+        <path d="M10 15.5l-1.5 3" />
+        <path d="M14 15.5l1.5 3" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("elevator") || name.includes("lift")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="7" y="5.5" width="10" height="13" rx="1.8" />
+        <path d="M10 9l2-2 2 2" />
+        <path d="M10 15l2 2 2-2" />
+      </svg>
+    `;
+  }
+
+  if (name.includes("accessible")) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="6.8" r="1.2" />
+        <path d="M12 8.5v4.2" />
+        <path d="M12 10.5h3" />
+        <path d="M12 12.7l-2 2" />
+        <path d="M10.8 19a3.8 3.8 0 1 1 4.9-5.7" />
+      </svg>
+    `;
+  }
+
+  if (
+    name.includes("ev charger") ||
+    name.includes("charger") ||
+    name.includes("electric vehicle")
+  ) {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="7" y="5.5" width="7" height="13" rx="2" />
+        <path d="M10.5 9.2l-1.2 2h1.6l-1 2" />
+        <path d="M16 9.5h1.5v5H16" />
+        <path d="M17.5 14.5l1.5 2" />
       </svg>
     `;
   }

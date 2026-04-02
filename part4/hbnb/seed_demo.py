@@ -6,10 +6,6 @@ app = create_app()
 
 def seed_demo_data():
     with app.app_context():
-        from app.models.user import User
-        from app.models.place import Place
-        from app.models.review import Review
-        from app.models.amenity import Amenity
         from app.models.place_image import PlaceImage
 
         db.drop_all()
@@ -107,13 +103,28 @@ def seed_demo_data():
             "WiFi",
             "Parking",
             "Sea View",
+            "City View",
+            "Mountain View",
             "Spa",
+            "Hot Tub",
             "Fireplace",
             "Workspace",
             "Garden",
             "Balcony",
             "Breakfast",
             "Air Conditioning",
+            "Heating",
+            "Kitchen",
+            "Washer",
+            "TV",
+            "Pool",
+            "Pet Friendly",
+            "Self Check-in",
+            "Beach Access",
+            "BBQ",
+            "Elevator",
+            "Accessible",
+            "EV Charger",
         ]
 
         amenities = {}
@@ -132,7 +143,17 @@ def seed_demo_data():
                 "latitude": 48.1113,
                 "longitude": -1.6800,
                 "owner": "micael",
-                "amenities": ["WiFi", "Workspace", "Air Conditioning", "Balcony"],
+                "amenities": [
+                    "WiFi",
+                    "Workspace",
+                    "Air Conditioning",
+                    "Heating",
+                    "Kitchen",
+                    "TV",
+                    "Washer",
+                    "Balcony",
+                    "Self Check-in",
+                ],
             },
             {
                 "key": "saint_malo_studio",
@@ -142,7 +163,15 @@ def seed_demo_data():
                 "latitude": 48.6493,
                 "longitude": -2.0257,
                 "owner": "brice",
-                "amenities": ["WiFi", "Breakfast", "Workspace"],
+                "amenities": [
+                    "WiFi",
+                    "Breakfast",
+                    "Kitchen",
+                    "TV",
+                    "Heating",
+                    "Beach Access",
+                    "Self Check-in",
+                ],
             },
             {
                 "key": "cancale_house",
@@ -152,7 +181,17 @@ def seed_demo_data():
                 "latitude": 48.6740,
                 "longitude": -1.8529,
                 "owner": "sebastien",
-                "amenities": ["WiFi", "Parking", "Sea View", "Garden", "Fireplace"],
+                "amenities": [
+                    "WiFi",
+                    "Parking",
+                    "Sea View",
+                    "Garden",
+                    "Fireplace",
+                    "Kitchen",
+                    "TV",
+                    "BBQ",
+                    "Pet Friendly",
+                ],
             },
             {
                 "key": "vannes_apartment",
@@ -162,7 +201,18 @@ def seed_demo_data():
                 "latitude": 47.6582,
                 "longitude": -2.7608,
                 "owner": "patricia",
-                "amenities": ["WiFi", "Workspace", "Balcony", "Air Conditioning"],
+                "amenities": [
+                    "WiFi",
+                    "Workspace",
+                    "Balcony",
+                    "Air Conditioning",
+                    "Heating",
+                    "Kitchen",
+                    "TV",
+                    "Washer",
+                    "City View",
+                    "Elevator",
+                ],
             },
             {
                 "key": "broceliande_cabin",
@@ -172,7 +222,17 @@ def seed_demo_data():
                 "latitude": 48.0108,
                 "longitude": -2.2017,
                 "owner": "melissandre",
-                "amenities": ["WiFi", "Garden", "Fireplace", "Breakfast"],
+                "amenities": [
+                    "WiFi",
+                    "Garden",
+                    "Fireplace",
+                    "Breakfast",
+                    "Heating",
+                    "Kitchen",
+                    "Pet Friendly",
+                    "Mountain View",
+                    "BBQ",
+                ],
             },
             {
                 "key": "dinard_villa",
@@ -182,7 +242,18 @@ def seed_demo_data():
                 "latitude": 48.6329,
                 "longitude": -2.0625,
                 "owner": "Léa",
-                "amenities": ["WiFi", "Parking", "Spa", "Garden", "Air Conditioning"],
+                "amenities": [
+                    "WiFi",
+                    "Parking",
+                    "Spa",
+                    "Hot Tub",
+                    "Garden",
+                    "Pool",
+                    "Air Conditioning",
+                    "Kitchen",
+                    "TV",
+                    "Beach Access",
+                ],
             },
             {
                 "key": "chambord_suite",
@@ -192,7 +263,17 @@ def seed_demo_data():
                 "latitude": 47.6160,
                 "longitude": 1.5160,
                 "owner": "antoine",
-                "amenities": ["WiFi", "Breakfast", "Spa", "Balcony", "Air Conditioning"],
+                "amenities": [
+                    "WiFi",
+                    "Breakfast",
+                    "Spa",
+                    "Balcony",
+                    "Air Conditioning",
+                    "Heating",
+                    "TV",
+                    "Elevator",
+                    "Accessible",
+                ],
             },
             {
                 "key": "betton_room",
@@ -202,7 +283,15 @@ def seed_demo_data():
                 "latitude": 48.1818,
                 "longitude": -1.6415,
                 "owner": "benjy",
-                "amenities": ["WiFi", "Workspace", "Parking"],
+                "amenities": [
+                    "WiFi",
+                    "Workspace",
+                    "Parking",
+                    "Heating",
+                    "TV",
+                    "Self Check-in",
+                    "EV Charger",
+                ],
             },
         ]
 
