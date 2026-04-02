@@ -363,10 +363,10 @@ def seed_demo_data():
         db.session.commit()
 
         # -------------------------
-        # Reviews (3 per place)
+        # Reviews (unique user/place, no self-review, varied averages)
         # -------------------------
         reviews_data = [
-            # Rennes City Center Loft (owner: micael)
+            # Rennes City Center Loft (owner: micael) -> avg 4.1 / 5
             {
                 "user": "antoine",
                 "place": "rennes_loft",
@@ -385,8 +385,32 @@ def seed_demo_data():
                 "rating": 5,
                 "text": "Beautiful loft in the city center, spotless and easy to access. I would definitely stay here again.",
             },
+            {
+                "user": "sebastien",
+                "place": "rennes_loft",
+                "rating": 4,
+                "text": "Very good stay overall. The loft is well designed and pleasant, with easy access to central Rennes.",
+            },
+            {
+                "user": "benjy",
+                "place": "rennes_loft",
+                "rating": 2,
+                "text": "The place looks good, but I had trouble sleeping because of outside noise and I expected a calmer stay for the price.",
+            },
+            {
+                "user": "melissandre",
+                "place": "rennes_loft",
+                "rating": 4,
+                "text": "Nice loft with real character and a comfortable layout. Good choice for a city break.",
+            },
+            {
+                "user": "brice",
+                "place": "rennes_loft",
+                "rating": 5,
+                "text": "Excellent balance of style, comfort, and location. One of the most polished stays in Rennes.",
+            },
 
-            # Cozy Saint-Malo Studio (owner: brice)
+            # Cozy Saint-Malo Studio (owner: brice) -> avg 3.7 / 5
             {
                 "user": "antoine",
                 "place": "saint_malo_studio",
@@ -405,8 +429,32 @@ def seed_demo_data():
                 "rating": 4,
                 "text": "Very practical and pleasant place. Good value for money and a warm atmosphere.",
             },
+            {
+                "user": "Léa",
+                "place": "saint_malo_studio",
+                "rating": 4,
+                "text": "Charming little studio, well placed and easy to enjoy for a weekend near the sea.",
+            },
+            {
+                "user": "sebastien",
+                "place": "saint_malo_studio",
+                "rating": 3,
+                "text": "Good location and useful for a short trip, but the space felt a bit limited once luggage was inside.",
+            },
+            {
+                "user": "patricia",
+                "place": "saint_malo_studio",
+                "rating": 2,
+                "text": "Correct for one night, but I found the studio too cramped and less comfortable than expected for a relaxing stay.",
+            },
+            {
+                "user": "micael",
+                "place": "saint_malo_studio",
+                "rating": 4,
+                "text": "Pleasant and well located studio. Simple, but it does the job well for a coastal weekend.",
+            },
 
-            # Sea View House in Cancale (owner: sebastien)
+            # Sea View House in Cancale (owner: sebastien) -> avg 4.3 / 5
             {
                 "user": "patricia",
                 "place": "cancale_house",
@@ -425,8 +473,32 @@ def seed_demo_data():
                 "rating": 5,
                 "text": "A truly relaxing house with an amazing view. It felt refined, spacious, and very comfortable.",
             },
+            {
+                "user": "antoine",
+                "place": "cancale_house",
+                "rating": 5,
+                "text": "Excellent family house with a strong premium feel. The sea view gives the whole stay real value.",
+            },
+            {
+                "user": "benjy",
+                "place": "cancale_house",
+                "rating": 4,
+                "text": "Very pleasant and spacious property. Great atmosphere and a strong sense of calm throughout the stay.",
+            },
+            {
+                "user": "melissandre",
+                "place": "cancale_house",
+                "rating": 2,
+                "text": "The view is beautiful, but I expected a more modern interior and found some parts of the house less cozy than shown.",
+            },
+            {
+                "user": "brice",
+                "place": "cancale_house",
+                "rating": 5,
+                "text": "Large, peaceful, and memorable. Excellent choice for a refined stay by the coast.",
+            },
 
-            # Chic Apartment in Vannes (owner: patricia)
+            # Chic Apartment in Vannes (owner: patricia) -> avg 4.6 / 5
             {
                 "user": "brice",
                 "place": "vannes_apartment",
@@ -445,8 +517,32 @@ def seed_demo_data():
                 "rating": 4,
                 "text": "Clean, bright, and well located. The decor gives the place a refined and welcoming character.",
             },
+            {
+                "user": "antoine",
+                "place": "vannes_apartment",
+                "rating": 5,
+                "text": "Elegant apartment, very clean, and perfectly suited for a comfortable city stay.",
+            },
+            {
+                "user": "Léa",
+                "place": "vannes_apartment",
+                "rating": 5,
+                "text": "Beautiful decor, calm atmosphere, and a very polished overall experience.",
+            },
+            {
+                "user": "sebastien",
+                "place": "vannes_apartment",
+                "rating": 5,
+                "text": "Bright, stylish, and well located. It felt premium from arrival to departure.",
+            },
+            {
+                "user": "melissandre",
+                "place": "vannes_apartment",
+                "rating": 4,
+                "text": "Very pleasant stay with a clean and modern feel. Easy place to recommend.",
+            },
 
-            # Nature Cabin in Broceliande (owner: melissandre)
+            # Nature Cabin in Broceliande (owner: melissandre) -> avg 4.0 / 5
             {
                 "user": "sebastien",
                 "place": "broceliande_cabin",
@@ -465,8 +561,32 @@ def seed_demo_data():
                 "rating": 5,
                 "text": "Excellent experience in the forest. Quiet, original, and perfect for a restful weekend.",
             },
+            {
+                "user": "patricia",
+                "place": "broceliande_cabin",
+                "rating": 4,
+                "text": "Lovely natural escape with a cozy interior. A very good choice for slowing down.",
+            },
+            {
+                "user": "benjy",
+                "place": "broceliande_cabin",
+                "rating": 4,
+                "text": "Peaceful setting and authentic cabin feel. Very pleasant if you want calm and nature.",
+            },
+            {
+                "user": "micael",
+                "place": "broceliande_cabin",
+                "rating": 1,
+                "text": "The location is beautiful, but the isolation was too strong for me and the rustic setup felt less comfortable than expected.",
+            },
+            {
+                "user": "brice",
+                "place": "broceliande_cabin",
+                "rating": 5,
+                "text": "A memorable cabin with real charm. Great atmosphere for a quiet weekend away.",
+            },
 
-            # Dinard Spa Villa (owner: Léa)
+            # Dinard Spa Villa (owner: Léa) -> avg 4.7 / 5
             {
                 "user": "antoine",
                 "place": "dinard_villa",
@@ -485,8 +605,32 @@ def seed_demo_data():
                 "rating": 4,
                 "text": "Very beautiful villa with excellent amenities. The spa and overall ambiance were top quality.",
             },
+            {
+                "user": "sebastien",
+                "place": "dinard_villa",
+                "rating": 5,
+                "text": "Outstanding villa with a premium feel throughout. Spacious, relaxing, and very well maintained.",
+            },
+            {
+                "user": "benjy",
+                "place": "dinard_villa",
+                "rating": 5,
+                "text": "Top-level comfort and excellent amenities. The spa area is a real strength of this property.",
+            },
+            {
+                "user": "micael",
+                "place": "dinard_villa",
+                "rating": 5,
+                "text": "A luxurious and polished stay with excellent comfort. Everything felt high-end and carefully prepared.",
+            },
+            {
+                "user": "melissandre",
+                "place": "dinard_villa",
+                "rating": 4,
+                "text": "Very refined villa with a relaxing atmosphere. A little formal in style for me, but clearly high quality.",
+            },
 
-            # Royal Suite at Chambord Castle (owner: antoine)
+            # Royal Suite at Chambord Castle (owner: antoine) -> avg 4.9 / 5
             {
                 "user": "sebastien",
                 "place": "chambord_suite",
@@ -505,8 +649,32 @@ def seed_demo_data():
                 "rating": 5,
                 "text": "Refined, spacious, and memorable. Everything about this suite felt exclusive and luxurious.",
             },
+            {
+                "user": "Léa",
+                "place": "chambord_suite",
+                "rating": 5,
+                "text": "Magnificent suite with a truly exceptional atmosphere. It felt elegant, memorable, and unique.",
+            },
+            {
+                "user": "benjy",
+                "place": "chambord_suite",
+                "rating": 5,
+                "text": "Very impressive stay. The place combines luxury, comfort, and a remarkable setting.",
+            },
+            {
+                "user": "melissandre",
+                "place": "chambord_suite",
+                "rating": 5,
+                "text": "A refined and unforgettable experience. The suite feels exclusive without losing comfort.",
+            },
+            {
+                "user": "brice",
+                "place": "chambord_suite",
+                "rating": 5,
+                "text": "Exceptional property with a real prestige feel. Easily one of the most memorable stays in the dataset.",
+            },
 
-            # Betton Room (owner: benjy)
+            # Betton Room (owner: benjy) -> avg 3.4 / 5
             {
                 "user": "Léa",
                 "place": "betton_room",
@@ -524,6 +692,30 @@ def seed_demo_data():
                 "place": "betton_room",
                 "rating": 4,
                 "text": "Clean and functional room with everything needed for a quick stop near Rennes.",
+            },
+            {
+                "user": "antoine",
+                "place": "betton_room",
+                "rating": 4,
+                "text": "Simple but clean and efficient. Good option for a short stay close to Rennes.",
+            },
+            {
+                "user": "sebastien",
+                "place": "betton_room",
+                "rating": 4,
+                "text": "Functional room with the basics covered. A practical and honest budget-friendly stay.",
+            },
+            {
+                "user": "patricia",
+                "place": "betton_room",
+                "rating": 2,
+                "text": "Useful in a pinch, but the room felt too basic for me and lacked the comfort I wanted, even at this price level.",
+            },
+            {
+                "user": "micael",
+                "place": "betton_room",
+                "rating": 3,
+                "text": "Correct for one or two nights. Nothing special, but generally functional and easy to reach.",
             },
         ]
 
