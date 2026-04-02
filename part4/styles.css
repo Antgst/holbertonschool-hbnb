@@ -60,7 +60,12 @@
 
 body {
   position: relative;
-  background: linear-gradient(180deg, #fbf8f3 0%, var(--background) 38%, #f3eee7 100%);
+  background: linear-gradient(
+    180deg,
+    #fbf8f3 0%,
+    var(--background) 38%,
+    #f3eee7 100%
+  );
   color: var(--text);
   min-height: 100vh;
   display: flex;
@@ -76,12 +81,12 @@ body::before {
   background:
     linear-gradient(
       180deg,
-      rgba(251, 248, 243, 0.9) 0%,
-      rgba(245, 239, 231, 0.82) 42%,
-      rgba(243, 238, 231, 0.9) 100%
+      rgba(251, 248, 243, 0.68) 0%,
+      rgba(245, 239, 231, 0.54) 42%,
+      rgba(243, 238, 231, 0.68) 100%
     ),
     url("hbnb/images/backgrounds/site-bg.jpg") center / cover no-repeat;
-  filter: blur(2px) saturate(0.9);
+  filter: blur(2px) saturate(0.95);
   transform: scale(1.02);
 }
 
@@ -91,8 +96,16 @@ body::after {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(circle at top left, rgba(201, 169, 110, 0.1), transparent 28%),
-    radial-gradient(circle at top right, rgba(92, 31, 36, 0.08), transparent 24%);
+    radial-gradient(
+      circle at top left,
+      rgba(201, 169, 110, 0.1),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(92, 31, 36, 0.08),
+      transparent 24%
+    );
   pointer-events: none;
 }
 
@@ -1756,7 +1769,7 @@ nav a:focus-visible,
     font-size: 2.2rem;
   }
 
-    .place-heading-top {
+  .place-heading-top {
     grid-template-columns: 1fr;
     gap: 0.85rem;
   }
@@ -1901,18 +1914,18 @@ nav a:focus-visible,
       margin-bottom: 1.1rem;
     }
 
-      .place-heading-top {
-    grid-template-columns: 1fr;
-    gap: 0.8rem;
-  }
+    .place-heading-top {
+      grid-template-columns: 1fr;
+      gap: 0.8rem;
+    }
 
-  .place-heading-side {
-    justify-content: flex-start;
-  }
+    .place-heading-side {
+      justify-content: flex-start;
+    }
 
-  .place-price-badge {
-    width: fit-content;
-  }
+    .place-price-badge {
+      width: fit-content;
+    }
 
     .place-info,
     .reviews-section {
