@@ -116,6 +116,7 @@ function setupRevealAnimations() {
     ...document.querySelectorAll(".place-summary"),
     ...document.querySelectorAll(".add-review"),
     ...document.querySelectorAll(".host-card"),
+    ...document.querySelectorAll(".host-preview-card"),
     ...document.querySelectorAll(".reviews-section"),
     ...document.querySelectorAll(".review-form"),
     ...document.querySelectorAll(".review-page-intro"),
@@ -963,6 +964,334 @@ function getHostImage(place) {
   return hostImages[hostName] || null;
 }
 
+function getPlaceDisplayTitle(place) {
+  return place?.title || place?.name || "Selected stay";
+}
+
+function buildReviewsByPlaceMap(reviews) {
+  const reviewsByPlace = new Map();
+
+  if (!Array.isArray(reviews)) {
+    return reviewsByPlace;
+  }
+
+  for (const review of reviews) {
+    if (!review || !review.place_id) {
+      continue;
+    }
+
+    if (!reviewsByPlace.has(review.place_id)) {
+      reviewsByPlace.set(review.place_id, []);
+    }
+
+    reviewsByPlace.get(review.place_id).push(review);
+  }
+
+  return reviewsByPlace;
+}
+
+function buildHostsDirectory(places, reviews) {
+  if (!Array.isArray(places) || places.length === 0) {
+    return [];
+  }
+
+  const reviewsByPlace = buildReviewsByPlaceMap(reviews);
+  const hostsById = new Map();
+
+  for (const place of places) {
+    if (!place || !place.owner || !place.owner.id) {
+      continue;
+    }
+
+    const ownerId = place.owner.id;
+
+    if (!hostsById.has(ownerId)) {
+      hostsById.set(ownerId, {
+        id: ownerId,
+        name: getHostName(place),
+        image: getHostImage(place),
+        initials: getHostInitials(place),
+        places: [],
+        reviews: [],
+      });
+    }
+
+    const host = hostsById.get(ownerId);
+    host.places.push(place);
+
+    const placeReviews = reviewsByPlace.get(place.id) || [];
+
+    if (placeReviews.length > 0) {
+      host.reviews.push(...placeReviews);
+    }
+  }
+
+  return Array.from(hostsById.values())
+    .map((host) => {
+      const leadPlace =
+        host.places.slice().sort((firstPlace, secondPlace) => {
+          const firstCount = (reviewsByPlace.get(firstPlace.id) || []).length;
+          const secondCount = (reviewsByPlace.get(secondPlace.id) || []).length;
+          return secondCount - firstCount;
+        })[0] || host.places[0];
+
+      const reviewSummary = getReviewSummary(host.reviews);
+
+      return {
+        id: host.id,
+        name: host.name,
+        image: host.image,
+        initials: host.initials,
+        places: host.places,
+        leadPlaceTitle: getPlaceDisplayTitle(leadPlace),
+        listingCount: host.places.length,
+        reviewCount: reviewSummary ? reviewSummary.count : 0,
+        reviewSummary,
+      };
+    })
+    .sort((firstHost, secondHost) =>
+      firstHost.name.localeCompare(secondHost.name, "fr", {
+        sensitivity: "base",
+      }),
+    );
+}
+
+function renderHostPreviewMedia(host) {
+  const hostName = escapeHtml(host.name);
+  const initials = escapeHtml(host.initials);
+
+  if (host.image) {
+    return `
+      <img
+        src="${host.image}"
+        alt="Portrait of ${hostName}"
+        class="host-preview-photo-inner"
+        loading="lazy"
+      >
+    `;
+  }
+
+  return `
+    <div class="host-preview-photo-inner" aria-hidden="true">
+      <span>${initials}</span>
+    </div>
+  `;
+}
+
+function renderHostPreviewCard(host) {
+  const hostName = escapeHtml(host.name);
+  const leadPlaceTitle = escapeHtml(host.leadPlaceTitle);
+  const listingLabel = `${host.listingCount} stay${host.listingCount > 1 ? "s" : ""}`;
+  const reviewLabel = `${host.reviewCount} review${host.reviewCount > 1 ? "s" : ""}`;
+  const ratingLabel = host.reviewSummary
+    ? `★ ${host.reviewSummary.averageLabel}`
+    : "New";
+
+  return `
+    <article class="host-preview-card">
+      <div class="host-preview-photo">
+        ${renderHostPreviewMedia(host)}
+      </div>
+
+      <div class="host-preview-body">
+        <div class="host-preview-top">
+          <h3>${hostName}</h3>
+          <span class="host-preview-rating">${ratingLabel}</span>
+        </div>
+
+        <p class="host-preview-location">${leadPlaceTitle}</p>
+
+        <div class="host-preview-stats">
+          <span>${listingLabel}</span>
+          <span>${reviewLabel}</span>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function displayHostsDirectory(hosts) {
+  const hostsList = document.getElementById("hosts-list");
+
+  if (!hostsList) {
+    return;
+  }
+
+  if (!Array.isArray(hosts) || hosts.length === 0) {
+    hostsList.innerHTML = renderStateCard(
+      "No hosts available",
+      "No hosts could be generated from the current platform data.",
+    );
+    setupRevealAnimations();
+    return;
+  }
+
+  hostsList.innerHTML = hosts
+    .map((host) => renderHostPreviewCard(host))
+    .join("");
+  setupRevealAnimations();
+}
+
+async function fetchHostsDirectory(token) {
+  const hostsList = document.getElementById("hosts-list");
+
+  if (!hostsList) {
+    return;
+  }
+
+  try {
+    const [placesResponse, reviewsResponse] = await Promise.all([
+      fetch(`${API_BASE_URL}/places/`, {
+        headers: buildAuthHeaders(token),
+      }),
+      fetch(`${API_BASE_URL}/reviews/`, {
+        headers: buildAuthHeaders(token),
+      }),
+    ]);
+
+    if (!placesResponse.ok || !reviewsResponse.ok) {
+      throw new Error("Failed to fetch hosts directory data");
+    }
+
+    const [places, reviews] = await Promise.all([
+      parseJsonSafely(placesResponse),
+      parseJsonSafely(reviewsResponse),
+    ]);
+
+    const hosts = buildHostsDirectory(
+      Array.isArray(places) ? places : [],
+      Array.isArray(reviews) ? reviews : [],
+    );
+
+    displayHostsDirectory(hosts);
+  } catch (error) {
+    hostsList.innerHTML = renderStateCard(
+      "Unable to load hosts",
+      "The hosts directory could not be loaded right now.",
+    );
+
+    throw error;
+  }
+}
+
+function renderHostPreviewMedia(host) {
+  const hostName = escapeHtml(host.name);
+  const initials = escapeHtml(host.initials);
+
+  if (host.image) {
+    return `
+      <img
+        src="${host.image}"
+        alt="Portrait of ${hostName}"
+        class="host-preview-photo-inner"
+        loading="lazy"
+      >
+    `;
+  }
+
+  return `
+    <div class="host-preview-photo-inner" aria-hidden="true">
+      <span>${initials}</span>
+    </div>
+  `;
+}
+
+function renderHostPreviewCard(host) {
+  const hostName = escapeHtml(host.name);
+  const leadPlaceTitle = escapeHtml(host.leadPlaceTitle);
+  const listingLabel = `${host.listingCount} stay${host.listingCount > 1 ? "s" : ""}`;
+  const reviewLabel = `${host.reviewCount} review${host.reviewCount > 1 ? "s" : ""}`;
+  const ratingLabel = host.reviewSummary
+    ? `★ ${host.reviewSummary.averageLabel}`
+    : "New";
+
+  return `
+    <article class="host-preview-card">
+      <div class="host-preview-photo">
+        ${renderHostPreviewMedia(host)}
+      </div>
+
+      <div class="host-preview-body">
+        <div class="host-preview-top">
+          <h3>${hostName}</h3>
+          <span class="host-preview-rating">${ratingLabel}</span>
+        </div>
+
+        <p class="host-preview-location">${leadPlaceTitle}</p>
+
+        <div class="host-preview-stats">
+          <span>${listingLabel}</span>
+          <span>${reviewLabel}</span>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function displayHostsDirectory(hosts) {
+  const hostsList = document.getElementById("hosts-list");
+
+  if (!hostsList) {
+    return;
+  }
+
+  if (!Array.isArray(hosts) || hosts.length === 0) {
+    hostsList.innerHTML = renderStateCard(
+      "No hosts available",
+      "No hosts could be generated from the current platform data.",
+    );
+    setupRevealAnimations();
+    return;
+  }
+
+  hostsList.innerHTML = hosts
+    .map((host) => renderHostPreviewCard(host))
+    .join("");
+  setupRevealAnimations();
+}
+
+async function fetchHostsDirectory(token) {
+  const hostsList = document.getElementById("hosts-list");
+
+  if (!hostsList) {
+    return;
+  }
+
+  try {
+    const [placesResponse, reviewsResponse] = await Promise.all([
+      fetch(`${API_BASE_URL}/places/`, {
+        headers: buildAuthHeaders(token),
+      }),
+      fetch(`${API_BASE_URL}/reviews/`, {
+        headers: buildAuthHeaders(token),
+      }),
+    ]);
+
+    if (!placesResponse.ok || !reviewsResponse.ok) {
+      throw new Error("Failed to fetch hosts directory data");
+    }
+
+    const [places, reviews] = await Promise.all([
+      parseJsonSafely(placesResponse),
+      parseJsonSafely(reviewsResponse),
+    ]);
+
+    const hosts = buildHostsDirectory(
+      Array.isArray(places) ? places : [],
+      Array.isArray(reviews) ? reviews : [],
+    );
+
+    displayHostsDirectory(hosts);
+  } catch (error) {
+    hostsList.innerHTML = renderStateCard(
+      "Unable to load hosts",
+      "The hosts directory could not be loaded right now.",
+    );
+
+    throw error;
+  }
+}
+
 function renderHostCard(place) {
   const hostCard = document.getElementById("host-card");
 
@@ -1157,6 +1486,122 @@ function displayPlaceSummary(place) {
     <p><strong>Host:</strong> ${escapeHtml(getHostName(place))}</p>
     <p><strong>Price:</strong> €${price} per night</p>
   `;
+}
+
+function renderHostPreviewMedia(host) {
+  const hostName = escapeHtml(host.name);
+  const initials = escapeHtml(host.initials);
+
+  if (host.image) {
+    return `
+      <img
+        src="${host.image}"
+        alt="Portrait of ${hostName}"
+        class="host-preview-photo-inner"
+        loading="lazy"
+      >
+    `;
+  }
+
+  return `
+    <div class="host-preview-photo-inner" aria-hidden="true">
+      <span>${initials}</span>
+    </div>
+  `;
+}
+
+function renderHostPreviewCard(host) {
+  const hostName = escapeHtml(host.name);
+  const leadPlaceTitle = escapeHtml(host.leadPlaceTitle);
+  const listingLabel = `${host.listingCount} stay${host.listingCount > 1 ? "s" : ""}`;
+  const reviewLabel = `${host.reviewCount} review${host.reviewCount > 1 ? "s" : ""}`;
+  const ratingLabel = host.reviewSummary
+    ? `★ ${host.reviewSummary.averageLabel}`
+    : "New";
+
+  return `
+    <article class="host-preview-card">
+      <div class="host-preview-photo">
+        ${renderHostPreviewMedia(host)}
+      </div>
+
+      <div class="host-preview-body">
+        <div class="host-preview-top">
+          <h3>${hostName}</h3>
+          <span class="host-preview-rating">${ratingLabel}</span>
+        </div>
+
+        <p class="host-preview-location">${leadPlaceTitle}</p>
+
+        <div class="host-preview-stats">
+          <span>${listingLabel}</span>
+          <span>${reviewLabel}</span>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function displayHostsDirectory(hosts) {
+  const hostsList = document.getElementById("hosts-list");
+
+  if (!hostsList) {
+    return;
+  }
+
+  if (!Array.isArray(hosts) || hosts.length === 0) {
+    hostsList.innerHTML = renderStateCard(
+      "No hosts available",
+      "No hosts could be generated from the current platform data.",
+    );
+    setupRevealAnimations();
+    return;
+  }
+
+  hostsList.innerHTML = hosts.map((host) => renderHostPreviewCard(host)).join("");
+  setupRevealAnimations();
+}
+
+async function fetchHostsDirectory(token) {
+  const hostsList = document.getElementById("hosts-list");
+
+  if (!hostsList) {
+    return;
+  }
+
+  try {
+    const [placesResponse, reviewsResponse] = await Promise.all([
+      fetch(`${API_BASE_URL}/places/`, {
+        headers: buildAuthHeaders(token),
+      }),
+      fetch(`${API_BASE_URL}/reviews/`, {
+        headers: buildAuthHeaders(token),
+      }),
+    ]);
+
+    if (!placesResponse.ok || !reviewsResponse.ok) {
+      throw new Error("Failed to fetch hosts directory data");
+    }
+
+    const [places, reviews] = await Promise.all([
+      parseJsonSafely(placesResponse),
+      parseJsonSafely(reviewsResponse),
+    ]);
+
+    const hosts = buildHostsDirectory(
+      Array.isArray(places) ? places : [],
+      Array.isArray(reviews) ? reviews : [],
+    );
+
+    displayHostsDirectory(hosts);
+  } catch (error) {
+    hostsList.innerHTML = renderStateCard(
+      "Unable to load hosts",
+      "The hosts directory could not be loaded right now.",
+    );
+
+    throw error;
+  }
 }
 
 function populatePriceFilter() {
@@ -1396,10 +1841,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const placeId = getPlaceIdFromURL();
 
   const placesList = document.getElementById("places-list");
-  const placeDetailsSection = document.getElementById("place-details");
-  const placeSummarySection = document.querySelector(".place-summary");
-  const loginForm = document.getElementById("login-form");
-  const reviewForm = document.getElementById("review-form");
+const hostsList = document.getElementById("hosts-list");
+const placeDetailsSection = document.getElementById("place-details");
+const placeSummarySection = document.querySelector(".place-summary");
+const loginForm = document.getElementById("login-form");
+const reviewForm = document.getElementById("review-form");
 
   if (loginForm && token) {
     window.location.href = "index.html";
@@ -1411,6 +1857,12 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error fetching places:", error);
     });
   }
+
+  if (hostsList) {
+  fetchHostsDirectory(token).catch((error) => {
+    console.error("Error fetching hosts directory:", error);
+  });
+}
 
   if (placeId && (placeDetailsSection || placeSummarySection)) {
     fetchPlaceDetails(token, placeId).catch((error) => {
