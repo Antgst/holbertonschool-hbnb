@@ -1757,16 +1757,20 @@ nav a:focus-visible,
   }
 
   .place-layout {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: 1fr;
+}
 
-  .add-review {
-    position: static;
-  }
+.place-sidebar {
+  position: static;
+}
 
-  .review-container {
-    grid-template-columns: 1fr;
-  }
+.add-review {
+  position: static;
+}
+
+.review-container {
+  grid-template-columns: 1fr;
+}
 
   .auth-page {
     grid-template-columns: 1fr;
