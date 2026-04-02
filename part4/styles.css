@@ -3089,3 +3089,539 @@ nav a:focus-visible,
     }
   }
 }
+
+html {
+  color-scheme: light;
+}
+
+.header-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.header-actions nav {
+  margin-left: 0;
+}
+
+.header-actions nav::before {
+  left: -0.65rem;
+}
+
+.theme-toggle {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.theme-toggle-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-toggle-track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 78px;
+  min-width: 78px;
+  height: 44px;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.05)
+  );
+  border: 1px solid rgba(201, 169, 110, 0.24);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.theme-toggle-icon {
+  position: relative;
+  z-index: 1;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: rgba(255, 247, 232, 0.9);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 248, 233, 0.98),
+    rgba(245, 230, 203, 0.96)
+  );
+  border: 1px solid rgba(201, 169, 110, 0.34);
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  transition:
+    transform var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.theme-toggle:hover .theme-toggle-track,
+.theme-toggle-input:focus-visible + .theme-toggle-track {
+  border-color: rgba(201, 169, 110, 0.44);
+  box-shadow: var(--shadow-interactive);
+}
+
+.theme-toggle-input:focus-visible + .theme-toggle-track {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.theme-toggle-input:checked + .theme-toggle-track .theme-toggle-thumb {
+  transform: translateX(34px);
+}
+
+.theme-toggle-input:checked + .theme-toggle-track .theme-toggle-icon--sun,
+.theme-toggle-input:not(:checked)
+  + .theme-toggle-track
+  .theme-toggle-icon--moon {
+  opacity: 0.52;
+  transform: scale(0.88);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --primary: #e4c58a;
+  --primary-dark: #c6a76d;
+  --accent: #d8b97c;
+  --background: #110f13;
+  --surface: #18141a;
+  --surface-soft: #211b23;
+  --text: #f4ede2;
+  --text-muted: #c5b8a8;
+  --border: #3f353f;
+  --input-border: #4d4150;
+  --border-soft: rgba(216, 185, 124, 0.16);
+  --border-premium: rgba(216, 185, 124, 0.22);
+  --border-premium-strong: rgba(216, 185, 124, 0.36);
+  --shadow-soft: 0 14px 28px rgba(0, 0, 0, 0.34);
+  --shadow: 0 18px 36px rgba(0, 0, 0, 0.42);
+  --shadow-md:
+    0 18px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-lg:
+    0 24px 40px rgba(0, 0, 0, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-interactive:
+    0 22px 38px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-subtle:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 12px 24px rgba(0, 0, 0, 0.3);
+  --focus-ring: 0 0 0 4px rgba(216, 185, 124, 0.18);
+}
+
+html[data-theme="dark"] body {
+  background: linear-gradient(180deg, #0f0d11 0%, #151117 40%, #1a141b 100%);
+}
+
+html[data-theme="dark"] body::before {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8, 8, 11, 0.82) 0%,
+      rgba(12, 10, 14, 0.74) 44%,
+      rgba(16, 12, 18, 0.86) 100%
+    ),
+    url("hbnb/images/backgrounds/site-bg.jpg") center / cover no-repeat;
+  filter: blur(2px) saturate(0.9) brightness(0.42);
+}
+
+html[data-theme="dark"] body::after {
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(216, 185, 124, 0.12),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(120, 78, 86, 0.16),
+      transparent 24%
+    );
+}
+
+html[data-theme="dark"] header {
+  background: linear-gradient(
+    135deg,
+    rgba(17, 15, 20, 0.94) 0%,
+    rgba(24, 18, 28, 0.96) 42%,
+    rgba(11, 10, 14, 0.98) 100%
+  );
+  border-bottom-color: rgba(216, 185, 124, 0.16);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+html[data-theme="dark"] header::before {
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(216, 185, 124, 0.14),
+      transparent 34%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.02) 50%,
+      transparent 100%
+    );
+}
+
+html[data-theme="dark"] .site-footer {
+  color: #f1e6d6;
+  background: linear-gradient(135deg, #0f0d11 0%, #19131b 42%, #0b090c 100%);
+  border-top-color: rgba(216, 185, 124, 0.14);
+  box-shadow:
+    0 -14px 34px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+html[data-theme="dark"] .site-footer::before {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(216, 185, 124, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.02) 50%,
+      transparent 100%
+    );
+}
+
+html[data-theme="dark"] nav a,
+html[data-theme="dark"] .hero-button,
+html[data-theme="dark"] .details-button,
+html[data-theme="dark"] button {
+  background: linear-gradient(
+    135deg,
+    rgba(43, 36, 45, 0.96),
+    rgba(24, 20, 28, 0.96)
+  );
+  border-color: rgba(216, 185, 124, 0.2);
+  color: #f7efe2;
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme="dark"] nav a {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(216, 185, 124, 0.18);
+}
+
+html[data-theme="dark"] nav a[aria-current="page"] {
+  background: linear-gradient(
+    135deg,
+    rgba(216, 185, 124, 0.22),
+    rgba(216, 185, 124, 0.1)
+  );
+  border-color: rgba(216, 185, 124, 0.34);
+  color: #fff4e0;
+}
+
+html[data-theme="dark"] nav a:hover,
+html[data-theme="dark"] nav a:focus-visible,
+html[data-theme="dark"] .hero-button:hover,
+html[data-theme="dark"] .hero-button:focus-visible,
+html[data-theme="dark"] .details-button:hover,
+html[data-theme="dark"] .details-button:focus-visible,
+html[data-theme="dark"] button:hover,
+html[data-theme="dark"] button:focus-visible,
+html[data-theme="dark"] .theme-toggle:hover .theme-toggle-track {
+  border-color: rgba(216, 185, 124, 0.38);
+}
+
+html[data-theme="dark"] .theme-toggle-track {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+  border-color: rgba(216, 185, 124, 0.18);
+}
+
+html[data-theme="dark"] .theme-toggle-thumb {
+  background: linear-gradient(
+    145deg,
+    rgba(226, 197, 139, 0.98),
+    rgba(183, 142, 74, 0.96)
+  );
+  border-color: rgba(255, 239, 214, 0.14);
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.26);
+}
+
+html[data-theme="dark"] .theme-toggle-icon {
+  color: rgba(247, 239, 226, 0.88);
+}
+
+html[data-theme="dark"] .hero {
+  border-color: rgba(216, 185, 124, 0.14);
+  box-shadow:
+    0 24px 46px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+html[data-theme="dark"] .hero::after {
+  background: linear-gradient(
+    90deg,
+    rgba(12, 10, 14, 0.44) 0%,
+    rgba(12, 10, 14, 0.2) 40%,
+    rgba(12, 10, 14, 0.52) 100%
+  );
+}
+
+html[data-theme="dark"] #filter,
+html[data-theme="dark"] #price-filter,
+html[data-theme="dark"] .place-card,
+html[data-theme="dark"] .review-card,
+html[data-theme="dark"] .place-details,
+html[data-theme="dark"] .add-review,
+html[data-theme="dark"] .reviews-section,
+html[data-theme="dark"] .host-card,
+html[data-theme="dark"] .review-summary-card,
+html[data-theme="dark"] .place-summary,
+html[data-theme="dark"] .review-form,
+html[data-theme="dark"] #login-form,
+html[data-theme="dark"] .auth-page-card,
+html[data-theme="dark"] .ui-state,
+html[data-theme="dark"] .review-summary-box,
+html[data-theme="dark"] .review-summary-empty,
+html[data-theme="dark"] .empty-state-card,
+html[data-theme="dark"] .host-preview-card,
+html[data-theme="dark"] .place-info,
+html[data-theme="dark"] .place-amenities-panel,
+html[data-theme="dark"] .amenity-card {
+  background: linear-gradient(
+    180deg,
+    rgba(28, 23, 30, 0.98),
+    rgba(20, 17, 24, 0.98)
+  );
+  border-color: rgba(216, 185, 124, 0.16);
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+html[data-theme="dark"] #filter:hover,
+html[data-theme="dark"] .place-card:hover,
+html[data-theme="dark"] .review-card:hover,
+html[data-theme="dark"] .place-details:hover,
+html[data-theme="dark"] .add-review:hover,
+html[data-theme="dark"] .reviews-section:hover,
+html[data-theme="dark"] .review-summary-card:hover,
+html[data-theme="dark"] .place-summary:hover,
+html[data-theme="dark"] .review-form:hover,
+html[data-theme="dark"] #login-form:hover,
+html[data-theme="dark"] .auth-page-card:hover,
+html[data-theme="dark"] .host-card:hover,
+html[data-theme="dark"] .amenity-card:hover,
+html[data-theme="dark"] .host-preview-card:hover,
+html[data-theme="dark"] .host-preview-card:focus-within {
+  border-color: rgba(216, 185, 124, 0.28);
+  box-shadow:
+    0 22px 38px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme="dark"] .place-card::before,
+html[data-theme="dark"] .review-summary-card::before,
+html[data-theme="dark"] .empty-state-card::before,
+html[data-theme="dark"] .host-preview-card::before {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(216, 185, 124, 0.08),
+      transparent 28%
+    ),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 60%);
+}
+
+html[data-theme="dark"] .place-card-placeholder,
+html[data-theme="dark"] .host-card-avatar,
+html[data-theme="dark"] .host-preview-photo-inner,
+html[data-theme="dark"] .place-card-price,
+html[data-theme="dark"] .place-price-badge {
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"] .place-card-rating,
+html[data-theme="dark"] .host-preview-rating,
+html[data-theme="dark"] .empty-state-badge,
+html[data-theme="dark"] .host-preview-stats span,
+html[data-theme="dark"] .host-card-tags span {
+  background: rgba(216, 185, 124, 0.12);
+  border-color: rgba(216, 185, 124, 0.22);
+  color: #f4ede2;
+}
+
+html[data-theme="dark"] .amenity-icon {
+  background: linear-gradient(
+    135deg,
+    rgba(216, 185, 124, 0.12),
+    rgba(216, 185, 124, 0.05)
+  );
+  border-color: rgba(216, 185, 124, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+html[data-theme="dark"] .place-card-title,
+html[data-theme="dark"] .hosts-preview-heading h2,
+html[data-theme="dark"] .empty-state-card h2,
+html[data-theme="dark"] .footer-brand-name,
+html[data-theme="dark"] .footer-column h2,
+html[data-theme="dark"] .brand-name {
+  color: #f7efe2;
+}
+
+html[data-theme="dark"] .place-details h1 {
+  color: #f7efe2;
+  text-shadow: none;
+}
+
+html[data-theme="dark"] .review-summary-scale,
+html[data-theme="dark"] .review-summary-count,
+html[data-theme="dark"] .footer-brand-text,
+html[data-theme="dark"] .footer-column p,
+html[data-theme="dark"] .footer-column a,
+html[data-theme="dark"] .footer-bottom p {
+  color: #cdbfae;
+}
+
+html[data-theme="dark"] #login-form input,
+html[data-theme="dark"] .review-form textarea,
+html[data-theme="dark"] .review-form select,
+html[data-theme="dark"] #price-filter {
+  background: linear-gradient(
+    180deg,
+    rgba(31, 26, 33, 0.98),
+    rgba(22, 18, 26, 0.98)
+  );
+  border-color: rgba(216, 185, 124, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 6px 14px rgba(0, 0, 0, 0.18);
+  color: #f4ede2;
+}
+
+html[data-theme="dark"] #login-form input::placeholder,
+html[data-theme="dark"] .review-form textarea::placeholder {
+  color: #8f8276;
+}
+
+html[data-theme="dark"] #price-filter,
+html[data-theme="dark"] .review-form select {
+  background-image:
+    linear-gradient(180deg, rgba(31, 26, 33, 0.98), rgba(22, 18, 26, 0.98)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23e4c58a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+
+html[data-theme="dark"] .form-message.is-error {
+  background: linear-gradient(
+    180deg,
+    rgba(151, 85, 88, 0.18),
+    rgba(151, 85, 88, 0.1)
+  );
+  border-color: rgba(213, 140, 142, 0.24);
+  color: #ffd8d9;
+}
+
+html[data-theme="dark"] .form-message.is-success {
+  background: linear-gradient(
+    180deg,
+    rgba(58, 123, 80, 0.2),
+    rgba(58, 123, 80, 0.12)
+  );
+  border-color: rgba(118, 199, 145, 0.24);
+  color: #bde8cb;
+}
+
+html[data-theme="dark"] .form-message.is-loading {
+  background: linear-gradient(
+    180deg,
+    rgba(216, 185, 124, 0.16),
+    rgba(216, 185, 124, 0.1)
+  );
+  border-color: rgba(216, 185, 124, 0.24);
+  color: #f7efe2;
+}
+
+@media (max-width: 920px) {
+  .header-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .header-actions nav {
+    width: auto;
+    flex: 1 1 auto;
+  }
+
+  .theme-toggle {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .header-actions nav {
+    width: 100%;
+  }
+
+  .header-actions nav a,
+  .header-actions .login-button {
+    width: auto;
+  }
+
+  .theme-toggle {
+    align-self: flex-end;
+  }
+}

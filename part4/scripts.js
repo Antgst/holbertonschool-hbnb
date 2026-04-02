@@ -1,5 +1,82 @@
 const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
 const TOKEN_COOKIE_NAME = "token";
+const THEME_STORAGE_KEY = "hbnb-theme";
+const LIGHT_THEME = "light";
+const DARK_THEME = "dark";
+
+function getStoredTheme() {
+  try {
+    return window.localStorage.getItem(THEME_STORAGE_KEY);
+  } catch (error) {
+    return null;
+  }
+}
+
+function getPreferredTheme() {
+  const storedTheme = getStoredTheme();
+
+  if (storedTheme === LIGHT_THEME || storedTheme === DARK_THEME) {
+    return storedTheme;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? DARK_THEME
+    : LIGHT_THEME;
+}
+
+function syncThemeToggleState(theme) {
+  const isDark = theme === DARK_THEME;
+
+  for (const toggle of document.querySelectorAll(".theme-toggle-input")) {
+    toggle.checked = isDark;
+    toggle.setAttribute("aria-checked", String(isDark));
+  }
+}
+
+function applyTheme(theme, persist = true) {
+  const resolvedTheme = theme === DARK_THEME ? DARK_THEME : LIGHT_THEME;
+
+  document.documentElement.dataset.theme = resolvedTheme;
+  document.documentElement.style.colorScheme = resolvedTheme;
+  syncThemeToggleState(resolvedTheme);
+
+  if (!persist) {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, resolvedTheme);
+  } catch (error) {
+    console.error("Unable to save theme preference:", error);
+  }
+}
+
+function initializeThemeToggle() {
+  const preferredTheme = getPreferredTheme();
+  applyTheme(preferredTheme, false);
+
+  for (const toggle of document.querySelectorAll(".theme-toggle-input")) {
+    toggle.addEventListener("change", (event) => {
+      const nextTheme = event.currentTarget.checked ? DARK_THEME : LIGHT_THEME;
+      applyTheme(nextTheme);
+    });
+  }
+
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const handleSystemThemeChange = (event) => {
+    if (getStoredTheme()) {
+      return;
+    }
+
+    applyTheme(event.matches ? DARK_THEME : LIGHT_THEME, false);
+  };
+
+  if (typeof mediaQuery.addEventListener === "function") {
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
+  } else if (typeof mediaQuery.addListener === "function") {
+    mediaQuery.addListener(handleSystemThemeChange);
+  }
+}
 
 function getCookie(name) {
   const cookies = document.cookie.split(";");
@@ -1835,6 +1912,7 @@ async function handleReviewSubmit(event, token, placeId, reviewForm) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  initializeThemeToggle();
   populatePriceFilter();
   setupPriceFilter();
 
