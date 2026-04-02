@@ -34,12 +34,72 @@ function buildAuthHeaders(token) {
   return headers;
 }
 
+async function parseJsonSafely(response) {
+  try {
+    return await response.json();
+  } catch (error) {
+    return {};
+  }
+}
+
+function resetFormMessage(messageElement) {
+  if (!messageElement) {
+    return;
+  }
+
+  messageElement.textContent = "";
+  messageElement.className = "form-message";
+}
+
+function setFormMessage(messageElement, text, type) {
+  if (!messageElement) {
+    return;
+  }
+
+  messageElement.textContent = text;
+  messageElement.className = "form-message is-visible";
+
+  if (type) {
+    messageElement.classList.add(`is-${type}`);
+  }
+}
+
+function setButtonLoading(button, isLoading, loadingText) {
+  if (!button) {
+    return;
+  }
+
+  if (!button.dataset.defaultLabel) {
+    button.dataset.defaultLabel = button.textContent.trim();
+  }
+
+  if (isLoading) {
+    button.disabled = true;
+    button.classList.add("is-loading");
+    button.textContent = loadingText;
+    return;
+  }
+
+  button.disabled = false;
+  button.classList.remove("is-loading");
+  button.textContent = button.dataset.defaultLabel;
+}
+
+function renderStateCard(title, text, compact = false) {
+  return `
+    <div class="ui-state${compact ? " ui-state--compact" : ""}">
+      <h3 class="ui-state-title">${title}</h3>
+      <p class="ui-state-text">${text}</p>
+    </div>
+  `;
+}
+
 function checkAuthentication() {
   const token = getAuthToken();
   const loginLink = document.getElementById("login-link");
 
   if (loginLink) {
-    loginLink.style.display = token ? "none" : "block";
+    loginLink.style.display = token ? "none" : "";
   }
 
   return token;
@@ -57,49 +117,113 @@ function requireAuthentication() {
 }
 
 async function fetchPlaces(token) {
-  const response = await fetch(`${API_BASE_URL}/places/`, {
-    headers: buildAuthHeaders(token),
-  });
+  const placesList = document.getElementById("places-list");
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch places");
+  try {
+    const response = await fetch(`${API_BASE_URL}/places/`, {
+      headers: buildAuthHeaders(token),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch places");
+    }
+
+    const places = await response.json();
+    displayPlaces(Array.isArray(places) ? places : []);
+  } catch (error) {
+    if (placesList) {
+      placesList.innerHTML = renderStateCard(
+        "Unable to load places",
+        "Please try again later or refresh the page.",
+      );
+    }
+
+    throw error;
   }
-
-  const places = await response.json();
-  displayPlaces(places);
 }
 
 async function fetchPlaceDetails(token, placeId) {
+  const placeDetailsSection = document.getElementById("place-details");
+  const reviewsSection = document.getElementById("reviews");
+  const placeSummarySection = document.querySelector(".place-summary");
+
   if (!placeId) {
     throw new Error("Place ID not found in URL");
   }
 
-  const response = await fetch(`${API_BASE_URL}/places/${placeId}`, {
-    headers: buildAuthHeaders(token),
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/places/${placeId}`, {
+      headers: buildAuthHeaders(token),
+    });
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch place details");
+    if (!response.ok) {
+      throw new Error("Failed to fetch place details");
+    }
+
+    const place = await response.json();
+
+    displayPlaceDetails(place);
+    displayPlaceSummary(place);
+    await fetchPlaceReviews(token, placeId);
+  } catch (error) {
+    if (placeDetailsSection) {
+      placeDetailsSection.innerHTML = renderStateCard(
+        "Unable to load this stay",
+        "The place details could not be loaded right now.",
+      );
+    }
+
+    if (reviewsSection) {
+      reviewsSection.innerHTML = renderStateCard(
+        "Reviews unavailable",
+        "Guest feedback could not be loaded at the moment.",
+        true,
+      );
+    }
+
+    if (placeSummarySection) {
+      placeSummarySection.innerHTML = renderStateCard(
+        "Summary unavailable",
+        "The place summary could not be loaded.",
+        true,
+      );
+    }
+
+    throw error;
   }
-
-  const place = await response.json();
-
-  displayPlaceDetails(place);
-  await fetchPlaceReviews(token, placeId);
-  displayPlaceSummary(place);
 }
 
 async function fetchPlaceReviews(token, placeId) {
-  const response = await fetch(`${API_BASE_URL}/places/${placeId}/reviews`, {
-    headers: buildAuthHeaders(token),
-  });
+  const reviewsSection = document.getElementById("reviews");
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch place reviews");
+  try {
+    const response = await fetch(`${API_BASE_URL}/places/${placeId}/reviews`, {
+      headers: buildAuthHeaders(token),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch place reviews");
+    }
+
+    const reviews = await response.json();
+    displayPlaceReviews(Array.isArray(reviews) ? reviews : []);
+  } catch (error) {
+    if (reviewsSection) {
+      reviewsSection.innerHTML = `
+        <div class="reviews-section-header">
+          <p class="section-kicker">Guest feedback</p>
+          <h2>Reviews</h2>
+        </div>
+        ${renderStateCard(
+        "Reviews unavailable",
+        "Guest feedback could not be loaded at the moment.",
+        true,
+      )}
+      `;
+    }
+
+    throw error;
   }
-
-  const reviews = await response.json();
-  displayPlaceReviews(reviews);
 }
 
 function displayPlaces(places) {
@@ -111,38 +235,47 @@ function displayPlaces(places) {
 
   placesList.innerHTML = "";
 
+  if (!places || places.length === 0) {
+    placesList.innerHTML = renderStateCard(
+      "No stays available",
+      "No places match the current selection yet.",
+    );
+    return;
+  }
+
   for (const place of places) {
-    const placeCard = document.createElement("div");
+    const placeCard = document.createElement("article");
     placeCard.classList.add("place-card");
-    placeCard.dataset.price = place.price;
+
+    const title = place.title || place.name || "Selected stay";
+    const price = Number(place.price) || 0;
+    placeCard.dataset.price = String(price);
 
     const firstImage =
       place.images && place.images.length > 0
-        ? `<img src="${place.images[0]}" alt="${place.title}" class="place-card-image">`
-        : `<div class="place-card-placeholder">No image available</div>`;
+        ? `<img src="${place.images[0]}" alt="${title}" class="place-card-image" loading="lazy">`
+        : `<div class="place-card-placeholder">Image coming soon</div>`;
 
     const shortDescription = place.description
-      ? place.description.slice(0, 90) +
-        (place.description.length > 90 ? "..." : "")
+      ? place.description.slice(0, 105) +
+      (place.description.length > 105 ? "..." : "")
       : "Elegant stay, premium comfort, and carefully selected amenities.";
 
     placeCard.innerHTML = `
-  <div class="place-card-media">
-    ${firstImage}
-    <span class="place-card-price">€${place.price} / night</span>
-  </div>
+      <div class="place-card-media">
+        ${firstImage}
+        <span class="place-card-price">€${price} / night</span>
+      </div>
 
-  <div class="place-card-body">
-    <h2>${place.title}</h2>
-    <p class="place-card-text">
-      ${shortDescription}
-    </p>
-  </div>
+      <div class="place-card-body">
+        <h2 class="place-card-title">${title}</h2>
+        <p class="place-card-text">${shortDescription}</p>
+      </div>
 
-  <div class="place-card-footer">
-    <a href="place.html?id=${place.id}" class="details-button">View details</a>
-  </div>
-`;
+      <div class="place-card-footer">
+        <a href="place.html?id=${place.id}" class="details-button">View details</a>
+      </div>
+    `;
 
     placesList.appendChild(placeCard);
   }
@@ -150,49 +283,68 @@ function displayPlaces(places) {
 
 function displayPlaceDetails(place) {
   const placeDetailsSection = document.getElementById("place-details");
-  const reviewsSection = document.getElementById("reviews");
 
-  if (!placeDetailsSection || !reviewsSection) {
+  if (!placeDetailsSection) {
     return;
   }
 
-  placeDetailsSection.innerHTML = "";
-  reviewsSection.innerHTML = "<h2>Reviews</h2>";
+  const title = place.title || place.name || "Selected stay";
+  const price = Number(place.price) || 0;
+  const hostName = getHostName(place);
+  const description =
+    place.description ||
+    "A refined stay with comfort, character, and carefully selected amenities.";
 
-  const title = document.createElement("h1");
-  title.textContent = place.title;
+  const images =
+    place.images && place.images.length > 0
+      ? place.images
+      : [null];
 
-  const gallery = document.createElement("div");
-  gallery.classList.add("place-gallery");
+  const galleryMarkup = images
+    .slice(0, 3)
+    .map((imageUrl, index) => {
+      if (!imageUrl) {
+        return `<div class="place-gallery-placeholder">${index === 0 ? "Image gallery coming soon" : "More visuals coming soon"
+          }</div>`;
+      }
 
-  if (place.images && place.images.length > 0) {
-    for (const imageUrl of place.images) {
-      const image = document.createElement("img");
-      image.src = imageUrl;
-      image.alt = place.title;
-      image.classList.add("place-gallery-image");
-      gallery.appendChild(image);
-    }
-  }
+      return `<img src="${imageUrl}" alt="${title}" class="place-gallery-image" loading="lazy">`;
+    })
+    .join("");
 
-  const hostInfo = createPlaceInfoBlock("Host", getHostName(place));
-  const priceInfo = createPlaceInfoBlock("Price", `$${place.price} per night`);
-  const descriptionInfo = createPlaceInfoBlock(
-    "Description",
-    place.description || "No description available.",
-  );
-  const amenitiesInfo = createAmenitiesBlock(place.amenities);
+  placeDetailsSection.innerHTML = `
+    <div class="place-heading">
+      <p class="section-kicker">Selected stay</p>
+      <h1>${title}</h1>
+      <p class="place-lead">${description}</p>
+    </div>
 
-  placeDetailsSection.appendChild(title);
-  placeDetailsSection.appendChild(gallery);
-  placeDetailsSection.appendChild(hostInfo);
-  placeDetailsSection.appendChild(priceInfo);
-  placeDetailsSection.appendChild(descriptionInfo);
-  placeDetailsSection.appendChild(amenitiesInfo);
+    <div class="place-meta">
+      <span class="place-meta-item">Hosted by ${hostName}</span>
+      <span class="place-meta-item">€${price} / night</span>
+      <span class="place-meta-item">${place.amenities && place.amenities.length > 0
+      ? `${place.amenities.length} amenit${place.amenities.length > 1 ? "ies" : "y"}`
+      : "Amenities available"
+    }</span>
+    </div>
+
+    <div class="place-gallery">
+      ${galleryMarkup}
+    </div>
+
+    <div class="place-info-grid"></div>
+  `;
+
+  const infoGrid = placeDetailsSection.querySelector(".place-info-grid");
+
+  infoGrid.appendChild(createPlaceInfoBlock("Host", hostName));
+  infoGrid.appendChild(createPlaceInfoBlock("Price", `€${price} per night`));
+  infoGrid.appendChild(createPlaceInfoBlock("Description", description));
+  infoGrid.appendChild(createAmenitiesBlock(place.amenities));
 }
 
 function createPlaceInfoBlock(titleText, contentText) {
-  const container = document.createElement("div");
+  const container = document.createElement("article");
   container.classList.add("place-info");
 
   const title = document.createElement("h2");
@@ -208,13 +360,14 @@ function createPlaceInfoBlock(titleText, contentText) {
 }
 
 function createAmenitiesBlock(amenities) {
-  const container = document.createElement("div");
+  const container = document.createElement("article");
   container.classList.add("place-info");
 
   const title = document.createElement("h2");
   title.textContent = "Amenities";
 
   const list = document.createElement("ul");
+  list.classList.add("amenity-list");
 
   if (amenities && amenities.length > 0) {
     for (const amenity of amenities) {
@@ -224,7 +377,7 @@ function createAmenitiesBlock(amenities) {
     }
   } else {
     const item = document.createElement("li");
-    item.textContent = "No amenities available.";
+    item.textContent = "No amenities listed yet";
     list.appendChild(item);
   }
 
@@ -246,6 +399,24 @@ function getHostName(place) {
   return "Unknown host";
 }
 
+function getReviewAuthorName(review) {
+  if (review.user && typeof review.user === "object") {
+    const firstName = review.user.first_name || "";
+    const lastName = review.user.last_name || "";
+    const fullName = `${firstName} ${lastName}`.trim();
+
+    if (fullName) {
+      return fullName;
+    }
+  }
+
+  if (typeof review.user === "string" && review.user.trim()) {
+    return review.user;
+  }
+
+  return "Anonymous guest";
+}
+
 function displayPlaceReviews(reviews) {
   const reviewsSection = document.getElementById("reviews");
 
@@ -253,29 +424,44 @@ function displayPlaceReviews(reviews) {
     return;
   }
 
-  reviewsSection.innerHTML = "<h2>Reviews</h2>";
+  reviewsSection.innerHTML = `
+    <div class="reviews-section-header">
+      <p class="section-kicker">Guest feedback</p>
+      <h2>Reviews</h2>
+    </div>
+  `;
 
-  if (reviews.length === 0) {
+  if (!reviews || reviews.length === 0) {
     const noReviews = document.createElement("p");
-    noReviews.textContent = "No reviews yet.";
+    noReviews.classList.add("review-empty");
+    noReviews.textContent =
+      "No reviews yet. Be the first guest to share feedback about this stay.";
     reviewsSection.appendChild(noReviews);
     return;
   }
+
+  const reviewsList = document.createElement("div");
+  reviewsList.classList.add("reviews-list");
 
   for (const review of reviews) {
     const reviewCard = document.createElement("article");
     reviewCard.classList.add("review-card");
 
+    const authorName = getReviewAuthorName(review);
+    const rating = Number(review.rating) || 0;
+
     reviewCard.innerHTML = `
       <div class="review-card-header">
-        <h3>${review.user || "Anonymous"}</h3>
-        <span class="review-rating">${review.rating}/5</span>
+        <h3>${authorName}</h3>
+        <span class="review-rating">${rating}/5</span>
       </div>
-      <p class="review-comment">${review.text || "No comment."}</p>
+      <p class="review-comment">${review.text || "No comment provided."}</p>
     `;
 
-    reviewsSection.appendChild(reviewCard);
+    reviewsList.appendChild(reviewCard);
   }
+
+  reviewsSection.appendChild(reviewsList);
 }
 
 function displayPlaceSummary(place) {
@@ -285,11 +471,15 @@ function displayPlaceSummary(place) {
     return;
   }
 
+  const title = place.title || place.name || "Selected stay";
+  const price = Number(place.price) || 0;
+
   placeSummarySection.innerHTML = `
+    <p class="section-kicker">Selected stay</p>
     <h2>Place Summary</h2>
-    <p><strong>Name:</strong> ${place.title}</p>
+    <p><strong>Name:</strong> ${title}</p>
     <p><strong>Host:</strong> ${getHostName(place)}</p>
-    <p><strong>Price:</strong> $${place.price} per night</p>
+    <p><strong>Price:</strong> €${price} per night</p>
   `;
 }
 
@@ -300,12 +490,19 @@ function populatePriceFilter() {
     return;
   }
 
-  const prices = ["All", "10", "50", "100"];
+  priceFilter.innerHTML = "";
+
+  const prices = [
+    { label: "All prices", value: "All" },
+    { label: "Up to €50", value: "50" },
+    { label: "Up to €100", value: "100" },
+    { label: "Up to €200", value: "200" },
+  ];
 
   for (const price of prices) {
     const option = document.createElement("option");
-    option.textContent = price;
-    option.value = price;
+    option.textContent = price.label;
+    option.value = price.value;
     priceFilter.appendChild(option);
   }
 }
@@ -339,28 +536,55 @@ function renderAddReviewAccess(token, placeId) {
   }
 
   if (!token) {
-    addReviewSection.style.display = "none";
+    addReviewSection.innerHTML = `
+      <p class="section-kicker">Guest contribution</p>
+      <h2>Share your experience</h2>
+      <p class="add-review-text">
+        Log in to leave a review and help future guests choose with confidence.
+      </p>
+      <a href="login.html" class="details-button">Log in to review</a>
+      <p class="add-review-note">
+        Reviews are available to authenticated guests only.
+      </p>
+    `;
     return;
   }
 
-  addReviewSection.style.display = "block";
   addReviewSection.innerHTML = `
-    <h2>Add a Review</h2>
+    <p class="section-kicker">Guest contribution</p>
+    <h2>Share your experience</h2>
+    <p class="add-review-text">
+      Leave a short, useful review about the comfort, amenities, and overall stay.
+    </p>
     <a href="add_review.html?id=${placeId}" class="details-button">Add Review</a>
+    <p class="add-review-note">
+      Clear and honest feedback helps future guests compare more easily.
+    </p>
   `;
 }
 
 async function handleLoginSubmit(event) {
   event.preventDefault();
 
+  const loginForm = event.currentTarget;
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   const loginMessage = document.getElementById("login-message");
+  const submitButton = loginForm.querySelector('button[type="submit"]');
 
-  if (loginMessage) {
-    loginMessage.textContent = "";
-    loginMessage.className = "form-message";
+  resetFormMessage(loginMessage);
+
+  if (!email || !password) {
+    setFormMessage(
+      loginMessage,
+      "Please enter both your email and password.",
+      "error",
+    );
+    return;
   }
+
+  setButtonLoading(submitButton, true, "Signing in...");
+  setFormMessage(loginMessage, "Checking your credentials...", "loading");
 
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -371,23 +595,33 @@ async function handleLoginSubmit(event) {
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await response.json();
+    const data = await parseJsonSafely(response);
 
-    if (response.ok) {
+    if (response.ok && data.access_token) {
       document.cookie = `${TOKEN_COOKIE_NAME}=${data.access_token}; path=/`;
-      window.location.href = "index.html";
+      setButtonLoading(submitButton, false);
+      setFormMessage(loginMessage, "Login successful. Redirecting...", "success");
+
+      window.setTimeout(() => {
+        window.location.href = "index.html";
+      }, 450);
+
       return;
     }
 
-    if (loginMessage) {
-      loginMessage.textContent = data.error || "Invalid email or password.";
-      loginMessage.classList.add("is-visible", "is-error");
-    }
+    setButtonLoading(submitButton, false);
+    setFormMessage(
+      loginMessage,
+      data.error || "Invalid email or password.",
+      "error",
+    );
   } catch (error) {
-    if (loginMessage) {
-      loginMessage.textContent = "An error occurred while trying to log in.";
-      loginMessage.classList.add("is-visible", "is-error");
-    }
+    setButtonLoading(submitButton, false);
+    setFormMessage(
+      loginMessage,
+      "An error occurred while trying to log in.",
+      "error",
+    );
   }
 }
 
@@ -396,14 +630,23 @@ async function handleReviewSubmit(event, token, placeId, reviewForm) {
 
   const reviewText = document.getElementById("review").value.trim();
   const rating = document.getElementById("rating").value;
+  const reviewMessage = document.getElementById("review-message");
+  const submitButton = reviewForm.querySelector('button[type="submit"]');
+
+  resetFormMessage(reviewMessage);
 
   if (!reviewText) {
-    alert("Review cannot be empty.");
+    setFormMessage(reviewMessage, "Review cannot be empty.", "error");
+    return;
+  }
+
+  if (!rating) {
+    setFormMessage(reviewMessage, "Please choose a rating.", "error");
     return;
   }
 
   if (!placeId) {
-    alert("Place ID not found.");
+    setFormMessage(reviewMessage, "Place ID not found.", "error");
     return;
   }
 
@@ -412,6 +655,9 @@ async function handleReviewSubmit(event, token, placeId, reviewForm) {
     rating: Number(rating),
     place_id: placeId,
   };
+
+  setButtonLoading(submitButton, true, "Submitting...");
+  setFormMessage(reviewMessage, "Submitting your review...", "loading");
 
   try {
     const response = await fetch(`${API_BASE_URL}/reviews/`, {
@@ -423,17 +669,32 @@ async function handleReviewSubmit(event, token, placeId, reviewForm) {
       body: JSON.stringify(reviewData),
     });
 
-    const data = await response.json();
+    const data = await parseJsonSafely(response);
+
+    setButtonLoading(submitButton, false);
 
     if (response.ok) {
-      alert("Review submitted successfully!");
       reviewForm.reset();
+      setFormMessage(
+        reviewMessage,
+        "Review submitted successfully.",
+        "success",
+      );
       return;
     }
 
-    alert(data.error || "Failed to submit review.");
+    setFormMessage(
+      reviewMessage,
+      data.error || "Failed to submit review.",
+      "error",
+    );
   } catch (error) {
-    alert("An error occurred while submitting the review.");
+    setButtonLoading(submitButton, false);
+    setFormMessage(
+      reviewMessage,
+      "An error occurred while submitting the review.",
+      "error",
+    );
   }
 }
 

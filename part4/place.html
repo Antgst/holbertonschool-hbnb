@@ -1,43 +1,61 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Place Details</title>
-    <link rel="icon" type="image/png" href="hbnb/images/icon.png" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Place Details</title>
+  <link rel="icon" type="image/png" href="hbnb/images/icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header>
+    <a href="index.html" class="brand" aria-label="Go to HBNB home page">
       <img src="hbnb/images/logo.png" alt="Application logo" class="logo" />
-      <div class="header-title">HBNB — Where comfort meets elegance</div>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="login.html" id="login-link" class="login-button">Login</a>
-      </nav>
-    </header>
+      <div class="brand-copy">
+        <span class="brand-name">HBNB</span>
+        <span class="brand-tagline">Where comfort meets elegance</span>
+      </div>
+    </a>
 
-    <main class="place-page">
+    <nav aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="login.html" id="login-link" class="login-button">Login</a>
+    </nav>
+  </header>
+
+  <main class="place-page">
+    <div class="place-layout">
       <section id="place-details" class="place-details">
         <!-- Place details will be inserted here dynamically -->
       </section>
 
-      <section id="add-review" class="add-review">
-        <h2>Add a Review</h2>
-        <!-- Button inserted dynamically if the user is logged in -->
-      </section>
+      <aside class="place-sidebar">
+        <section id="add-review" class="add-review">
+          <p class="section-kicker">Guest contribution</p>
+          <h2>Share your experience</h2>
+          <p class="add-review-text">
+            Log in to leave a review and help future guests choose with confidence.
+          </p>
+        </section>
+      </aside>
+    </div>
 
-      <section id="reviews" class="reviews-section">
+    <section id="reviews" class="reviews-section">
+      <div class="reviews-section-header">
+        <p class="section-kicker">Guest feedback</p>
         <h2>Reviews</h2>
-        <!-- Reviews will be inserted here dynamically -->
-      </section>
-    </main>
+      </div>
+      <!-- Reviews will be inserted here dynamically -->
+    </section>
+  </main>
 
-    <footer>
-      <p>All rights reserved.</p>
-    </footer>
+  <footer>
+    <p>All rights reserved.</p>
+  </footer>
 
-    <script src="scripts.js"></script>
-  </body>
+  <script src="scripts.js"></script>
+</body>
+
 </html>
