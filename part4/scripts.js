@@ -381,6 +381,7 @@ function displayPlaceDetails(place) {
   }
 
   const title = escapeHtml(place.title || place.name || "Selected stay");
+  const price = Number(place.price) || 0;
   const hostName = escapeHtml(getHostName(place));
   const description = escapeHtml(
     place.description ||
