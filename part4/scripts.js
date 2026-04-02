@@ -578,6 +578,15 @@ function getReviewAuthorName(review) {
   return "Anonymous guest";
 }
 
+function renderStarRating(rating) {
+  const safeRating = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+
+  return Array.from({ length: 5 }, (_, index) => {
+    const isFilled = index < safeRating;
+    return `<span class="review-star${isFilled ? " is-filled" : ""}" aria-hidden="true">★</span>`;
+  }).join("");
+}
+
 function displayPlaceReviews(reviews) {
   const reviewsSection = document.getElementById("reviews");
 
@@ -608,16 +617,22 @@ function displayPlaceReviews(reviews) {
     const reviewCard = document.createElement("article");
     reviewCard.classList.add("review-card");
 
-    const authorName = escapeHtml(getReviewAuthorName(review));
+    const authorName = getReviewAuthorName(review);
     const rating = Number(review.rating) || 0;
+    const starsMarkup = renderStarRating(rating);
 
     reviewCard.innerHTML = `
-      <div class="review-card-header">
-        <h3>${authorName}</h3>
-        <span class="review-rating">${rating}/5</span>
+  <div class="review-card-header">
+    <h3>${authorName}</h3>
+    <div class="review-rating" aria-label="${rating} out of 5">
+      <div class="review-rating-stars">
+        ${starsMarkup}
       </div>
-      <p class="review-comment">${escapeHtml(review.text || "No comment provided.")}</p>
-    `;
+      <span class="review-rating-value">${rating}/5</span>
+    </div>
+  </div>
+  <p class="review-comment">${review.text || "No comment provided."}</p>
+`;
 
     reviewsList.appendChild(reviewCard);
   }
