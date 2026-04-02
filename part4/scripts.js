@@ -407,8 +407,11 @@ function displayPlaceDetails(place) {
   infoGrid.appendChild(createPlaceInfoBlock("Price", `€${price} per night`));
   infoGrid.appendChild(createPlaceInfoBlock("Description", description));
   infoGrid.appendChild(createAmenitiesBlock(place.amenities));
+
+  renderHostCard(place);
   setupRevealAnimations();
 }
+
 
 function createPlaceInfoBlock(titleText, contentText) {
   const container = document.createElement("article");
@@ -465,6 +468,104 @@ function getHostName(place) {
 
   return "Unknown host";
 }
+
+function getHostInitials(place) {
+  const hostName = getHostName(place);
+
+  if (!hostName || hostName === "Unknown host") {
+    return "HG";
+  }
+
+  const parts = hostName
+    .split(" ")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+
+  return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+}
+
+function renderHostCard(place) {
+  const hostCard = document.getElementById("host-card");
+
+  if (!hostCard) {
+    return;
+  }
+
+  const hostName = getHostName(place);
+  const initials = getHostInitials(place);
+  const amenitiesCount =
+    place.amenities && place.amenities.length > 0
+      ? `${place.amenities.length} amenit${place.amenities.length > 1 ? "ies" : "y"}`
+      : "Well-prepared stay";
+
+  const locationLabel = place.title || place.name || "Selected stay";
+  const hostImageSrc = "hbnb/images/hosts/default-host.jpg";
+
+  hostCard.innerHTML = `
+    <p class="section-kicker">Host spotlight</p>
+
+    <div class="host-card-media">
+      <img
+        src="${hostImageSrc}"
+        alt="${hostName}"
+        class="host-card-image"
+        loading="lazy"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+      />
+      <div class="host-card-avatar" aria-hidden="true" style="display: none;">${initials}</div>
+    </div>
+
+    <div class="host-card-body">
+      <h2>Meet your host</h2>
+      <p class="host-card-name">${hostName}</p>
+      <p class="host-card-role">Local host</p>
+      <p class="host-card-text">
+        Thoughtful hosting and carefully prepared stays designed for a smoother guest experience.
+      </p>
+
+      <div class="host-card-tags">
+        <span>${amenitiesCount}</span>
+        <span>Guest-focused</span>
+        <span>${locationLabel}</span>
+      </div>
+    </div>
+  `;
+}
+
+const hostName = getHostName(place);
+const initials = getHostInitials(place);
+const amenitiesCount = place.amenities && place.amenities.length > 0
+  ? `${place.amenities.length} amenit${place.amenities.length > 1 ? "ies" : "y"}`
+  : "Well-prepared stay";
+
+const locationLabel = place.title || place.name || "Selected stay";
+
+hostCard.innerHTML = `
+    <p class="section-kicker">Host spotlight</p>
+
+    <div class="host-card-media">
+      <div class="host-card-avatar" aria-hidden="true">${initials}</div>
+    </div>
+
+    <div class="host-card-body">
+      <h2>Meet your host</h2>
+      <p class="host-card-name">${hostName}</p>
+      <p class="host-card-role">Local host</p>
+      <p class="host-card-text">
+        Thoughtful hosting and carefully prepared stays designed for a smoother guest experience.
+      </p>
+
+      <div class="host-card-tags">
+        <span>${amenitiesCount}</span>
+        <span>Guest-focused</span>
+        <span>${locationLabel}</span>
+      </div>
+    </div>
+  `;
 
 function getReviewAuthorName(review) {
   if (review.user && typeof review.user === "object") {
