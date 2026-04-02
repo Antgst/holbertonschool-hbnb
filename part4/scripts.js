@@ -1000,31 +1000,6 @@ function getReviewSummary(reviews) {
   };
 }
 
-function getReviewSummary(reviews) {
-  if (!Array.isArray(reviews) || reviews.length === 0) {
-    return null;
-  }
-
-  const ratings = reviews
-    .map((review) => Number(review.rating))
-    .filter((rating) => Number.isFinite(rating) && rating >= 1 && rating <= 5);
-
-  if (ratings.length === 0) {
-    return null;
-  }
-
-  const total = ratings.reduce((sum, rating) => sum + rating, 0);
-  const average = total / ratings.length;
-  const count = ratings.length;
-
-  return {
-    average,
-    averageLabel: average.toFixed(1),
-    count,
-    countLabel: `${count} review${count > 1 ? "s" : ""}`,
-  };
-}
-
 function displayPlaceReviews(reviews) {
   const reviewsSection = document.getElementById("reviews");
 

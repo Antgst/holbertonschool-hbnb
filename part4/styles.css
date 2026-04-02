@@ -825,6 +825,7 @@ p {
 .add-review,
 .reviews-section,
 .host-card,
+.review-summary-card,
 .place-summary,
 .review-form,
 #login-form,
@@ -878,7 +879,8 @@ p {
 
 .place-details,
 .add-review,
-.reviews-section {
+.reviews-section,
+.review-summary-card {
   transition:
     box-shadow 0.25s ease,
     border-color 0.25s ease;
@@ -886,7 +888,8 @@ p {
 
 .place-details:hover,
 .add-review:hover,
-.reviews-section:hover {
+.reviews-section:hover,
+.review-summary-card:hover {
   border-color: rgba(201, 169, 110, 0.28);
   box-shadow:
     0 18px 34px rgba(0, 0, 0, 0.08),
@@ -1276,11 +1279,26 @@ p {
   line-height: 1.65;
 }
 
-.host-card-rating,
-.host-card-rating-empty {
-  margin-top: 0.95rem;
-  padding: 0.95rem 1rem;
-  border-radius: 18px;
+.review-summary-card {
+  background: rgba(252, 248, 242, 0.96);
+  border: 1px solid rgba(201, 169, 110, 0.14);
+  border-radius: 28px;
+  padding: 1.35rem 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.review-summary-card:hover {
+  border-color: rgba(201, 169, 110, 0.3);
+  box-shadow:
+    0 20px 38px rgba(0, 0, 0, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.review-summary-box,
+.review-summary-empty {
+  margin-top: 0.85rem;
+  padding: 1rem;
+  border-radius: 20px;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.98),
@@ -1292,7 +1310,7 @@ p {
     0 8px 18px rgba(0, 0, 0, 0.04);
 }
 
-.host-card-rating-top {
+.review-summary-top {
   display: flex;
   align-items: baseline;
   gap: 0.35rem;
@@ -1300,27 +1318,27 @@ p {
   line-height: 1;
 }
 
-.host-card-rating-value {
+.review-summary-value {
   font-size: 2rem;
   font-weight: 900;
   color: var(--primary);
   letter-spacing: -0.03em;
 }
 
-.host-card-rating-scale {
+.review-summary-scale {
   color: var(--text-muted);
   font-size: 0.95rem;
   font-weight: 700;
 }
 
-.host-card-rating-stars {
+.review-summary-stars {
   display: inline-flex;
   align-items: center;
   gap: 0.18rem;
   margin-bottom: 0.35rem;
 }
 
-.host-card-rating-count {
+.review-summary-count {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.92rem;
@@ -1328,7 +1346,7 @@ p {
   line-height: 1.4;
 }
 
-.host-card-rating-empty {
+.review-summary-empty {
   color: var(--text-muted);
   font-size: 0.92rem;
   font-weight: 600;
