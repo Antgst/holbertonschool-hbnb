@@ -19,6 +19,10 @@ function getAuthToken() {
   return getCookie(TOKEN_COOKIE_NAME);
 }
 
+function clearCookie(name) {
+  document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+}
+
 function getPlaceIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
@@ -184,7 +188,23 @@ function checkAuthentication() {
   const loginLink = document.getElementById("login-link");
 
   if (loginLink) {
-    loginLink.style.display = token ? "none" : "";
+    loginLink.style.display = "";
+
+    if (token) {
+      loginLink.textContent = "Logout";
+      loginLink.href = "#";
+      loginLink.removeAttribute("aria-current");
+
+      loginLink.onclick = (event) => {
+        event.preventDefault();
+        clearCookie(TOKEN_COOKIE_NAME);
+        window.location.href = "index.html";
+      };
+    } else {
+      loginLink.textContent = "Login";
+      loginLink.href = "login.html";
+      loginLink.onclick = null;
+    }
   }
 
   return token;
@@ -1380,6 +1400,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const placeSummarySection = document.querySelector(".place-summary");
   const loginForm = document.getElementById("login-form");
   const reviewForm = document.getElementById("review-form");
+
+  if (loginForm && token) {
+    window.location.href = "index.html";
+    return;
+  }
 
   if (placesList) {
     fetchPlaces(token).catch((error) => {

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hosts</title>
+    <link rel="icon" type="image/png" href="hbnb/images/icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header>
+      <a href="index.html" class="brand" aria-label="HBNB home">
+        <img src="hbnb/images/logo.png" alt="Application logo" class="logo" />
+        <div class="brand-copy">
+          <span class="brand-name">HBNB</span>
+          <span class="brand-tagline">Curated premium stays</span>
+        </div>
+      </a>
+
+      <nav aria-label="Primary navigation">
+        <a href="index.html">Home</a>
+        <a href="hosts.html" aria-current="page">Hosts</a>
+        <a href="login.html" id="login-link" class="login-button">Login</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero hero-small">
+        <div class="hero-content">
+          <p class="hero-kicker">Meet our hosts</p>
+          <h1>Discover the people behind each exceptional stay</h1>
+          <p class="hero-text">
+            Browse our hosts, their signature properties, and the average
+            ratings guests have given them across the platform.
+          </p>
+        </div>
+      </section>
+
+      <section class="section-shell">
+        <div class="empty-state-card">
+          <span class="empty-state-badge">Hosts directory</span>
+          <h2>Trusted hosts, curated stays</h2>
+          <p>
+            Each host below is generated dynamically from the current platform
+            data, including places, reviews and average ratings.
+          </p>
+        </div>
+
+        <section class="hosts-preview" aria-label="Hosts directory">
+          <div class="hosts-preview-heading">
+            <p class="section-kicker">Directory</p>
+            <h2>Our hosts at a glance</h2>
+            <p>
+              Explore the current host roster with their profile images,
+              properties, review volume and average ratings.
+            </p>
+          </div>
+
+          <div id="hosts-list" class="hosts-grid">
+            <div class="ui-state">
+              <h3 class="ui-state-title">Loading hosts</h3>
+              <p class="ui-state-text">
+                Please wait while the hosts directory is being prepared.
+              </p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="footer-brand-name">HBNB</span>
+          <p class="footer-brand-text">
+            Curated premium stays designed for elegant and memorable
+            experiences.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h2>Navigation</h2>
+          <a href="index.html">Home</a>
+          <a href="index.html#filter">Explore stays</a>
+          <a href="login.html">Login</a>
+        </div>
+
+        <div class="footer-column">
+          <h2>Experience</h2>
+          <p>Elegant destinations</p>
+          <p>Premium comfort</p>
+          <p>Clear and trusted reviews</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 HBNB — All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>
