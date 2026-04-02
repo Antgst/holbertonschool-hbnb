@@ -13,7 +13,12 @@ db = SQLAlchemy()
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    CORS(app, resources={r"/api/*": {"origins": "http://127.0.0.1:5500"}})
+    CORS(app, resources={r"/api/*": {"origins": [
+        "http://127.0.0.1:5500",
+        "http://127.0.0.1:5501",
+        "http://localhost:5500",
+        "http://localhost:5501"
+    ]}})
 
     # Initialise Flask-Bcrypt avec l'app et initialise JWT manager mais aussi la database
     bcrypt.init_app(app)
