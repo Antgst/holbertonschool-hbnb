@@ -1558,7 +1558,9 @@ function displayHostsDirectory(hosts) {
     return;
   }
 
-  hostsList.innerHTML = hosts.map((host) => renderHostPreviewCard(host)).join("");
+  hostsList.innerHTML = hosts
+    .map((host) => renderHostPreviewCard(host))
+    .join("");
   setupRevealAnimations();
 }
 
@@ -1841,11 +1843,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const placeId = getPlaceIdFromURL();
 
   const placesList = document.getElementById("places-list");
-const hostsList = document.getElementById("hosts-list");
-const placeDetailsSection = document.getElementById("place-details");
-const placeSummarySection = document.querySelector(".place-summary");
-const loginForm = document.getElementById("login-form");
-const reviewForm = document.getElementById("review-form");
+  const hostsList = document.getElementById("hosts-list");
+  const placeDetailsSection = document.getElementById("place-details");
+  const placeSummarySection = document.querySelector(".place-summary");
+  const loginForm = document.getElementById("login-form");
+  const reviewForm = document.getElementById("review-form");
 
   if (loginForm && token) {
     window.location.href = "index.html";
@@ -1859,10 +1861,10 @@ const reviewForm = document.getElementById("review-form");
   }
 
   if (hostsList) {
-  fetchHostsDirectory(token).catch((error) => {
-    console.error("Error fetching hosts directory:", error);
-  });
-}
+    fetchHostsDirectory(token).catch((error) => {
+      console.error("Error fetching hosts directory:", error);
+    });
+  }
 
   if (placeId && (placeDetailsSection || placeSummarySection)) {
     fetchPlaceDetails(token, placeId).catch((error) => {
