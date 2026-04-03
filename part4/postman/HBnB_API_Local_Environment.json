@@ -1,0 +1,45 @@
+{
+  "id": "hbnb-local-env",
+  "name": "HBnB Local API",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:5000",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "adminEmail",
+      "value": "antoine.gousset@hbnb.test",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "adminPassword",
+      "value": "Test1234!",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "seededUserEmail",
+      "value": "sebastien.vallier@hbnb.test",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "seededUserPassword",
+      "value": "Test1234!",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "nonexistentUuid",
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2026-04-03T00:00:00.000Z",
+  "_postman_exported_using": "OpenAI GPT-5.4 Thinking"
+}
