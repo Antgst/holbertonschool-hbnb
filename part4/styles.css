@@ -1583,22 +1583,18 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin: 0;
-  padding: 0.95rem;
-  border: 1px solid var(--border-soft, #e2d7c8);
-  border-radius: var(--radius-lg, 18px);
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   background: linear-gradient(
     180deg,
     rgba(252, 248, 242, 0.98),
     rgba(248, 241, 232, 0.98)
   );
   box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
-  transition:
-    transform var(--transition-fast, 0.2s ease),
-    box-shadow var(--transition-fast, 0.2s ease),
-    border-color var(--transition-fast, 0.2s ease);
+    0 18px 38px rgba(60, 28, 34, 0.08),
+    0 6px 18px rgba(60, 28, 34, 0.06);
 }
 
 .place-card:hover {
@@ -1791,15 +1787,15 @@ p {
 }
 
 .review-card {
-  margin: 0;
-  padding: 1.05rem 1.15rem;
-  border-radius: 18px;
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.98),
     rgba(249, 246, 241, 0.98)
   );
-  border: 1px solid rgba(201, 169, 110, 0.16);
   transition:
     box-shadow 0.25s ease,
     border-color 0.25s ease;

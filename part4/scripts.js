@@ -403,11 +403,11 @@ function setupRevealAnimations() {
 }
 
 function requireAuthentication() {
-  // Redirects anonymous visitors to the login page when access is protected.
+  // Redirects anonymous visitors to the index page when access is protected.
   const token = getAuthToken();
 
   if (!token) {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     return null;
   }
 
@@ -2660,10 +2660,10 @@ function populatePriceFilter() {
   priceFilter.innerHTML = "";
 
   const prices = [
-    { label: t("dynamic.allPrices"), value: "All" },
+    { label: formatUpToPrice(10), value: "10" },
     { label: formatUpToPrice(50), value: "50" },
     { label: formatUpToPrice(100), value: "100" },
-    { label: formatUpToPrice(200), value: "200" },
+    { label: t("dynamic.allPrices"), value: "All" },
   ];
 
   for (const price of prices) {
