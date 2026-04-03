@@ -186,6 +186,20 @@ def seed_demo_data():
                 ],
             },
             {
+                "key": "budget_tent",
+                "title": "Budget Tent",
+                "description": "It is literally a tent. No luxury, no nonsense, just a cheap place to sleep and a perfect excuse to make the €10 filter useful.",
+                "price": 5,
+                "latitude": 48.1173,
+                "longitude": -1.6778,
+                "owner": "benjy",
+                "amenities": [
+                    "Parking",
+                    "Pet Friendly",
+                    "Self Check-in",
+                ],
+            },
+            {
                 "key": "cancale_house",
                 "title": "Sea View House in Cancale",
                 "description": "A spacious house with panoramic sea views, designed for peaceful stays, family gatherings, and refined comfort by the coast.",
@@ -336,6 +350,11 @@ def seed_demo_data():
                 "hbnb/images/places/saint-malo-studio-1.jpg",
                 "hbnb/images/places/saint-malo-studio-2.jpg",
                 "hbnb/images/places/saint-malo-studio-3.jpg",
+            ],
+            "budget_tent": [
+                "hbnb/images/places/tent-1.jpg",
+                "hbnb/images/places/tent-1.jpg",
+                "hbnb/images/places/tent-1.jpg",
             ],
             "cancale_house": [
                 "hbnb/images/places/cancale-house-1.jpg",
