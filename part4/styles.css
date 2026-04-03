@@ -1176,6 +1176,7 @@ p {
 
 .hero {
   position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1.8fr) minmax(260px, 0.9fr);
   gap: 1.35rem;
@@ -1185,19 +1186,40 @@ p {
   overflow: hidden;
   margin-bottom: 0;
   padding: 2.65rem;
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(201, 169, 110, 0.2),
-      transparent 28%
-    ),
-    linear-gradient(135deg, rgba(17, 15, 14, 0.1), rgba(17, 15, 14, 0.04)),
-    linear-gradient(0deg, rgba(31, 29, 27, 0.68), rgba(31, 29, 27, 0.16)),
-    url("hbnb/images/places/chambord-suite-1.jpg") center / cover no-repeat;
+  background: rgba(17, 15, 14, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
     0 20px 44px rgba(0, 0, 0, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-media-layer {
+  position: absolute;
+  inset: 0;
+  background-image: var(
+    --hero-image,
+    url("hbnb/images/places/chambord-suite-1.jpg")
+  );
+  background-position: var(--hero-position, center center);
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  transform: scale(1.03);
+  filter: saturate(1.02) contrast(1.02);
+  transition:
+    opacity 900ms var(--ease-premium),
+    transform 1400ms var(--ease-premium);
+}
+
+.hero-media-layer.is-active {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .hero--hosts {
@@ -1209,10 +1231,26 @@ p {
   max-width: 760px;
 }
 
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(201, 169, 110, 0.2),
+      transparent 28%
+    ),
+    linear-gradient(135deg, rgba(17, 15, 14, 0.1), rgba(17, 15, 14, 0.04));
+  pointer-events: none;
+}
+
 .hero::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: linear-gradient(
     90deg,
     rgba(24, 20, 18, 0.18) 0%,
@@ -1225,7 +1263,7 @@ p {
 .hero-content,
 .hero-panel {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .hero-content {

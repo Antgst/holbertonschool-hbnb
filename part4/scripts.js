@@ -4,6 +4,134 @@ const THEME_STORAGE_KEY = "hbnb-theme";
 const LIGHT_THEME = "light";
 const DARK_THEME = "dark";
 
+const HERO_ROTATION_DELAY_MS = 14000;
+const HERO_IMAGE_LIBRARY = [
+  { src: "hbnb/images/places/chambord-suite-1.jpg", position: "center center" },
+  { src: "hbnb/images/places/chambord-suite-2.jpg", position: "center center" },
+  { src: "hbnb/images/places/cancale-house-1.jpg", position: "center center" },
+  { src: "hbnb/images/places/cancale-house-2.jpg", position: "center center" },
+  { src: "hbnb/images/places/dinard-villa-1.jpg", position: "center center" },
+  { src: "hbnb/images/places/dinard-villa-2.jpg", position: "center center" },
+  { src: "hbnb/images/places/rennes-loft-1.jpg", position: "center center" },
+  { src: "hbnb/images/places/rennes-loft-2.jpg", position: "center center" },
+  {
+    src: "hbnb/images/places/saint-malo-studio-1.jpg",
+    position: "center center",
+  },
+  { src: "hbnb/images/places/betton-room-2.jpg", position: "center center" },
+  {
+    src: "hbnb/images/places/broceliande-cabin-1.jpg",
+    position: "center center",
+  },
+  {
+    src: "hbnb/images/places/vannes-apartment-2.jpg",
+    position: "center center",
+  },
+];
+
+function getRandomHeroImage(excludedSrc = "") {
+  const candidates = HERO_IMAGE_LIBRARY.filter(
+    (image) => image && image.src !== excludedSrc,
+  );
+  const source = candidates.length ? candidates : HERO_IMAGE_LIBRARY;
+
+  return source[Math.floor(Math.random() * source.length)] || null;
+}
+
+function preloadImage(source) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = () => resolve(source);
+    image.onerror = () => reject(new Error(`Unable to preload ${source}`));
+    image.src = source;
+  });
+}
+
+function applyHeroImageToLayer(layer, image) {
+  if (!layer || !image?.src) {
+    return;
+  }
+
+  layer.style.backgroundImage = `url("${image.src}")`;
+  layer.style.backgroundPosition = image.position || "center center";
+}
+
+function crossfadeHeroLayers(state, nextImage) {
+  if (!state || !nextImage) {
+    return;
+  }
+
+  const previousActiveLayer = state.activeLayer;
+
+  applyHeroImageToLayer(state.inactiveLayer, nextImage);
+  state.inactiveLayer.classList.add("is-active");
+  previousActiveLayer.classList.remove("is-active");
+
+  state.activeLayer = state.inactiveLayer;
+  state.inactiveLayer = previousActiveLayer;
+  state.currentImage = nextImage;
+}
+
+async function rotateHeroBackground(state) {
+  if (!state) {
+    return;
+  }
+
+  const nextImage = getRandomHeroImage(state.currentImage?.src);
+
+  if (!nextImage) {
+    return;
+  }
+
+  try {
+    await preloadImage(nextImage.src);
+    crossfadeHeroLayers(state, nextImage);
+  } catch (error) {
+    console.error("Unable to update hero background:", error);
+  }
+}
+
+function initializeHeroBackgrounds() {
+  const heroes = document.querySelectorAll(".hero");
+
+  if (!heroes.length || !HERO_IMAGE_LIBRARY.length) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  for (const hero of heroes) {
+    const primaryLayer = hero.querySelector(".hero-media-layer--primary");
+    const secondaryLayer = hero.querySelector(".hero-media-layer--secondary");
+
+    if (!primaryLayer || !secondaryLayer) {
+      continue;
+    }
+
+    const state = {
+      activeLayer: primaryLayer,
+      inactiveLayer: secondaryLayer,
+      currentImage: HERO_IMAGE_LIBRARY[0],
+    };
+
+    applyHeroImageToLayer(state.activeLayer, state.currentImage);
+    state.activeLayer.classList.add("is-active");
+
+    rotateHeroBackground(state);
+
+    if (prefersReducedMotion || HERO_IMAGE_LIBRARY.length < 2) {
+      continue;
+    }
+
+    window.setInterval(() => {
+      rotateHeroBackground(state);
+    }, HERO_ROTATION_DELAY_MS);
+  }
+}
+
 function getStoredTheme() {
   try {
     return window.localStorage.getItem(THEME_STORAGE_KEY);
@@ -1917,6 +2045,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupPriceFilter();
 
   const token = checkAuthentication();
+  initializeHeroBackgrounds();
   setupRevealAnimations();
   const placeId = getPlaceIdFromURL();
 
