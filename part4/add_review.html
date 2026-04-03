@@ -14,39 +14,66 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  <body>
+  <body data-page-title="titles.addReview">
     <header>
       <div class="header-inner">
-        <a href="index.html" class="brand" aria-label="HBNB home">
-          <img src="hbnb/images/logo.png" alt="Application logo" class="logo" />
+        <a
+          href="index.html"
+          class="brand"
+          aria-label="HBNB home"
+          data-i18n-aria-label="common.brand.homeAria"
+        >
+          <img
+            src="hbnb/images/logo.png"
+            alt="Application logo"
+            data-i18n-alt="common.brand.logoAlt"
+            class="logo"
+          />
           <div class="brand-copy">
             <span class="brand-name">HBNB</span>
-            <span class="brand-tagline">Where comfort meets elegance</span>
+            <span class="brand-tagline" data-i18n="common.brand.tagline"
+              >Where comfort meets elegance</span
+            >
           </div>
         </a>
 
         <div class="header-context" aria-label="Page context">
-          <span class="header-context-kicker">Guest review</span>
-          <p class="header-context-text">Share concise and useful feedback</p>
+          <span class="header-context-kicker" data-i18n="add.header.kicker"
+            >Guest review</span
+          >
+          <p class="header-context-text" data-i18n="add.header.text">
+            Share concise and useful feedback
+          </p>
         </div>
 
         <div class="header-actions">
-          <nav aria-label="Primary navigation">
-            <a href="index.html">Home</a>
-            <a href="hosts.html">Hosts</a>
-            <a href="login.html" id="login-link" class="login-button">Login</a>
+          <nav
+            aria-label="Primary navigation"
+            data-i18n-aria-label="common.nav.aria"
+          >
+            <a href="index.html" data-i18n="common.nav.home">Home</a>
+            <a href="hosts.html" data-i18n="common.nav.hosts">Hosts</a>
+            <a
+              href="login.html"
+              id="login-link"
+              class="login-button"
+              data-i18n="common.nav.login"
+              >Login</a
+            >
           </nav>
 
           <label
             class="theme-toggle"
             for="theme-toggle"
             aria-label="Toggle color theme"
+            data-i18n-aria-label="common.theme.toggle"
           >
             <input
               type="checkbox"
               id="theme-toggle"
               class="theme-toggle-input"
               aria-label="Toggle dark mode"
+              data-i18n-aria-label="common.theme.mode"
             />
             <span class="theme-toggle-track">
               <span
@@ -64,15 +91,39 @@
               </span>
             </span>
           </label>
+
+          <label
+            class="language-toggle"
+            for="language-toggle"
+            data-i18n-aria-label="common.language.toggle"
+          >
+            <input
+              type="checkbox"
+              id="language-toggle"
+              class="language-toggle-input"
+              data-i18n-aria-label="common.language.toggle"
+            />
+            <span class="language-toggle-track" aria-hidden="true">
+              <span class="language-toggle-option language-toggle-option--en"
+                >EN</span
+              >
+              <span class="language-toggle-option language-toggle-option--fr"
+                >FR</span
+              >
+              <span class="language-toggle-thumb"></span>
+            </span>
+          </label>
         </div>
       </div>
     </header>
 
     <main class="review-page">
       <section class="review-page-intro">
-        <p class="section-kicker">Guest contribution</p>
-        <h1>Add a Review</h1>
-        <p>
+        <p class="section-kicker" data-i18n="add.intro.kicker">
+          Guest contribution
+        </p>
+        <h1 data-i18n="add.intro.title">Add a Review</h1>
+        <p data-i18n="add.intro.text">
           Share clear, useful feedback about the stay, comfort, amenities, and
           overall experience.
         </p>
@@ -80,34 +131,54 @@
 
       <div class="review-container">
         <section class="place-summary">
-          <p class="section-kicker">Selected stay</p>
-          <h2>Place Summary</h2>
-          <p>Loading place summary...</p>
+          <p class="section-kicker" data-i18n="add.summary.kicker">
+            Selected stay
+          </p>
+          <h2 data-i18n="add.summary.title">Place Summary</h2>
+          <p data-i18n="add.summary.loading">Loading place summary...</p>
         </section>
 
         <form id="review-form" class="review-form">
           <p id="review-message" class="form-message" aria-live="polite"></p>
 
-          <label for="review">Your review</label>
+          <label for="review" data-i18n="add.form.reviewLabel"
+            >Your review</label
+          >
           <textarea
             id="review"
             name="review"
             rows="6"
             placeholder="Describe the stay, comfort, amenities, and overall impression."
+            data-i18n-placeholder="add.form.reviewPlaceholder"
             required
           ></textarea>
 
-          <label for="rating">Rating</label>
+          <label for="rating" data-i18n="add.form.ratingLabel">Rating</label>
           <select id="rating" name="rating" required>
-            <option value="" selected disabled>Choose a rating</option>
-            <option value="1">1 — Very poor</option>
-            <option value="2">2 — Fair</option>
-            <option value="3">3 — Good</option>
-            <option value="4">4 — Very good</option>
-            <option value="5">5 — Excellent</option>
+            <option
+              value=""
+              selected
+              disabled
+              data-i18n="add.form.optionPlaceholder"
+            >
+              Choose a rating
+            </option>
+            <option value="1" data-i18n="add.form.option1">
+              1 — Very poor
+            </option>
+            <option value="2" data-i18n="add.form.option2">2 — Fair</option>
+            <option value="3" data-i18n="add.form.option3">3 — Good</option>
+            <option value="4" data-i18n="add.form.option4">
+              4 — Very good
+            </option>
+            <option value="5" data-i18n="add.form.option5">
+              5 — Excellent
+            </option>
           </select>
 
-          <button type="submit">Submit Review</button>
+          <button type="submit" data-i18n="add.form.submit">
+            Submit Review
+          </button>
         </form>
       </div>
     </main>
@@ -116,29 +187,33 @@
       <div class="footer-top">
         <div class="footer-brand">
           <span class="footer-brand-name">HBNB</span>
-          <p class="footer-brand-text">
+          <p class="footer-brand-text" data-i18n="common.footer.brandText">
             Curated premium stays designed for elegant and memorable
             experiences.
           </p>
         </div>
 
         <div class="footer-column">
-          <h2>Navigation</h2>
+          <h2 data-i18n="common.footer.navTitle">Navigation</h2>
           <a href="index.html">Home</a>
-          <a href="index.html#filter">Explore stays</a>
-          <a href="login.html">Login</a>
+          <a href="index.html#filter" data-i18n="common.footer.explore"
+            >Explore stays</a
+          >
+          <a href="login.html" data-i18n="common.nav.login">Login</a>
         </div>
 
         <div class="footer-column">
-          <h2>Experience</h2>
-          <p>Elegant destinations</p>
-          <p>Premium comfort</p>
-          <p>Clear and trusted reviews</p>
+          <h2 data-i18n="common.footer.experienceTitle">Experience</h2>
+          <p data-i18n="common.footer.experience1">Elegant destinations</p>
+          <p data-i18n="common.footer.experience2">Premium comfort</p>
+          <p data-i18n="common.footer.experience3">Clear and trusted reviews</p>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>© 2026 HBNB — All rights reserved.</p>
+        <p data-i18n="common.footer.rights">
+          © 2026 HBNB — All rights reserved.
+        </p>
       </div>
     </footer>
 

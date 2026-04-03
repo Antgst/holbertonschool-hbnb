@@ -2358,3 +2358,1581 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+const LANGUAGE_STORAGE_KEY = "hbnb-language";
+const DEFAULT_LANGUAGE = "en";
+const APP_STATE = {
+  places: null,
+  reviewSummaryMap: new Map(),
+  currentPlace: null,
+  currentReviews: null,
+  currentReviewSummary: null,
+  hosts: null,
+};
+
+const TRANSLATIONS = {
+  en: {
+    "titles.index": "List of Places",
+    "titles.place": "Place Details",
+    "titles.login": "Login",
+    "titles.hosts": "Hosts",
+    "titles.addReview": "Add Review",
+    "common.brand.homeAria": "HBNB home",
+    "common.brand.logoAlt": "Application logo",
+    "common.brand.tagline": "Where comfort meets elegance",
+    "common.nav.aria": "Primary navigation",
+    "common.nav.home": "Home",
+    "common.nav.hosts": "Hosts",
+    "common.nav.login": "Login",
+    "common.nav.logout": "Logout",
+    "common.theme.toggle": "Toggle color theme",
+    "common.theme.mode": "Toggle dark mode",
+    "common.language.toggle": "Toggle language",
+    "common.footer.brandText":
+      "Curated premium stays designed for elegant and memorable experiences.",
+    "common.footer.navTitle": "Navigation",
+    "common.footer.explore": "Explore stays",
+    "common.footer.experienceTitle": "Experience",
+    "common.footer.experience1": "Elegant destinations",
+    "common.footer.experience2": "Premium comfort",
+    "common.footer.experience3": "Clear and trusted reviews",
+    "common.footer.rights": "© 2026 HBNB — All rights reserved.",
+    "index.header.kicker": "Collection",
+    "index.header.text": "Curated stays across Brittany",
+    "index.hero.kicker": "Curated premium stays",
+    "index.hero.title": "Experience refined stays in exceptional places",
+    "index.hero.text":
+      "Discover elegant properties, premium comfort, and carefully selected destinations designed for memorable stays.",
+    "index.hero.cta": "Explore stays",
+    "index.panel.aria": "Premium selection highlights",
+    "index.panel.label": "Designed for quality stays",
+    "index.panel.item1": "Handpicked destinations",
+    "index.panel.item2": "Elegant interiors and refined comfort",
+    "index.panel.item3": "Clear pricing and smooth browsing",
+    "index.intro.kicker": "Browse the collection",
+    "index.intro.title": "Find the stay that fits your pace",
+    "index.intro.text":
+      "Use the price filter to narrow the selection and compare properties more easily.",
+    "index.filter.aria": "Filter places by maximum price",
+    "index.filter.label": "Max price",
+    "place.header.kicker": "Stay details",
+    "place.header.defaultContext": "Coastal stay, Brittany",
+    "place.host.aria": "Host information",
+    "place.host.kicker": "Host spotlight",
+    "place.host.title": "Meet your host",
+    "place.host.loading": "Loading host...",
+    "place.host.role": "Local host",
+    "place.host.text": "Thoughtful hosting and carefully prepared stays.",
+    "place.host.tag1": "Guest-focused",
+    "place.host.tag2": "Carefully prepared",
+    "place.addreview.kicker": "Guest contribution",
+    "place.addreview.title": "Share your experience",
+    "place.addreview.text":
+      "Log in to leave a review and help future guests choose with confidence.",
+    "place.reviewSummary.aria": "Guest rating summary",
+    "place.reviews.kicker": "Guest feedback",
+    "place.reviews.title": "Reviews",
+    "login.header.kicker": "Guest access",
+    "login.header.text": "Reviews, hosts and stays in one place",
+    "login.intro.kicker": "Member access",
+    "login.intro.title": "Sign in to continue your experience",
+    "login.intro.text":
+      "Access your account to browse stays, leave reviews, and continue exploring carefully selected places with a smoother experience.",
+    "login.card.title": "Why sign in?",
+    "login.card.benefit1": "Leave reviews and share feedback",
+    "login.card.benefit2": "Access a smoother guest experience",
+    "login.card.benefit3": "Keep browsing with a cleaner flow",
+    "login.form.title": "Login",
+    "login.form.email": "Email",
+    "login.form.emailPlaceholder": "Enter your email",
+    "login.form.password": "Password",
+    "login.form.passwordPlaceholder": "Enter your password",
+    "login.form.submit": "Login",
+    "hosts.header.kicker": "Hosts directory",
+    "hosts.header.text": "Trusted hosts, reviewed stays",
+    "hosts.hero.kicker": "Meet our hosts",
+    "hosts.hero.title": "Discover the people behind each exceptional stay",
+    "hosts.hero.text":
+      "Browse our hosts, their signature properties, and the average ratings guests have given them across the platform.",
+    "hosts.empty.badge": "Hosts directory",
+    "hosts.empty.title": "Trusted hosts, curated stays",
+    "hosts.empty.text":
+      "Each host below is generated dynamically from the current platform data, including places, reviews and average ratings.",
+    "hosts.preview.aria": "Hosts directory",
+    "hosts.preview.kicker": "Directory",
+    "hosts.preview.title": "Our hosts at a glance",
+    "hosts.preview.text":
+      "Explore the current host roster with their profile images, properties, review volume and average ratings.",
+    "hosts.loading.title": "Loading hosts",
+    "hosts.loading.text":
+      "Please wait while the hosts directory is being prepared.",
+    "add.header.kicker": "Guest review",
+    "add.header.text": "Share concise and useful feedback",
+    "add.intro.kicker": "Guest contribution",
+    "add.intro.title": "Add a Review",
+    "add.intro.text":
+      "Share clear, useful feedback about the stay, comfort, amenities, and overall experience.",
+    "add.summary.kicker": "Selected stay",
+    "add.summary.title": "Place Summary",
+    "add.summary.loading": "Loading place summary...",
+    "add.form.reviewLabel": "Your review",
+    "add.form.reviewPlaceholder":
+      "Describe the stay, comfort, amenities, and overall impression.",
+    "add.form.ratingLabel": "Rating",
+    "add.form.optionPlaceholder": "Choose a rating",
+    "add.form.option1": "1 — Very poor",
+    "add.form.option2": "2 — Fair",
+    "add.form.option3": "3 — Good",
+    "add.form.option4": "4 — Very good",
+    "add.form.option5": "5 — Excellent",
+    "add.form.submit": "Submit Review",
+    "dynamic.noStaysTitle": "No stays available",
+    "dynamic.noStaysText": "No places match the current selection yet.",
+    "dynamic.imageComingSoon": "Image coming soon",
+    "dynamic.moreVisualsComingSoon": "More visuals coming soon",
+    "dynamic.selectedStay": "Selected stay",
+    "dynamic.defaultDescription":
+      "Elegant stay, premium comfort, and carefully selected amenities.",
+    "dynamic.viewDetails": "View details",
+    "dynamic.descriptionTitle": "Description",
+    "dynamic.refinedStayDescription":
+      "A refined stay with comfort, character, and carefully selected amenities.",
+    "dynamic.amenitiesTitle": "Amenities",
+    "dynamic.noAmenities": "No amenities listed yet.",
+    "dynamic.unknownHost": "Unknown host",
+    "dynamic.hostSpotlight": "Host spotlight",
+    "dynamic.meetHost": "Meet your host",
+    "dynamic.localHost": "Local host",
+    "dynamic.hostText":
+      "Thoughtful hosting and carefully prepared stays designed for a smoother guest experience.",
+    "dynamic.guestFocused": "Guest-focused",
+    "dynamic.carefullyPrepared": "Carefully prepared",
+    "dynamic.guestRating": "Guest rating",
+    "dynamic.reviewsAppearSoon":
+      "Reviews will appear here once guests start sharing feedback.",
+    "dynamic.anonymousGuest": "Anonymous guest",
+    "dynamic.guestFeedback": "Guest feedback",
+    "dynamic.reviewsTitle": "Reviews",
+    "dynamic.noReviews":
+      "No reviews yet. Be the first guest to share feedback about this stay.",
+    "dynamic.noComment": "No comment provided.",
+    "dynamic.placeSummaryTitle": "Place Summary",
+    "dynamic.labelName": "Name:",
+    "dynamic.labelHost": "Host:",
+    "dynamic.labelPrice": "Price:",
+    "dynamic.new": "New",
+    "dynamic.noHostsAvailableTitle": "No hosts available",
+    "dynamic.noHostsAvailableText":
+      "No hosts could be generated from the current platform data.",
+    "dynamic.unableToLoadHostsTitle": "Unable to load hosts",
+    "dynamic.unableToLoadHostsText":
+      "The hosts directory could not be loaded right now.",
+    "dynamic.allPrices": "All prices",
+    "dynamic.addReviewLoginText":
+      "Log in to leave a review and help future guests choose with confidence.",
+    "dynamic.addReviewLoginCta": "Log in to review",
+    "dynamic.addReviewLoginNote":
+      "Reviews are available to authenticated guests only.",
+    "dynamic.addReviewAuthText":
+      "Leave a short, useful review about the comfort, amenities, and overall stay.",
+    "dynamic.addReviewAuthCta": "Add Review",
+    "dynamic.addReviewAuthNote":
+      "Clear and honest feedback helps future guests compare more easily.",
+    "dynamic.loginMissingFields": "Please enter both your email and password.",
+    "dynamic.signingIn": "Signing in...",
+    "dynamic.checkingCredentials": "Checking your credentials...",
+    "dynamic.loginSuccess": "Login successful. Redirecting...",
+    "dynamic.invalidCredentials": "Invalid email or password.",
+    "dynamic.loginError": "An error occurred while trying to log in.",
+    "dynamic.reviewEmpty": "Review cannot be empty.",
+    "dynamic.reviewInvalidRating":
+      "Please choose a valid rating between 1 and 5.",
+    "dynamic.placeIdMissing": "Place ID not found.",
+    "dynamic.submitting": "Submitting...",
+    "dynamic.submittingReview": "Submitting your review...",
+    "dynamic.reviewSuccess": "Review submitted successfully.",
+    "dynamic.reviewFailed": "Failed to submit review.",
+    "dynamic.reviewError": "An error occurred while submitting the review.",
+    "dynamic.lightboxDialog": "Expanded place gallery",
+    "dynamic.lightboxPrev": "Previous image",
+    "dynamic.lightboxNext": "Next image",
+    "dynamic.lightboxClose": "Close image preview",
+    "dynamic.expandedImageAlt": "Expanded place image",
+    "dynamic.refinedStayContext": "refined stay",
+  },
+  fr: {
+    "titles.index": "Liste des logements",
+    "titles.place": "Détails du logement",
+    "titles.login": "Connexion",
+    "titles.hosts": "Hôtes",
+    "titles.addReview": "Ajouter un avis",
+    "common.brand.homeAria": "Accueil HBNB",
+    "common.brand.logoAlt": "Logo de l'application",
+    "common.brand.tagline": "Quand le confort rencontre l'élégance",
+    "common.nav.aria": "Navigation principale",
+    "common.nav.home": "Accueil",
+    "common.nav.hosts": "Hôtes",
+    "common.nav.login": "Connexion",
+    "common.nav.logout": "Déconnexion",
+    "common.theme.toggle": "Changer le thème",
+    "common.theme.mode": "Activer le mode sombre",
+    "common.language.toggle": "Changer de langue",
+    "common.footer.brandText":
+      "Des séjours premium pensés pour des expériences élégantes et mémorables.",
+    "common.footer.navTitle": "Navigation",
+    "common.footer.explore": "Explorer les logements",
+    "common.footer.experienceTitle": "Expérience",
+    "common.footer.experience1": "Destinations élégantes",
+    "common.footer.experience2": "Confort premium",
+    "common.footer.experience3": "Avis clairs et fiables",
+    "common.footer.rights": "© 2026 HBNB — Tous droits réservés.",
+    "index.header.kicker": "Collection",
+    "index.header.text": "Séjours sélectionnés à travers la Bretagne",
+    "index.hero.kicker": "Séjours premium sélectionnés",
+    "index.hero.title": "Vivez des séjours raffinés dans des lieux d'exception",
+    "index.hero.text":
+      "Découvrez des propriétés élégantes, un confort premium et des destinations soigneusement choisies pour des séjours mémorables.",
+    "index.hero.cta": "Explorer les logements",
+    "index.panel.aria": "Points forts de la sélection premium",
+    "index.panel.label": "Pensé pour des séjours de qualité",
+    "index.panel.item1": "Destinations soigneusement choisies",
+    "index.panel.item2": "Intérieurs élégants et confort raffiné",
+    "index.panel.item3": "Tarifs clairs et navigation fluide",
+    "index.intro.kicker": "Parcourir la collection",
+    "index.intro.title": "Trouvez le séjour qui correspond à votre rythme",
+    "index.intro.text":
+      "Utilisez le filtre de prix pour affiner la sélection et comparer les logements plus facilement.",
+    "index.filter.aria": "Filtrer les logements par prix maximum",
+    "index.filter.label": "Prix max",
+    "place.header.kicker": "Détails du séjour",
+    "place.header.defaultContext": "Séjour côtier, Bretagne",
+    "place.host.aria": "Informations sur l'hôte",
+    "place.host.kicker": "Hôte à l'honneur",
+    "place.host.title": "Rencontrez votre hôte",
+    "place.host.loading": "Chargement de l'hôte...",
+    "place.host.role": "Hôte local",
+    "place.host.text":
+      "Un accueil attentionné et des séjours préparés avec soin.",
+    "place.host.tag1": "Orienté voyageurs",
+    "place.host.tag2": "Préparé avec soin",
+    "place.addreview.kicker": "Contribution voyageur",
+    "place.addreview.title": "Partagez votre expérience",
+    "place.addreview.text":
+      "Connectez-vous pour laisser un avis et aider les futurs voyageurs à choisir en toute confiance.",
+    "place.reviewSummary.aria": "Résumé de la note des voyageurs",
+    "place.reviews.kicker": "Retours des voyageurs",
+    "place.reviews.title": "Avis",
+    "login.header.kicker": "Accès voyageur",
+    "login.header.text": "Avis, hôtes et séjours au même endroit",
+    "login.intro.kicker": "Accès membre",
+    "login.intro.title": "Connectez-vous pour poursuivre votre expérience",
+    "login.intro.text":
+      "Accédez à votre compte pour parcourir les logements, laisser des avis et continuer à explorer des lieux soigneusement sélectionnés avec une expérience plus fluide.",
+    "login.card.title": "Pourquoi se connecter ?",
+    "login.card.benefit1": "Laisser des avis et partager vos retours",
+    "login.card.benefit2": "Profiter d'une expérience voyageur plus fluide",
+    "login.card.benefit3": "Continuer votre navigation plus sereinement",
+    "login.form.title": "Connexion",
+    "login.form.email": "Email",
+    "login.form.emailPlaceholder": "Saisissez votre email",
+    "login.form.password": "Mot de passe",
+    "login.form.passwordPlaceholder": "Saisissez votre mot de passe",
+    "login.form.submit": "Connexion",
+    "hosts.header.kicker": "Annuaire des hôtes",
+    "hosts.header.text": "Hôtes fiables, séjours évalués",
+    "hosts.hero.kicker": "Rencontrez nos hôtes",
+    "hosts.hero.title":
+      "Découvrez les personnes derrière chaque séjour d'exception",
+    "hosts.hero.text":
+      "Parcourez nos hôtes, leurs propriétés phares et les notes moyennes que les voyageurs leur attribuent sur la plateforme.",
+    "hosts.empty.badge": "Annuaire des hôtes",
+    "hosts.empty.title": "Hôtes de confiance, séjours sélectionnés",
+    "hosts.empty.text":
+      "Chaque hôte ci-dessous est généré dynamiquement à partir des données actuelles de la plateforme, y compris les logements, les avis et les notes moyennes.",
+    "hosts.preview.aria": "Annuaire des hôtes",
+    "hosts.preview.kicker": "Annuaire",
+    "hosts.preview.title": "Nos hôtes en un coup d'œil",
+    "hosts.preview.text":
+      "Découvrez la liste actuelle des hôtes avec leurs photos de profil, leurs logements, le volume d'avis et les notes moyennes.",
+    "hosts.loading.title": "Chargement des hôtes",
+    "hosts.loading.text":
+      "Veuillez patienter pendant la préparation de l'annuaire des hôtes.",
+    "add.header.kicker": "Avis voyageur",
+    "add.header.text": "Partagez un retour concis et utile",
+    "add.intro.kicker": "Contribution voyageur",
+    "add.intro.title": "Ajouter un avis",
+    "add.intro.text":
+      "Partagez un retour clair et utile sur le séjour, le confort, les équipements et l'expérience globale.",
+    "add.summary.kicker": "Séjour sélectionné",
+    "add.summary.title": "Résumé du logement",
+    "add.summary.loading": "Chargement du résumé du logement...",
+    "add.form.reviewLabel": "Votre avis",
+    "add.form.reviewPlaceholder":
+      "Décrivez le séjour, le confort, les équipements et votre impression générale.",
+    "add.form.ratingLabel": "Note",
+    "add.form.optionPlaceholder": "Choisissez une note",
+    "add.form.option1": "1 — Très insuffisant",
+    "add.form.option2": "2 — Moyen",
+    "add.form.option3": "3 — Bien",
+    "add.form.option4": "4 — Très bien",
+    "add.form.option5": "5 — Excellent",
+    "add.form.submit": "Envoyer l'avis",
+    "dynamic.noStaysTitle": "Aucun logement disponible",
+    "dynamic.noStaysText":
+      "Aucun logement ne correspond encore à la sélection actuelle.",
+    "dynamic.imageComingSoon": "Image bientôt disponible",
+    "dynamic.moreVisualsComingSoon": "D'autres visuels arrivent bientôt",
+    "dynamic.selectedStay": "Séjour sélectionné",
+    "dynamic.defaultDescription":
+      "Séjour élégant, confort premium et équipements soigneusement sélectionnés.",
+    "dynamic.viewDetails": "Voir les détails",
+    "dynamic.descriptionTitle": "Description",
+    "dynamic.refinedStayDescription":
+      "Un séjour raffiné avec du confort, du caractère et des équipements soigneusement sélectionnés.",
+    "dynamic.amenitiesTitle": "Équipements",
+    "dynamic.noAmenities": "Aucun équipement renseigné pour le moment.",
+    "dynamic.unknownHost": "Hôte inconnu",
+    "dynamic.hostSpotlight": "Hôte à l'honneur",
+    "dynamic.meetHost": "Rencontrez votre hôte",
+    "dynamic.localHost": "Hôte local",
+    "dynamic.hostText":
+      "Un accueil attentionné et des séjours préparés avec soin pour une expérience voyageur plus fluide.",
+    "dynamic.guestFocused": "Axé voyageurs",
+    "dynamic.carefullyPrepared": "Préparé avec soin",
+    "dynamic.guestRating": "Note voyageurs",
+    "dynamic.reviewsAppearSoon":
+      "Les avis apparaîtront ici dès que les voyageurs commenceront à partager leurs retours.",
+    "dynamic.anonymousGuest": "Voyageur anonyme",
+    "dynamic.guestFeedback": "Retours des voyageurs",
+    "dynamic.reviewsTitle": "Avis",
+    "dynamic.noReviews":
+      "Aucun avis pour le moment. Soyez le premier voyageur à partager votre retour sur ce séjour.",
+    "dynamic.noComment": "Aucun commentaire fourni.",
+    "dynamic.placeSummaryTitle": "Résumé du logement",
+    "dynamic.labelName": "Nom :",
+    "dynamic.labelHost": "Hôte :",
+    "dynamic.labelPrice": "Prix :",
+    "dynamic.new": "Nouveau",
+    "dynamic.noHostsAvailableTitle": "Aucun hôte disponible",
+    "dynamic.noHostsAvailableText":
+      "Aucun hôte n'a pu être généré à partir des données actuelles de la plateforme.",
+    "dynamic.unableToLoadHostsTitle": "Impossible de charger les hôtes",
+    "dynamic.unableToLoadHostsText":
+      "L'annuaire des hôtes ne peut pas être chargé pour le moment.",
+    "dynamic.allPrices": "Tous les prix",
+    "dynamic.addReviewLoginText":
+      "Connectez-vous pour laisser un avis et aider les futurs voyageurs à choisir en toute confiance.",
+    "dynamic.addReviewLoginCta": "Se connecter pour laisser un avis",
+    "dynamic.addReviewLoginNote":
+      "Les avis sont réservés aux voyageurs authentifiés.",
+    "dynamic.addReviewAuthText":
+      "Laissez un avis court et utile sur le confort, les équipements et le séjour global.",
+    "dynamic.addReviewAuthCta": "Ajouter un avis",
+    "dynamic.addReviewAuthNote":
+      "Des retours clairs et honnêtes aident les futurs voyageurs à comparer plus facilement.",
+    "dynamic.loginMissingFields":
+      "Veuillez saisir votre email et votre mot de passe.",
+    "dynamic.signingIn": "Connexion en cours...",
+    "dynamic.checkingCredentials": "Vérification de vos identifiants...",
+    "dynamic.loginSuccess": "Connexion réussie. Redirection...",
+    "dynamic.invalidCredentials": "Email ou mot de passe invalide.",
+    "dynamic.loginError":
+      "Une erreur est survenue lors de la tentative de connexion.",
+    "dynamic.reviewEmpty": "L'avis ne peut pas être vide.",
+    "dynamic.reviewInvalidRating":
+      "Veuillez choisir une note valide entre 1 et 5.",
+    "dynamic.placeIdMissing": "ID du logement introuvable.",
+    "dynamic.submitting": "Envoi en cours...",
+    "dynamic.submittingReview": "Envoi de votre avis...",
+    "dynamic.reviewSuccess": "Avis envoyé avec succès.",
+    "dynamic.reviewFailed": "Échec de l'envoi de l'avis.",
+    "dynamic.reviewError": "Une erreur est survenue lors de l'envoi de l'avis.",
+    "dynamic.lightboxDialog": "Galerie du logement agrandie",
+    "dynamic.lightboxPrev": "Image précédente",
+    "dynamic.lightboxNext": "Image suivante",
+    "dynamic.lightboxClose": "Fermer l'aperçu de l'image",
+    "dynamic.expandedImageAlt": "Image agrandie du logement",
+    "dynamic.refinedStayContext": "séjour raffiné",
+  },
+};
+
+function getStoredLanguage() {
+  try {
+    return window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  } catch (error) {
+    return null;
+  }
+}
+
+function getPreferredLanguage() {
+  const storedLanguage = getStoredLanguage();
+
+  if (storedLanguage === "fr" || storedLanguage === "en") {
+    return storedLanguage;
+  }
+
+  return DEFAULT_LANGUAGE;
+}
+
+function getCurrentLanguage() {
+  return document.documentElement.dataset.language || DEFAULT_LANGUAGE;
+}
+
+function t(key, replacements = {}) {
+  const language = getCurrentLanguage();
+  const entry = TRANSLATIONS[language]?.[key] ?? TRANSLATIONS.en?.[key] ?? key;
+
+  return String(entry).replace(/\{(\w+)\}/g, (match, token) => {
+    return token in replacements ? String(replacements[token]) : match;
+  });
+}
+
+function formatCountLabel(type, count) {
+  const language = getCurrentLanguage();
+  const plural = count > 1;
+
+  if (type === "review") {
+    if (language === "fr") {
+      return `${count} avis`;
+    }
+    return `${count} review${plural ? "s" : ""}`;
+  }
+
+  if (type === "stay") {
+    if (language === "fr") {
+      return `${count} séjour${plural ? "s" : ""}`;
+    }
+    return `${count} stay${plural ? "s" : ""}`;
+  }
+
+  if (type === "image") {
+    if (language === "fr") {
+      return `${count} image${plural ? "s" : ""}`;
+    }
+    return `${count} image${plural ? "s" : ""}`;
+  }
+
+  return `${count}`;
+}
+
+function formatPriceLabel(price) {
+  return `${Number(price) || 0} € ${getCurrentLanguage() === "fr" ? "/ nuit" : "/ night"}`;
+}
+
+function formatPriceInline(price) {
+  return `€${Number(price) || 0} ${getCurrentLanguage() === "fr" ? "/ nuit" : "/ night"}`;
+}
+
+function formatUpToPrice(price) {
+  return getCurrentLanguage() === "fr"
+    ? `Jusqu'à ${price} €`
+    : `Up to €${price}`;
+}
+
+function syncLanguageToggleState(language) {
+  const isFrench = language === "fr";
+
+  for (const toggle of document.querySelectorAll(".language-toggle-input")) {
+    toggle.checked = isFrench;
+    toggle.setAttribute("aria-checked", String(isFrench));
+  }
+}
+
+function applyStaticTranslations() {
+  const pageTitleKey = document.body?.dataset.pageTitle;
+
+  if (pageTitleKey) {
+    document.title = t(pageTitleKey);
+  }
+
+  for (const element of document.querySelectorAll("[data-i18n]")) {
+    element.textContent = t(element.dataset.i18n);
+  }
+
+  for (const element of document.querySelectorAll("[data-i18n-placeholder]")) {
+    element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
+  }
+
+  for (const element of document.querySelectorAll("[data-i18n-aria-label]")) {
+    element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+  }
+
+  for (const element of document.querySelectorAll("[data-i18n-alt]")) {
+    element.setAttribute("alt", t(element.dataset.i18nAlt));
+  }
+}
+
+function refreshLocalizedContent() {
+  applyStaticTranslations();
+  checkAuthentication();
+  populatePriceFilter();
+
+  const placeId = getPlaceIdFromURL();
+  const token = getAuthToken();
+
+  if (
+    document.getElementById("places-list") &&
+    Array.isArray(APP_STATE.places)
+  ) {
+    displayPlaces(APP_STATE.places, APP_STATE.reviewSummaryMap);
+  }
+
+  if (document.getElementById("hosts-list") && Array.isArray(APP_STATE.hosts)) {
+    displayHostsDirectory(APP_STATE.hosts);
+  }
+
+  if (document.getElementById("place-details") && APP_STATE.currentPlace) {
+    displayPlaceDetails(APP_STATE.currentPlace);
+  }
+
+  if (document.querySelector(".place-summary") && APP_STATE.currentPlace) {
+    displayPlaceSummary(APP_STATE.currentPlace);
+  }
+
+  if (document.getElementById("review-summary-card")) {
+    renderReviewSummaryCard(APP_STATE.currentReviewSummary || null);
+  }
+
+  if (document.getElementById("reviews") && APP_STATE.currentReviews) {
+    displayPlaceReviews(APP_STATE.currentReviews);
+  }
+
+  if (document.getElementById("add-review") && placeId) {
+    renderAddReviewAccess(token, placeId);
+  }
+
+  updatePlaceImageLightbox();
+}
+
+function applyLanguage(language, persist = true) {
+  const resolvedLanguage = language === "fr" ? "fr" : "en";
+
+  document.documentElement.lang = resolvedLanguage;
+  document.documentElement.dataset.language = resolvedLanguage;
+  syncLanguageToggleState(resolvedLanguage);
+
+  if (persist) {
+    try {
+      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, resolvedLanguage);
+    } catch (error) {
+      console.error("Unable to save language preference:", error);
+    }
+  }
+
+  refreshLocalizedContent();
+}
+
+function initializeLanguageToggle() {
+  applyLanguage(getPreferredLanguage(), false);
+
+  for (const toggle of document.querySelectorAll(".language-toggle-input")) {
+    toggle.addEventListener("change", (event) => {
+      const nextLanguage = event.currentTarget.checked ? "fr" : "en";
+      applyLanguage(nextLanguage);
+    });
+  }
+}
+
+function renderStateCard(title, text, compact = false) {
+  return `
+    <div class="ui-state${compact ? " ui-state--compact" : ""}">
+      <h3 class="ui-state-title">${title}</h3>
+      <p class="ui-state-text">${text}</p>
+    </div>
+  `;
+}
+
+function checkAuthentication() {
+  const token = getAuthToken();
+  const loginLink = document.getElementById("login-link");
+
+  if (loginLink) {
+    loginLink.style.display = "";
+
+    if (token) {
+      loginLink.textContent = t("common.nav.logout");
+      loginLink.href = "#";
+      loginLink.removeAttribute("aria-current");
+      loginLink.onclick = (event) => {
+        event.preventDefault();
+        clearCookie(TOKEN_COOKIE_NAME);
+        window.location.href = "index.html";
+      };
+    } else {
+      loginLink.textContent = t("common.nav.login");
+      loginLink.href = "login.html";
+      loginLink.onclick = null;
+    }
+  }
+
+  return token;
+}
+
+async function fetchPlaces(token) {
+  const placesList = document.getElementById("places-list");
+
+  if (!placesList) {
+    return;
+  }
+
+  try {
+    const placesResponse = await fetch(`${API_BASE_URL}/places/`, {
+      headers: buildAuthHeaders(token),
+    });
+
+    if (!placesResponse.ok) {
+      throw new Error("Failed to fetch places");
+    }
+
+    const places = await parseJsonSafely(placesResponse);
+    const safePlaces = Array.isArray(places) ? places : [];
+    let reviewSummaryMap = new Map();
+
+    try {
+      reviewSummaryMap = await fetchPlaceReviewSummaries(token);
+    } catch (error) {
+      console.error("Error fetching place review summaries:", error);
+    }
+
+    APP_STATE.places = safePlaces;
+    APP_STATE.reviewSummaryMap = reviewSummaryMap;
+    displayPlaces(safePlaces, reviewSummaryMap);
+  } catch (error) {
+    placesList.innerHTML = renderStateCard(
+      t("dynamic.noStaysTitle"),
+      t("dynamic.noStaysText"),
+    );
+    throw error;
+  }
+}
+
+async function fetchPlaceDetails(token, placeId) {
+  if (!placeId) {
+    throw new Error("Place ID not found in URL");
+  }
+
+  const placeDetailsResponse = await fetch(
+    `${API_BASE_URL}/places/${placeId}`,
+    {
+      headers: buildAuthHeaders(token),
+    },
+  );
+
+  if (!placeDetailsResponse.ok) {
+    throw new Error("Failed to fetch place details");
+  }
+
+  const place = await parseJsonSafely(placeDetailsResponse);
+  APP_STATE.currentPlace = place;
+  displayPlaceDetails(place);
+  displayPlaceSummary(place);
+
+  try {
+    const reviews = await fetchPlaceReviews(token, placeId);
+    const reviewSummary = getReviewSummary(reviews);
+    APP_STATE.currentReviewSummary = reviewSummary;
+    renderReviewSummaryCard(reviewSummary);
+  } catch (error) {
+    console.error("Error fetching place reviews:", error);
+  }
+}
+
+async function fetchPlaceReviews(token, placeId) {
+  const response = await fetch(`${API_BASE_URL}/places/${placeId}/reviews`, {
+    headers: buildAuthHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch place reviews");
+  }
+
+  const reviews = await parseJsonSafely(response);
+  const safeReviews = Array.isArray(reviews) ? reviews : [];
+  APP_STATE.currentReviews = safeReviews;
+  displayPlaceReviews(safeReviews);
+  return safeReviews;
+}
+
+function displayPlaces(places, reviewSummaryMap = new Map()) {
+  const placesList = document.getElementById("places-list");
+
+  if (!placesList) {
+    return;
+  }
+
+  placesList.innerHTML = "";
+
+  if (!places || places.length === 0) {
+    placesList.innerHTML = renderStateCard(
+      t("dynamic.noStaysTitle"),
+      t("dynamic.noStaysText"),
+    );
+    setupRevealAnimations();
+    return;
+  }
+
+  for (const [index, place] of places.entries()) {
+    const placeCard = document.createElement("article");
+    placeCard.classList.add("place-card");
+    placeCard.style.setProperty("--card-index", index);
+
+    const title = escapeHtml(
+      place.title || place.name || t("dynamic.selectedStay"),
+    );
+    const price = Number(place.price) || 0;
+    placeCard.dataset.price = String(price);
+
+    const placeUrl = `place.html?id=${place.id}`;
+
+    const firstImage =
+      place.images && place.images.length > 0
+        ? `<img src="${place.images[0]}" alt="${title}" class="place-card-image" loading="lazy">`
+        : `<div class="place-card-placeholder">${t("dynamic.imageComingSoon")}</div>`;
+
+    const shortDescription = place.description
+      ? escapeHtml(place.description.slice(0, 105)) +
+        (place.description.length > 105 ? "..." : "")
+      : t("dynamic.defaultDescription");
+
+    const reviewSummary = reviewSummaryMap.get(place.id) || null;
+    const ratingBadge = renderPlaceCardRatingBadge(reviewSummary);
+
+    placeCard.innerHTML = `
+      <a
+        href="${placeUrl}"
+        class="place-card-media-link"
+        aria-label="${t("dynamic.viewDetails")} ${title}"
+      >
+        <div class="place-card-media">
+          ${firstImage}
+          ${ratingBadge}
+          <span class="place-card-price">${formatPriceInline(price)}</span>
+        </div>
+      </a>
+
+      <div class="place-card-body">
+        <h2 class="place-card-title">${title}</h2>
+        <p class="place-card-text">${shortDescription}</p>
+      </div>
+
+      <div class="place-card-footer">
+        <a href="${placeUrl}" class="details-button">${t("dynamic.viewDetails")}</a>
+      </div>
+    `;
+
+    placesList.appendChild(placeCard);
+  }
+
+  setupRevealAnimations();
+}
+
+function renderPlaceCardRatingBadge(reviewSummary) {
+  if (!reviewSummary) {
+    return "";
+  }
+
+  const countLabel =
+    reviewSummary.countLabel || formatCountLabel("review", reviewSummary.count);
+  const ariaLabel =
+    getCurrentLanguage() === "fr"
+      ? `Noté ${reviewSummary.averageLabel} sur 5 à partir de ${countLabel}`
+      : `Rated ${reviewSummary.averageLabel} out of 5 from ${countLabel}`;
+
+  return `
+    <span
+      class="place-card-rating"
+      aria-label="${ariaLabel}"
+      title="${countLabel}"
+    >
+      <span class="place-card-rating-star" aria-hidden="true">★</span>
+      <span class="place-card-rating-value">${reviewSummary.averageLabel}</span>
+    </span>
+  `;
+}
+
+function displayPlaceDetails(place) {
+  const placeDetailsSection = document.getElementById("place-details");
+
+  if (!placeDetailsSection) {
+    return;
+  }
+
+  const title = escapeHtml(
+    place.title || place.name || t("dynamic.selectedStay"),
+  );
+  const price = Number(place.price) || 0;
+  const description = escapeHtml(
+    place.description || t("dynamic.refinedStayDescription"),
+  );
+
+  const images =
+    place.images && place.images.length > 0 ? place.images : [null];
+
+  const galleryMarkup = images
+    .slice(0, 3)
+    .map((imageUrl, index) => {
+      if (!imageUrl) {
+        return `<div class="place-gallery-placeholder">${
+          index === 0
+            ? t("dynamic.imageComingSoon")
+            : t("dynamic.moreVisualsComingSoon")
+        }</div>`;
+      }
+
+      return `
+      <button
+        type="button"
+        class="place-gallery-trigger"
+        data-image-src="${escapeHtml(imageUrl)}"
+        data-image-alt="${title}"
+        aria-label="${
+          getCurrentLanguage() === "fr"
+            ? `Ouvrir l'image ${index + 1} de ${title}`
+            : `Open image ${index + 1} of ${title}`
+        }"
+      >
+        <img
+          src="${imageUrl}"
+          alt="${title}"
+          class="place-gallery-image"
+          loading="lazy"
+        >
+      </button>
+    `;
+    })
+    .join("");
+
+  placeDetailsSection.innerHTML = `
+    <div class="place-heading">
+      <div class="place-heading-top">
+        <div class="place-heading-copy">
+          <p class="section-kicker">${t("dynamic.selectedStay")}</p>
+          <h1>${title}</h1>
+          <p class="place-lead">${description}</p>
+        </div>
+
+        <div class="place-heading-side">
+          <span class="place-price-badge">${formatPriceInline(price)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="place-gallery">
+      ${galleryMarkup}
+    </div>
+
+    <div class="place-info-grid"></div>
+    <div class="place-amenities-mount"></div>
+  `;
+
+  const infoGrid = placeDetailsSection.querySelector(".place-info-grid");
+  const amenitiesMount = placeDetailsSection.querySelector(
+    ".place-amenities-mount",
+  );
+
+  infoGrid.appendChild(
+    createPlaceInfoBlock(t("dynamic.descriptionTitle"), description),
+  );
+  amenitiesMount.appendChild(createAmenitiesPanel(place.amenities));
+
+  renderHostCard(place);
+  renderReviewSummaryCard(APP_STATE.currentReviewSummary || null);
+  setupRevealAnimations();
+  updateHeaderPlaceContext(place);
+}
+
+function createPlaceInfoBlock(titleText, contentText) {
+  const container = document.createElement("article");
+  container.classList.add("place-info");
+
+  const title = document.createElement("h2");
+  title.textContent = titleText;
+
+  const content = document.createElement("p");
+  content.textContent = contentText;
+
+  container.appendChild(title);
+  container.appendChild(content);
+
+  return container;
+}
+
+function createAmenitiesPanel(amenities) {
+  const panel = document.createElement("section");
+  panel.classList.add("place-amenities-panel");
+
+  const title = document.createElement("h2");
+  title.textContent = t("dynamic.amenitiesTitle");
+
+  const grid = document.createElement("div");
+  grid.classList.add("amenities-grid");
+
+  if (amenities && amenities.length > 0) {
+    for (const amenity of amenities) {
+      const amenityLabel = amenity.name || amenity;
+
+      const card = document.createElement("article");
+      card.classList.add("amenity-card");
+
+      const icon = document.createElement("div");
+      icon.classList.add("amenity-icon");
+      icon.innerHTML = getAmenityIconMarkup(amenityLabel);
+
+      const label = document.createElement("p");
+      label.classList.add("amenity-label");
+      label.textContent = amenityLabel;
+
+      card.appendChild(icon);
+      card.appendChild(label);
+      grid.appendChild(card);
+    }
+  } else {
+    const emptyState = document.createElement("p");
+    emptyState.classList.add("amenities-empty");
+    emptyState.textContent = t("dynamic.noAmenities");
+    grid.appendChild(emptyState);
+  }
+
+  panel.appendChild(title);
+  panel.appendChild(grid);
+
+  return panel;
+}
+
+function getHostName(place) {
+  if (place.owner && place.owner.first_name && place.owner.last_name) {
+    return `${place.owner.first_name} ${place.owner.last_name}`;
+  }
+
+  if (place.owner && place.owner.first_name) {
+    return place.owner.first_name;
+  }
+
+  return t("dynamic.unknownHost");
+}
+
+function getHostInitials(place) {
+  const hostName = getHostName(place);
+
+  if (!hostName || hostName === t("dynamic.unknownHost")) {
+    return "HG";
+  }
+
+  const parts = hostName
+    .split(" ")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+
+  return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+}
+
+function renderHostCard(place) {
+  const hostCard = document.getElementById("host-card");
+
+  if (!hostCard) {
+    return;
+  }
+
+  const hostName = escapeHtml(getHostName(place));
+  const initials = escapeHtml(getHostInitials(place));
+  const hostImage = getHostImage(place);
+
+  const hostMedia = hostImage
+    ? `<img src="${hostImage}" alt="${hostName}" class="host-card-image" loading="lazy">`
+    : `<div class="host-card-avatar" aria-hidden="true">${initials}</div>`;
+
+  hostCard.innerHTML = `
+    <p class="section-kicker">${t("dynamic.hostSpotlight")}</p>
+
+    <div class="host-card-media">
+      ${hostMedia}
+    </div>
+
+    <div class="host-card-body">
+      <h2>${t("dynamic.meetHost")}</h2>
+      <p class="host-card-name">${hostName}</p>
+      <p class="host-card-role">${t("dynamic.localHost")}</p>
+      <p class="host-card-text">
+        ${t("dynamic.hostText")}
+      </p>
+      <div class="host-card-tags">
+        <span>${t("dynamic.guestFocused")}</span>
+        <span>${t("dynamic.carefullyPrepared")}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderReviewSummaryCard(reviewSummary = null) {
+  const reviewSummaryCard = document.getElementById("review-summary-card");
+
+  if (!reviewSummaryCard) {
+    return;
+  }
+
+  if (!reviewSummary) {
+    reviewSummaryCard.innerHTML = `
+      <p class="section-kicker">${t("dynamic.guestRating")}</p>
+      <div class="review-summary-empty">
+        ${t("dynamic.reviewsAppearSoon")}
+      </div>
+    `;
+    return;
+  }
+
+  const ariaLabel =
+    getCurrentLanguage() === "fr"
+      ? `${reviewSummary.averageLabel} sur 5 à partir de ${reviewSummary.countLabel}`
+      : `${reviewSummary.averageLabel} out of 5 from ${reviewSummary.countLabel}`;
+
+  reviewSummaryCard.innerHTML = `
+    <p class="section-kicker">${t("dynamic.guestRating")}</p>
+
+    <div
+      class="review-summary-box"
+      aria-label="${ariaLabel}"
+    >
+      <div class="review-summary-top">
+        <span class="review-summary-value">${reviewSummary.averageLabel}</span>
+        <span class="review-summary-scale">/ 5</span>
+      </div>
+
+      <div class="review-summary-stars">
+        ${renderStarRating(reviewSummary.average)}
+      </div>
+
+      <p class="review-summary-count">${reviewSummary.countLabel}</p>
+    </div>
+  `;
+}
+
+function getReviewAuthorName(review) {
+  if (review.user && typeof review.user === "object") {
+    const firstName = review.user.first_name || "";
+    const lastName = review.user.last_name || "";
+    const fullName = `${firstName} ${lastName}`.trim();
+
+    if (fullName) {
+      return fullName;
+    }
+  }
+
+  if (typeof review.user === "string" && review.user.trim()) {
+    return review.user;
+  }
+
+  return t("dynamic.anonymousGuest");
+}
+
+function getReviewSummary(reviews) {
+  if (!Array.isArray(reviews) || reviews.length === 0) {
+    return null;
+  }
+
+  const ratings = reviews
+    .map((review) => Number(review.rating))
+    .filter((rating) => Number.isFinite(rating) && rating >= 1 && rating <= 5);
+
+  if (ratings.length === 0) {
+    return null;
+  }
+
+  const total = ratings.reduce((sum, rating) => sum + rating, 0);
+  const average = total / ratings.length;
+  const count = ratings.length;
+
+  return {
+    average,
+    averageLabel: average.toFixed(1),
+    count,
+    countLabel: formatCountLabel("review", count),
+  };
+}
+
+function displayPlaceReviews(reviews) {
+  const reviewsSection = document.getElementById("reviews");
+
+  if (!reviewsSection) {
+    return;
+  }
+
+  reviewsSection.innerHTML = `
+    <div class="reviews-section-header">
+      <p class="section-kicker">${t("dynamic.guestFeedback")}</p>
+      <h2>${t("dynamic.reviewsTitle")}</h2>
+    </div>
+  `;
+
+  if (!reviews || reviews.length === 0) {
+    const noReviews = document.createElement("p");
+    noReviews.classList.add("review-empty");
+    noReviews.textContent = t("dynamic.noReviews");
+    reviewsSection.appendChild(noReviews);
+    return;
+  }
+
+  const reviewsList = document.createElement("div");
+  reviewsList.classList.add("reviews-list");
+
+  for (const review of reviews) {
+    const reviewCard = document.createElement("article");
+    reviewCard.classList.add("review-card");
+
+    const authorName = getReviewAuthorName(review);
+    const rating = Number(review.rating) || 0;
+    const starsMarkup = renderStarRating(rating);
+    const ariaLabel =
+      getCurrentLanguage() === "fr" ? `${rating} sur 5` : `${rating} out of 5`;
+
+    reviewCard.innerHTML = `
+      <div class="review-card-header">
+        <h3>${authorName}</h3>
+        <div class="review-rating" aria-label="${ariaLabel}">
+          <div class="review-rating-stars">
+            ${starsMarkup}
+          </div>
+          <span class="review-rating-value">${rating}/5</span>
+        </div>
+      </div>
+      <p class="review-comment">${review.text || t("dynamic.noComment")}</p>
+    `;
+
+    reviewsList.appendChild(reviewCard);
+  }
+
+  reviewsSection.appendChild(reviewsList);
+  setupRevealAnimations();
+}
+
+function displayPlaceSummary(place) {
+  const placeSummarySection = document.querySelector(".place-summary");
+
+  if (!placeSummarySection) {
+    return;
+  }
+
+  const title = escapeHtml(
+    place.title || place.name || t("dynamic.selectedStay"),
+  );
+  const price = Number(place.price) || 0;
+
+  placeSummarySection.innerHTML = `
+    <p class="section-kicker">${t("dynamic.selectedStay")}</p>
+    <h2>${t("dynamic.placeSummaryTitle")}</h2>
+    <p><strong>${t("dynamic.labelName")}</strong> ${title}</p>
+    <p><strong>${t("dynamic.labelHost")}</strong> ${escapeHtml(getHostName(place))}</p>
+    <p><strong>${t("dynamic.labelPrice")}</strong> ${formatPriceInline(price)}</p>
+  `;
+}
+
+function renderHostPreviewCard(host) {
+  const hostName = escapeHtml(host.name);
+  const leadPlaceTitle = escapeHtml(host.leadPlaceTitle);
+  const listingLabel = formatCountLabel("stay", host.listingCount);
+  const reviewLabel = formatCountLabel("review", host.reviewCount);
+  const ratingLabel = host.reviewSummary
+    ? `★ ${host.reviewSummary.averageLabel}`
+    : t("dynamic.new");
+
+  return `
+    <article class="host-preview-card">
+      <div class="host-preview-photo">
+        ${renderHostPreviewMedia(host)}
+      </div>
+
+      <div class="host-preview-body">
+        <div class="host-preview-top">
+          <h3>${hostName}</h3>
+          <span class="host-preview-rating">${ratingLabel}</span>
+        </div>
+
+        <p class="host-preview-location">${leadPlaceTitle}</p>
+
+        <div class="host-preview-stats">
+          <span>${listingLabel}</span>
+          <span>${reviewLabel}</span>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function displayHostsDirectory(hosts) {
+  const hostsList = document.getElementById("hosts-list");
+
+  if (!hostsList) {
+    return;
+  }
+
+  if (!Array.isArray(hosts) || hosts.length === 0) {
+    hostsList.innerHTML = renderStateCard(
+      t("dynamic.noHostsAvailableTitle"),
+      t("dynamic.noHostsAvailableText"),
+    );
+    setupRevealAnimations();
+    return;
+  }
+
+  hostsList.innerHTML = hosts
+    .map((host) => renderHostPreviewCard(host))
+    .join("");
+  setupRevealAnimations();
+}
+
+async function fetchHostsDirectory(token) {
+  const hostsList = document.getElementById("hosts-list");
+
+  if (!hostsList) {
+    return;
+  }
+
+  try {
+    const [placesResponse, reviewsResponse] = await Promise.all([
+      fetch(`${API_BASE_URL}/places/`, {
+        headers: buildAuthHeaders(token),
+      }),
+      fetch(`${API_BASE_URL}/reviews/`, {
+        headers: buildAuthHeaders(token),
+      }),
+    ]);
+
+    if (!placesResponse.ok || !reviewsResponse.ok) {
+      throw new Error("Failed to fetch hosts directory data");
+    }
+
+    const [places, reviews] = await Promise.all([
+      parseJsonSafely(placesResponse),
+      parseJsonSafely(reviewsResponse),
+    ]);
+
+    const hosts = buildHostsDirectory(
+      Array.isArray(places) ? places : [],
+      Array.isArray(reviews) ? reviews : [],
+    );
+
+    APP_STATE.hosts = hosts;
+    displayHostsDirectory(hosts);
+  } catch (error) {
+    hostsList.innerHTML = renderStateCard(
+      t("dynamic.unableToLoadHostsTitle"),
+      t("dynamic.unableToLoadHostsText"),
+    );
+
+    throw error;
+  }
+}
+
+function populatePriceFilter() {
+  const priceFilter = document.getElementById("price-filter");
+
+  if (!priceFilter) {
+    return;
+  }
+
+  const selectedValue = priceFilter.value || "All";
+  priceFilter.innerHTML = "";
+
+  const prices = [
+    { label: t("dynamic.allPrices"), value: "All" },
+    { label: formatUpToPrice(50), value: "50" },
+    { label: formatUpToPrice(100), value: "100" },
+    { label: formatUpToPrice(200), value: "200" },
+  ];
+
+  for (const price of prices) {
+    const option = document.createElement("option");
+    option.textContent = price.label;
+    option.value = price.value;
+    option.selected = selectedValue === price.value;
+    priceFilter.appendChild(option);
+  }
+}
+
+function renderAddReviewAccess(token, placeId) {
+  const addReviewSection = document.getElementById("add-review");
+
+  if (!addReviewSection) {
+    return;
+  }
+
+  if (!token) {
+    addReviewSection.innerHTML = `
+      <p class="section-kicker">${t("place.addreview.kicker")}</p>
+      <h2>${t("place.addreview.title")}</h2>
+      <p class="add-review-text">
+        ${t("dynamic.addReviewLoginText")}
+      </p>
+      <a href="login.html" class="details-button">${t("dynamic.addReviewLoginCta")}</a>
+      <p class="add-review-note">
+        ${t("dynamic.addReviewLoginNote")}
+      </p>
+    `;
+    return;
+  }
+
+  addReviewSection.innerHTML = `
+    <p class="section-kicker">${t("place.addreview.kicker")}</p>
+    <h2>${t("place.addreview.title")}</h2>
+    <p class="add-review-text">
+      ${t("dynamic.addReviewAuthText")}
+    </p>
+    <a href="add_review.html?id=${placeId}" class="details-button">${t("dynamic.addReviewAuthCta")}</a>
+    <p class="add-review-note">
+      ${t("dynamic.addReviewAuthNote")}
+    </p>
+  `;
+}
+
+async function handleLoginSubmit(event) {
+  event.preventDefault();
+
+  const loginForm = event.currentTarget;
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const loginMessage = document.getElementById("login-message");
+  const submitButton = loginForm.querySelector('button[type="submit"]');
+
+  resetFormMessage(loginMessage);
+
+  if (!email || !password) {
+    setFormMessage(loginMessage, t("dynamic.loginMissingFields"), "error");
+    return;
+  }
+
+  setButtonLoading(submitButton, true, t("dynamic.signingIn"));
+  setFormMessage(loginMessage, t("dynamic.checkingCredentials"), "loading");
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await parseJsonSafely(response);
+
+    if (response.ok && data.access_token) {
+      document.cookie = `${TOKEN_COOKIE_NAME}=${data.access_token}; path=/`;
+      setButtonLoading(submitButton, false);
+      setFormMessage(loginMessage, t("dynamic.loginSuccess"), "success");
+
+      window.setTimeout(() => {
+        window.location.href = "index.html";
+      }, 450);
+
+      return;
+    }
+
+    setButtonLoading(submitButton, false);
+    setFormMessage(
+      loginMessage,
+      data.error || t("dynamic.invalidCredentials"),
+      "error",
+    );
+  } catch (error) {
+    setButtonLoading(submitButton, false);
+    setFormMessage(loginMessage, t("dynamic.loginError"), "error");
+  }
+}
+
+async function handleReviewSubmit(event, token, placeId, reviewForm) {
+  event.preventDefault();
+
+  const reviewText = document.getElementById("review").value.trim();
+  const rating = document.getElementById("rating").value;
+  const numericRating = Number(rating);
+  const reviewMessage = document.getElementById("review-message");
+  const submitButton = reviewForm.querySelector('button[type="submit"]');
+
+  resetFormMessage(reviewMessage);
+
+  if (!reviewText) {
+    setFormMessage(reviewMessage, t("dynamic.reviewEmpty"), "error");
+    return;
+  }
+
+  if (
+    !Number.isInteger(numericRating) ||
+    numericRating < 1 ||
+    numericRating > 5
+  ) {
+    setFormMessage(reviewMessage, t("dynamic.reviewInvalidRating"), "error");
+    return;
+  }
+
+  if (!placeId) {
+    setFormMessage(reviewMessage, t("dynamic.placeIdMissing"), "error");
+    return;
+  }
+
+  const reviewData = {
+    text: reviewText,
+    rating: numericRating,
+    place_id: placeId,
+  };
+
+  setButtonLoading(submitButton, true, t("dynamic.submitting"));
+  setFormMessage(reviewMessage, t("dynamic.submittingReview"), "loading");
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/reviews/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(reviewData),
+    });
+
+    const data = await parseJsonSafely(response);
+
+    setButtonLoading(submitButton, false);
+
+    if (response.ok) {
+      reviewForm.reset();
+      setFormMessage(reviewMessage, t("dynamic.reviewSuccess"), "success");
+      return;
+    }
+
+    setFormMessage(
+      reviewMessage,
+      data.error || t("dynamic.reviewFailed"),
+      "error",
+    );
+  } catch (error) {
+    setButtonLoading(submitButton, false);
+    setFormMessage(reviewMessage, t("dynamic.reviewError"), "error");
+  }
+}
+
+function ensurePlaceImageLightbox() {
+  let lightbox = document.getElementById("place-image-lightbox");
+
+  if (lightbox) {
+    return lightbox;
+  }
+
+  lightbox = document.createElement("div");
+  lightbox.id = "place-image-lightbox";
+  lightbox.className = "place-image-lightbox";
+  lightbox.setAttribute("aria-hidden", "true");
+
+  lightbox.innerHTML = `
+    <div class="place-image-lightbox-backdrop" data-lightbox-close="true"></div>
+
+    <div
+      class="place-image-lightbox-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-label="${t("dynamic.lightboxDialog")}"
+    >
+      <button
+        type="button"
+        class="place-image-lightbox-nav place-image-lightbox-nav--prev"
+        aria-label="${t("dynamic.lightboxPrev")}"
+        data-lightbox-prev="true"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M15 18L9 12L15 6" />
+        </svg>
+      </button>
+
+      <div class="place-image-lightbox-figure">
+        <button
+          type="button"
+          class="place-image-lightbox-close"
+          aria-label="${t("dynamic.lightboxClose")}"
+          data-lightbox-close="true"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6L18 18" />
+            <path d="M18 6L6 18" />
+          </svg>
+        </button>
+
+        <img
+          src=""
+          alt=""
+          class="place-image-lightbox-image"
+        >
+
+        <p class="place-image-lightbox-counter" aria-live="polite"></p>
+      </div>
+
+      <button
+        type="button"
+        class="place-image-lightbox-nav place-image-lightbox-nav--next"
+        aria-label="${t("dynamic.lightboxNext")}"
+        data-lightbox-next="true"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18L15 12L9 6" />
+        </svg>
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(lightbox);
+  return lightbox;
+}
+
+function updateHeaderPlaceContext(place) {
+  const target = document.getElementById("header-place-context");
+
+  if (!target || !place) {
+    return;
+  }
+
+  const title = place.title || place.name || "";
+  const match = title.match(/\bin\s+(.+)$/i);
+  const location =
+    place.city || place.location || (match ? match[1] : "Brittany");
+
+  target.textContent = `${location} · ${t("dynamic.refinedStayContext")}`;
+}
+
+function updatePlaceImageLightbox() {
+  const lightbox = ensurePlaceImageLightbox();
+  const image = lightbox.querySelector(".place-image-lightbox-image");
+  const counter = lightbox.querySelector(".place-image-lightbox-counter");
+  const dialog = lightbox.querySelector(".place-image-lightbox-dialog");
+  const previousButton = lightbox.querySelector("[data-lightbox-prev='true']");
+  const nextButton = lightbox.querySelector("[data-lightbox-next='true']");
+  const closeButton = lightbox.querySelector("[data-lightbox-close='true']");
+
+  const { images, currentIndex } = placeGalleryLightboxState;
+
+  if (!images.length || !images[currentIndex]) {
+    return;
+  }
+
+  const currentImage = images[currentIndex];
+
+  if (dialog) {
+    dialog.setAttribute("aria-label", t("dynamic.lightboxDialog"));
+  }
+
+  if (previousButton) {
+    previousButton.setAttribute("aria-label", t("dynamic.lightboxPrev"));
+  }
+
+  if (nextButton) {
+    nextButton.setAttribute("aria-label", t("dynamic.lightboxNext"));
+  }
+
+  if (closeButton) {
+    closeButton.setAttribute("aria-label", t("dynamic.lightboxClose"));
+  }
+
+  image.src = currentImage.src;
+  image.alt = currentImage.alt || t("dynamic.expandedImageAlt");
+  counter.textContent = `${currentIndex + 1} / ${images.length}`;
+}
+
+initializeLanguageToggle();
