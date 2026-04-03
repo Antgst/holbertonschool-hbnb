@@ -133,56 +133,102 @@
 
       <!-- The selected place summary and review form are filled by JavaScript. -->
       <div class="review-container">
-        <section class="place-summary">
-          <p class="section-kicker" data-i18n="add.summary.kicker">
-            Selected stay
-          </p>
-          <h2 data-i18n="add.summary.title">Place Summary</h2>
-          <p data-i18n="add.summary.loading">Loading place summary...</p>
-        </section>
+        <aside class="review-page-sidebar">
+          <section class="place-summary">
+            <p class="section-kicker" data-i18n="add.summary.kicker">
+              Selected stay
+            </p>
+            <h2 data-i18n="add.summary.title">Place Summary</h2>
+            <p data-i18n="add.summary.loading">Loading place summary...</p>
+          </section>
 
-        <form id="review-form" class="review-form">
-          <p id="review-message" class="form-message" aria-live="polite"></p>
+          <section id="review-status-card" class="review-status-card">
+            <p class="section-kicker" data-i18n="add.status.kicker">
+              Your review
+            </p>
+            <h2 data-i18n="add.status.title">Review status</h2>
+            <p data-i18n="add.status.loading">
+              Checking whether you already reviewed this stay...
+            </p>
+          </section>
 
-          <label for="review" data-i18n="add.form.reviewLabel"
-            >Your review</label
-          >
-          <textarea
-            id="review"
-            name="review"
-            rows="6"
-            placeholder="Describe the stay, comfort, amenities, and overall impression."
-            data-i18n-placeholder="add.form.reviewPlaceholder"
-            required
-          ></textarea>
+          <section class="review-guide-card">
+            <p class="section-kicker" data-i18n="add.guide.kicker">
+              Writing guide
+            </p>
+            <h2 data-i18n="add.guide.title">What makes a useful review?</h2>
+            <ul class="review-guide-list">
+              <li data-i18n="add.guide.item1">
+                Be concrete about comfort, cleanliness, and amenities.
+              </li>
+              <li data-i18n="add.guide.item2">
+                Keep it concise and explain the main strengths or limits.
+              </li>
+              <li data-i18n="add.guide.item3">
+                Match the written review with the score you choose.
+              </li>
+            </ul>
+          </section>
+        </aside>
 
-          <label for="rating" data-i18n="add.form.ratingLabel">Rating</label>
-          <select id="rating" name="rating" required>
-            <option
-              value=""
-              selected
-              disabled
-              data-i18n="add.form.optionPlaceholder"
+        <section class="review-composer-panel">
+          <form id="review-form" class="review-form">
+            <p class="section-kicker" data-i18n="add.form.kicker">
+              Writing space
+            </p>
+            <h2 id="review-form-title" data-i18n="add.form.title">
+              Share your feedback
+            </h2>
+            <p
+              id="review-form-helper"
+              class="review-form-helper"
+              data-i18n="add.form.helper"
             >
-              Choose a rating
-            </option>
-            <option value="1" data-i18n="add.form.option1">
-              1 — Very poor
-            </option>
-            <option value="2" data-i18n="add.form.option2">2 — Fair</option>
-            <option value="3" data-i18n="add.form.option3">3 — Good</option>
-            <option value="4" data-i18n="add.form.option4">
-              4 — Very good
-            </option>
-            <option value="5" data-i18n="add.form.option5">
-              5 — Excellent
-            </option>
-          </select>
+              Focus on comfort, cleanliness, amenities, and the overall stay.
+            </p>
 
-          <button type="submit" data-i18n="add.form.submit">
-            Submit Review
-          </button>
-        </form>
+            <p id="review-message" class="form-message" aria-live="polite"></p>
+
+            <label for="review" data-i18n="add.form.reviewLabel"
+              >Your review</label
+            >
+            <textarea
+              id="review"
+              name="review"
+              rows="6"
+              placeholder="Describe the stay, comfort, amenities, and overall impression."
+              data-i18n-placeholder="add.form.reviewPlaceholder"
+              required
+            ></textarea>
+
+            <label for="rating" data-i18n="add.form.ratingLabel">Rating</label>
+            <select id="rating" name="rating" required>
+              <option
+                value=""
+                selected
+                disabled
+                data-i18n="add.form.optionPlaceholder"
+              >
+                Choose a rating
+              </option>
+              <option value="1" data-i18n="add.form.option1">
+                1 — Very poor
+              </option>
+              <option value="2" data-i18n="add.form.option2">2 — Fair</option>
+              <option value="3" data-i18n="add.form.option3">3 — Good</option>
+              <option value="4" data-i18n="add.form.option4">
+                4 — Very good
+              </option>
+              <option value="5" data-i18n="add.form.option5">
+                5 — Excellent
+              </option>
+            </select>
+
+            <button type="submit" data-i18n="add.form.submit">
+              Submit Review
+            </button>
+          </form>
+        </section>
       </div>
     </main>
 

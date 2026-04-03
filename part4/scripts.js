@@ -237,6 +237,42 @@ function getAuthToken() {
   return getCookie(TOKEN_COOKIE_NAME);
 }
 
+function decodeJwtPayload(token) {
+  // Decodes the JWT payload so review actions can be scoped to the owner.
+  if (!token) {
+    return null;
+  }
+
+  const parts = token.split(".");
+
+  if (parts.length < 2) {
+    return null;
+  }
+
+  try {
+    const normalized = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(
+      normalized.length + ((4 - (normalized.length % 4)) % 4),
+      "=",
+    );
+
+    return JSON.parse(window.atob(padded));
+  } catch (error) {
+    return null;
+  }
+}
+
+function getAuthContext(token = getAuthToken()) {
+  // Returns the current authenticated user context extracted from the JWT.
+  const payload = decodeJwtPayload(token);
+
+  return {
+    token: token || null,
+    userId: payload?.sub ? String(payload.sub) : null,
+    isAdmin: Boolean(payload?.is_admin),
+  };
+}
+
 function clearCookie(name) {
   // Deletes one cookie by forcing an expired date.
   document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
@@ -1286,6 +1322,7 @@ document.addEventListener("DOMContentLoaded", () => {
   populatePriceFilter();
   setupPriceFilter();
   initializePlaceGalleryLightbox();
+  initializeReviewActionDelegation();
 
   const token = checkAuthentication();
   initializeHeroBackgrounds();
@@ -1304,6 +1341,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  let activeToken = token;
+
+  if (reviewForm && placeSummarySection) {
+    activeToken = requireAuthentication();
+
+    if (!activeToken) {
+      return;
+    }
+  }
+
+  APP_STATE.auth = getAuthContext(activeToken || token);
+
   if (placesList) {
     fetchPlaces(token).catch((error) => {
       console.error("Error fetching places:", error);
@@ -1317,13 +1366,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (placeId && (placeDetailsSection || placeSummarySection)) {
-    fetchPlaceDetails(token, placeId).catch((error) => {
+    fetchPlaceDetails(activeToken || token, placeId).catch((error) => {
       console.error("Error fetching place details:", error);
     });
   }
 
   if (placeId && placeDetailsSection) {
-    renderAddReviewAccess(token, placeId);
+    renderAddReviewAccess(activeToken || token, placeId);
   }
 
   if (loginForm) {
@@ -1331,14 +1380,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (reviewForm && placeSummarySection) {
-    const reviewToken = requireAuthentication();
-
-    if (!reviewToken) {
-      return;
-    }
-
     reviewForm.addEventListener("submit", async (event) => {
-      await handleReviewSubmit(event, reviewToken, placeId, reviewForm);
+      await handleReviewSubmit(event, activeToken, placeId, reviewForm);
     });
   }
 });
@@ -1351,7 +1394,13 @@ const APP_STATE = {
   currentPlace: null,
   currentReviews: null,
   currentReviewSummary: null,
+  currentUserReview: null,
   hosts: null,
+  auth: {
+    token: null,
+    userId: null,
+    isAdmin: false,
+  },
 };
 
 const TRANSLATIONS = {
@@ -1470,6 +1519,19 @@ const TRANSLATIONS = {
     "add.form.option4": "4 — Very good",
     "add.form.option5": "5 — Excellent",
     "add.form.submit": "Submit Review",
+    "add.form.kicker": "Writing space",
+    "add.form.title": "Share your feedback",
+    "add.form.helper":
+      "Focus on comfort, cleanliness, amenities, and the overall stay.",
+    "add.status.kicker": "Your review",
+    "add.status.title": "Review status",
+    "add.status.loading": "Checking whether you already reviewed this stay...",
+    "add.guide.kicker": "Writing guide",
+    "add.guide.title": "What makes a useful review?",
+    "add.guide.item1": "Be concrete about comfort, cleanliness, and amenities.",
+    "add.guide.item2":
+      "Keep it concise and explain the main strengths or limits.",
+    "add.guide.item3": "Match the written review with the score you choose.",
     "dynamic.noStaysTitle": "No stays available",
     "dynamic.noStaysText": "No places match the current selection yet.",
     "dynamic.imageComingSoon": "Image coming soon",
@@ -1537,6 +1599,44 @@ const TRANSLATIONS = {
     "dynamic.reviewSuccess": "Review submitted successfully.",
     "dynamic.reviewFailed": "Failed to submit review.",
     "dynamic.reviewError": "An error occurred while submitting the review.",
+    "dynamic.yourReviewBadge": "Your review",
+    "dynamic.editReview": "Edit review",
+    "dynamic.deleteReview": "Delete review",
+    "dynamic.reviewStatusEmptyTitle": "No review submitted yet",
+    "dynamic.reviewStatusEmptyText":
+      "You can still submit one clear review for this stay.",
+    "dynamic.reviewStatusFilledText":
+      "You already reviewed this stay. You can edit or delete it anytime.",
+    "dynamic.reviewLockedTitle": "You already reviewed this stay",
+    "dynamic.reviewLockedHelper":
+      "Use the buttons below to update or remove your existing review.",
+    "dynamic.reviewUnlockedHelper":
+      "A short and precise review is more useful than a long generic one.",
+    "dynamic.reviewReadyChip": "Ready to review",
+    "dynamic.reviewAlreadySharedChip": "Review already shared",
+    "dynamic.noReviewsYetShort": "No ratings yet",
+    "dynamic.manageYourReview": "Manage your review",
+    "dynamic.editReviewTitle": "Edit your review",
+    "dynamic.editReviewText":
+      "Adjust the text and score so they reflect your real experience.",
+    "dynamic.editReviewSubmit": "Save changes",
+    "dynamic.updateReviewSuccess": "Review updated successfully.",
+    "dynamic.updateReviewFailed": "Failed to update the review.",
+    "dynamic.updateReviewError": "An error occurred while updating the review.",
+    "dynamic.updatingReview": "Updating your review...",
+    "dynamic.deleteReviewTitle": "Delete your review?",
+    "dynamic.deleteReviewText":
+      "This action removes your review for this stay. You can add a new one later.",
+    "dynamic.deleteReviewConfirm": "Delete now",
+    "dynamic.cancel": "Cancel",
+    "dynamic.deleteReviewSuccess": "Review deleted successfully.",
+    "dynamic.deleteReviewFailed": "Failed to delete the review.",
+    "dynamic.deleteReviewError": "An error occurred while deleting the review.",
+    "dynamic.deletingReview": "Deleting your review...",
+    "dynamic.reviewAlreadySharedText":
+      "You already left a review for this stay.",
+    "dynamic.reviewAlreadySharedNote":
+      "You can update or remove it directly from here.",
     "dynamic.lightboxDialog": "Expanded place gallery",
     "dynamic.lightboxPrev": "Previous image",
     "dynamic.lightboxNext": "Next image",
@@ -1661,6 +1761,22 @@ const TRANSLATIONS = {
     "add.form.option4": "4 — Très bien",
     "add.form.option5": "5 — Excellent",
     "add.form.submit": "Envoyer l'avis",
+    "add.form.kicker": "Espace de rédaction",
+    "add.form.title": "Partagez votre retour",
+    "add.form.helper":
+      "Concentrez-vous sur le confort, la propreté, les équipements et l'expérience globale.",
+    "add.status.kicker": "Votre avis",
+    "add.status.title": "Statut de l'avis",
+    "add.status.loading":
+      "Vérification de votre avis existant sur ce logement...",
+    "add.guide.kicker": "Guide de rédaction",
+    "add.guide.title": "Qu'est-ce qui rend un avis utile ?",
+    "add.guide.item1":
+      "Soyez concret sur le confort, la propreté et les équipements.",
+    "add.guide.item2":
+      "Restez concis et expliquez les points forts ou limites principales.",
+    "add.guide.item3":
+      "Faites correspondre le texte de l'avis avec la note choisie.",
     "dynamic.noStaysTitle": "Aucun logement disponible",
     "dynamic.noStaysText":
       "Aucun logement ne correspond encore à la sélection actuelle.",
@@ -1731,6 +1847,46 @@ const TRANSLATIONS = {
     "dynamic.reviewSuccess": "Avis envoyé avec succès.",
     "dynamic.reviewFailed": "Échec de l'envoi de l'avis.",
     "dynamic.reviewError": "Une erreur est survenue lors de l'envoi de l'avis.",
+    "dynamic.yourReviewBadge": "Votre avis",
+    "dynamic.editReview": "Modifier l'avis",
+    "dynamic.deleteReview": "Supprimer l'avis",
+    "dynamic.reviewStatusEmptyTitle": "Aucun avis envoyé pour le moment",
+    "dynamic.reviewStatusEmptyText":
+      "Vous pouvez encore laisser un avis clair sur ce logement.",
+    "dynamic.reviewStatusFilledText":
+      "Vous avez déjà évalué ce logement. Vous pouvez modifier ou supprimer votre avis à tout moment.",
+    "dynamic.reviewLockedTitle": "Vous avez déjà évalué ce logement",
+    "dynamic.reviewLockedHelper":
+      "Utilisez les boutons ci-dessous pour modifier ou supprimer votre avis actuel.",
+    "dynamic.reviewUnlockedHelper":
+      "Un avis court et précis est plus utile qu'un long texte générique.",
+    "dynamic.reviewReadyChip": "Prêt à noter",
+    "dynamic.reviewAlreadySharedChip": "Avis déjà partagé",
+    "dynamic.noReviewsYetShort": "Pas encore de note",
+    "dynamic.manageYourReview": "Gérez votre avis",
+    "dynamic.editReviewTitle": "Modifiez votre avis",
+    "dynamic.editReviewText":
+      "Ajustez le texte et la note pour qu'ils reflètent votre expérience réelle.",
+    "dynamic.editReviewSubmit": "Enregistrer les modifications",
+    "dynamic.updateReviewSuccess": "Avis modifié avec succès.",
+    "dynamic.updateReviewFailed": "Échec de la modification de l'avis.",
+    "dynamic.updateReviewError":
+      "Une erreur est survenue lors de la modification de l'avis.",
+    "dynamic.updatingReview": "Modification de votre avis...",
+    "dynamic.deleteReviewTitle": "Supprimer votre avis ?",
+    "dynamic.deleteReviewText":
+      "Cette action supprime votre avis pour ce logement. Vous pourrez en ajouter un nouveau plus tard.",
+    "dynamic.deleteReviewConfirm": "Supprimer maintenant",
+    "dynamic.cancel": "Annuler",
+    "dynamic.deleteReviewSuccess": "Avis supprimé avec succès.",
+    "dynamic.deleteReviewFailed": "Échec de la suppression de l'avis.",
+    "dynamic.deleteReviewError":
+      "Une erreur est survenue lors de la suppression de l'avis.",
+    "dynamic.deletingReview": "Suppression de votre avis...",
+    "dynamic.reviewAlreadySharedText":
+      "Vous avez déjà laissé un avis pour ce logement.",
+    "dynamic.reviewAlreadySharedNote":
+      "Vous pouvez le modifier ou le supprimer directement depuis ici.",
     "dynamic.lightboxDialog": "Galerie du logement agrandie",
     "dynamic.lightboxPrev": "Image précédente",
     "dynamic.lightboxNext": "Image suivante",
@@ -1945,6 +2101,8 @@ function checkAuthentication() {
   const token = getAuthToken();
   const loginLink = document.getElementById("login-link");
 
+  APP_STATE.auth = getAuthContext(token);
+
   if (loginLink) {
     loginLink.style.display = "";
 
@@ -2029,10 +2187,7 @@ async function fetchPlaceDetails(token, placeId) {
   displayPlaceSummary(place);
 
   try {
-    const reviews = await fetchPlaceReviews(token, placeId);
-    const reviewSummary = getReviewSummary(reviews);
-    APP_STATE.currentReviewSummary = reviewSummary;
-    renderReviewSummaryCard(reviewSummary);
+    await fetchPlaceReviews(token, placeId);
   } catch (error) {
     console.error("Error fetching place reviews:", error);
   }
@@ -2050,8 +2205,23 @@ async function fetchPlaceReviews(token, placeId) {
 
   const reviews = await parseJsonSafely(response);
   const safeReviews = Array.isArray(reviews) ? reviews : [];
+
   APP_STATE.currentReviews = safeReviews;
+  APP_STATE.currentReviewSummary = getReviewSummary(safeReviews);
+  APP_STATE.currentUserReview = getCurrentUserReview(
+    safeReviews,
+    getAuthContext(token),
+  );
+
   displayPlaceReviews(safeReviews);
+  renderReviewSummaryCard(APP_STATE.currentReviewSummary);
+  renderAddReviewAccess(token, placeId);
+  renderReviewWorkspace(APP_STATE.currentUserReview);
+
+  if (APP_STATE.currentPlace) {
+    displayPlaceSummary(APP_STATE.currentPlace);
+  }
+
   return safeReviews;
 }
 
@@ -2505,10 +2675,19 @@ function displayPlaceReviews(reviews) {
     const starsMarkup = renderStarRating(rating);
     const ariaLabel =
       getCurrentLanguage() === "fr" ? `${rating} sur 5` : `${rating} out of 5`;
+    const isOwnedReview = canManageReview(review);
 
     reviewCard.innerHTML = `
       <div class="review-card-header">
-        <h3>${authorName}</h3>
+        <div class="review-card-heading">
+          <h3>${authorName}</h3>
+          ${
+            isOwnedReview
+              ? `<span class="review-card-badge">${t("dynamic.yourReviewBadge")}</span>`
+              : ""
+          }
+        </div>
+
         <div class="review-rating" aria-label="${ariaLabel}">
           <div class="review-rating-stars">
             ${starsMarkup}
@@ -2517,6 +2696,7 @@ function displayPlaceReviews(reviews) {
         </div>
       </div>
       <p class="review-comment">${translateReviewText(review.text || t("dynamic.noComment"))}</p>
+      ${renderReviewActionButtons(review)}
     `;
 
     reviewsList.appendChild(reviewCard);
@@ -2524,6 +2704,492 @@ function displayPlaceReviews(reviews) {
 
   reviewsSection.appendChild(reviewsList);
   setupRevealAnimations();
+}
+
+function canManageReview(review, authContext = APP_STATE.auth) {
+  // Restricts edit and delete controls to the review owner or an admin.
+  if (!review || !authContext?.userId) {
+    return false;
+  }
+
+  return (
+    String(review.user_id) === String(authContext.userId) ||
+    Boolean(authContext.isAdmin)
+  );
+}
+
+function getCurrentUserReview(reviews, authContext = APP_STATE.auth) {
+  // Returns the review currently owned by the authenticated user.
+  if (!Array.isArray(reviews) || !authContext?.userId) {
+    return null;
+  }
+
+  return (
+    reviews.find(
+      (review) => String(review.user_id) === String(authContext.userId),
+    ) || null
+  );
+}
+
+function getReviewById(reviewId) {
+  // Locates one review inside the current client-side review cache.
+  if (!Array.isArray(APP_STATE.currentReviews)) {
+    return null;
+  }
+
+  return (
+    APP_STATE.currentReviews.find(
+      (review) => String(review.id) === String(reviewId),
+    ) || null
+  );
+}
+
+function renderReviewActionButtons(review, compact = false) {
+  // Builds the action controls shown on reviews owned by the current user.
+  if (!canManageReview(review)) {
+    return "";
+  }
+
+  return `
+    <div class="review-card-actions${compact ? " review-card-actions--compact" : ""}">
+      <button
+        type="button"
+        class="review-action-button"
+        data-review-action="edit"
+        data-review-id="${escapeHtml(review.id)}"
+      >
+        ${t("dynamic.editReview")}
+      </button>
+
+      <button
+        type="button"
+        class="review-action-button review-action-button--ghost"
+        data-review-action="delete"
+        data-review-id="${escapeHtml(review.id)}"
+      >
+        ${t("dynamic.deleteReview")}
+      </button>
+    </div>
+  `;
+}
+
+function renderCurrentUserReviewCard(review, showActions = true) {
+  // Displays the current user's review in the add-review workspace.
+  if (!review) {
+    return "";
+  }
+
+  const rating = Number(review.rating) || 0;
+  const ariaLabel =
+    getCurrentLanguage() === "fr" ? `${rating} sur 5` : `${rating} out of 5`;
+
+  return `
+    <article class="review-owner-card">
+      <div class="review-owner-card-header">
+        <div>
+          <p class="review-owner-card-label">${t("dynamic.yourReviewBadge")}</p>
+          <h3>${escapeHtml(getReviewAuthorName(review))}</h3>
+        </div>
+
+        <div class="review-rating" aria-label="${ariaLabel}">
+          <div class="review-rating-stars">
+            ${renderStarRating(rating)}
+          </div>
+          <span class="review-rating-value">${rating}/5</span>
+        </div>
+      </div>
+
+      <p class="review-comment">${translateReviewText(review.text || t("dynamic.noComment"))}</p>
+      ${showActions ? renderReviewActionButtons(review, true) : ""}
+    </article>
+  `;
+}
+
+function renderReviewWorkspace(currentReview = null) {
+  // Synchronizes the add-review page with the user's current review state.
+  const reviewStatusCard = document.getElementById("review-status-card");
+  const reviewForm = document.getElementById("review-form");
+  const reviewTextInput = document.getElementById("review");
+  const ratingInput = document.getElementById("rating");
+  const submitButton = reviewForm?.querySelector('button[type="submit"]');
+  const formTitle = document.getElementById("review-form-title");
+  const formHelper = document.getElementById("review-form-helper");
+  const existingState = reviewForm?.querySelector(".review-form-lock-card");
+
+  if (reviewStatusCard) {
+    if (!currentReview) {
+      reviewStatusCard.innerHTML = `
+        <p class="section-kicker">${t("add.status.kicker")}</p>
+        <h2>${t("add.status.title")}</h2>
+        ${renderStateCard(
+          t("dynamic.reviewStatusEmptyTitle"),
+          t("dynamic.reviewStatusEmptyText"),
+          true,
+        )}
+      `;
+    } else {
+      reviewStatusCard.innerHTML = `
+        <p class="section-kicker">${t("add.status.kicker")}</p>
+        <h2>${t("add.status.title")}</h2>
+        <p class="review-status-text">${t("dynamic.reviewStatusFilledText")}</p>
+        ${renderCurrentUserReviewCard(currentReview, true)}
+      `;
+    }
+  }
+
+  if (!reviewForm || !reviewTextInput || !ratingInput || !submitButton) {
+    return;
+  }
+
+  if (existingState) {
+    existingState.remove();
+  }
+
+  if (currentReview) {
+    reviewForm.classList.add("review-form--locked");
+    reviewTextInput.value = currentReview.text || "";
+    ratingInput.value = String(currentReview.rating || "");
+    reviewTextInput.disabled = true;
+    ratingInput.disabled = true;
+    submitButton.hidden = true;
+
+    if (formTitle) {
+      formTitle.textContent = t("dynamic.reviewLockedTitle");
+    }
+
+    if (formHelper) {
+      formHelper.textContent = t("dynamic.reviewLockedHelper");
+    }
+
+    const lockCard = document.createElement("div");
+    lockCard.className = "review-form-lock-card";
+    lockCard.innerHTML = `
+      <p>${t("dynamic.reviewLockedHelper")}</p>
+      ${renderReviewActionButtons(currentReview, true)}
+    `;
+    reviewForm.appendChild(lockCard);
+    return;
+  }
+
+  reviewForm.classList.remove("review-form--locked");
+  reviewTextInput.disabled = false;
+  ratingInput.disabled = false;
+  submitButton.hidden = false;
+  reviewTextInput.value = "";
+  ratingInput.value = "";
+
+  if (formTitle) {
+    formTitle.textContent = t("add.form.title");
+  }
+
+  if (formHelper) {
+    formHelper.textContent = t("dynamic.reviewUnlockedHelper");
+  }
+}
+
+async function refreshReviewExperience(placeId, token) {
+  // Reloads review-dependent UI after create, update, or delete actions.
+  if (!placeId) {
+    return;
+  }
+
+  await fetchPlaceReviews(token, placeId);
+}
+
+function ensureReviewActionModal() {
+  // Lazily creates the shared modal used to edit or delete one review.
+  let modal = document.getElementById("review-action-modal");
+
+  if (modal) {
+    return modal;
+  }
+
+  modal = document.createElement("div");
+  modal.id = "review-action-modal";
+  modal.className = "review-modal";
+  document.body.appendChild(modal);
+
+  modal.addEventListener("click", (event) => {
+    if (event.target.closest("[data-review-modal-close='true']")) {
+      closeReviewActionModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeReviewActionModal();
+    }
+  });
+
+  return modal;
+}
+
+function openReviewActionModal(markup) {
+  // Opens the shared review modal with injected content.
+  const modal = ensureReviewActionModal();
+  modal.innerHTML = markup;
+  modal.classList.add("is-open");
+  document.body.classList.add("page-modal-open");
+}
+
+function closeReviewActionModal() {
+  // Closes the shared review modal and clears its content.
+  const modal = document.getElementById("review-action-modal");
+
+  if (!modal) {
+    return;
+  }
+
+  modal.classList.remove("is-open");
+  modal.innerHTML = "";
+  document.body.classList.remove("page-modal-open");
+}
+
+function openReviewEditModal(review) {
+  // Opens a modal form to edit one existing review.
+  const rating = Number(review.rating) || 0;
+
+  openReviewActionModal(`
+    <div class="review-modal-backdrop" data-review-modal-close="true"></div>
+
+    <div
+      class="review-modal-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-label="${t("dynamic.editReviewTitle")}"
+    >
+      <button
+        type="button"
+        class="review-modal-close"
+        data-review-modal-close="true"
+        aria-label="${t("dynamic.cancel")}"
+      >
+        ×
+      </button>
+
+      <p class="section-kicker">${t("dynamic.manageYourReview")}</p>
+      <h2>${t("dynamic.editReviewTitle")}</h2>
+      <p class="review-modal-text">${t("dynamic.editReviewText")}</p>
+
+      <form id="review-modal-form" class="review-modal-form">
+        <p id="review-modal-message" class="form-message" aria-live="polite"></p>
+
+        <label for="review-modal-text">${t("add.form.reviewLabel")}</label>
+        <textarea id="review-modal-text" rows="6" required>${escapeHtml(review.text || "")}</textarea>
+
+        <label for="review-modal-rating">${t("add.form.ratingLabel")}</label>
+        <select id="review-modal-rating" required>
+          <option value="1" ${rating === 1 ? "selected" : ""}>${t("add.form.option1")}</option>
+          <option value="2" ${rating === 2 ? "selected" : ""}>${t("add.form.option2")}</option>
+          <option value="3" ${rating === 3 ? "selected" : ""}>${t("add.form.option3")}</option>
+          <option value="4" ${rating === 4 ? "selected" : ""}>${t("add.form.option4")}</option>
+          <option value="5" ${rating === 5 ? "selected" : ""}>${t("add.form.option5")}</option>
+        </select>
+
+        <div class="review-modal-actions">
+          <button
+            type="button"
+            class="review-action-button review-action-button--ghost"
+            data-review-modal-close="true"
+          >
+            ${t("dynamic.cancel")}
+          </button>
+          <button type="submit" class="review-action-button review-action-button--primary">
+            ${t("dynamic.editReviewSubmit")}
+          </button>
+        </div>
+      </form>
+    </div>
+  `);
+
+  const modal = document.getElementById("review-action-modal");
+  const form = modal?.querySelector("#review-modal-form");
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const messageElement = modal.querySelector("#review-modal-message");
+    const submitButton = form.querySelector('button[type="submit"]');
+    const nextText = modal.querySelector("#review-modal-text").value.trim();
+    const nextRating = Number(
+      modal.querySelector("#review-modal-rating").value,
+    );
+
+    resetFormMessage(messageElement);
+
+    if (!nextText) {
+      setFormMessage(messageElement, t("dynamic.reviewEmpty"), "error");
+      return;
+    }
+
+    if (!Number.isInteger(nextRating) || nextRating < 1 || nextRating > 5) {
+      setFormMessage(messageElement, t("dynamic.reviewInvalidRating"), "error");
+      return;
+    }
+
+    setButtonLoading(submitButton, true, t("dynamic.submitting"));
+    setFormMessage(messageElement, t("dynamic.updatingReview"), "loading");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews/${review.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${APP_STATE.auth.token}`,
+        },
+        body: JSON.stringify({
+          text: nextText,
+          rating: nextRating,
+        }),
+      });
+
+      const data = await parseJsonSafely(response);
+      setButtonLoading(submitButton, false);
+
+      if (!response.ok) {
+        setFormMessage(
+          messageElement,
+          data.error || t("dynamic.updateReviewFailed"),
+          "error",
+        );
+        return;
+      }
+
+      await refreshReviewExperience(getPlaceIdFromURL(), APP_STATE.auth.token);
+      closeReviewActionModal();
+
+      const reviewMessage = document.getElementById("review-message");
+      if (reviewMessage) {
+        setFormMessage(
+          reviewMessage,
+          t("dynamic.updateReviewSuccess"),
+          "success",
+        );
+      }
+    } catch (error) {
+      setButtonLoading(submitButton, false);
+      setFormMessage(messageElement, t("dynamic.updateReviewError"), "error");
+    }
+  });
+}
+
+function openReviewDeleteModal(review) {
+  // Opens a confirmation dialog before deleting one review.
+  openReviewActionModal(`
+    <div class="review-modal-backdrop" data-review-modal-close="true"></div>
+
+    <div
+      class="review-modal-dialog review-modal-dialog--confirm"
+      role="dialog"
+      aria-modal="true"
+      aria-label="${t("dynamic.deleteReviewTitle")}"
+    >
+      <button
+        type="button"
+        class="review-modal-close"
+        data-review-modal-close="true"
+        aria-label="${t("dynamic.cancel")}"
+      >
+        ×
+      </button>
+
+      <p class="section-kicker">${t("dynamic.manageYourReview")}</p>
+      <h2>${t("dynamic.deleteReviewTitle")}</h2>
+      <p class="review-modal-text">${t("dynamic.deleteReviewText")}</p>
+      ${renderCurrentUserReviewCard(review, false)}
+
+      <p id="review-modal-message" class="form-message" aria-live="polite"></p>
+
+      <div class="review-modal-actions">
+        <button
+          type="button"
+          class="review-action-button review-action-button--ghost"
+          data-review-modal-close="true"
+        >
+          ${t("dynamic.cancel")}
+        </button>
+        <button
+          type="button"
+          id="review-delete-confirm"
+          class="review-action-button review-action-button--danger"
+        >
+          ${t("dynamic.deleteReviewConfirm")}
+        </button>
+      </div>
+    </div>
+  `);
+
+  const modal = document.getElementById("review-action-modal");
+  const confirmButton = modal?.querySelector("#review-delete-confirm");
+
+  confirmButton?.addEventListener("click", async () => {
+    const messageElement = modal.querySelector("#review-modal-message");
+    resetFormMessage(messageElement);
+    setButtonLoading(confirmButton, true, t("dynamic.deletingReview"));
+    setFormMessage(messageElement, t("dynamic.deletingReview"), "loading");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews/${review.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${APP_STATE.auth.token}`,
+        },
+      });
+
+      const data = await parseJsonSafely(response);
+      setButtonLoading(confirmButton, false);
+
+      if (!response.ok) {
+        setFormMessage(
+          messageElement,
+          data.error || t("dynamic.deleteReviewFailed"),
+          "error",
+        );
+        return;
+      }
+
+      await refreshReviewExperience(getPlaceIdFromURL(), APP_STATE.auth.token);
+      closeReviewActionModal();
+
+      const reviewMessage = document.getElementById("review-message");
+      if (reviewMessage) {
+        setFormMessage(
+          reviewMessage,
+          t("dynamic.deleteReviewSuccess"),
+          "success",
+        );
+      }
+    } catch (error) {
+      setButtonLoading(confirmButton, false);
+      setFormMessage(messageElement, t("dynamic.deleteReviewError"), "error");
+    }
+  });
+}
+
+function initializeReviewActionDelegation() {
+  // Routes edit and delete button clicks to the shared review modal.
+  document.addEventListener("click", (event) => {
+    const actionButton = event.target.closest("[data-review-action]");
+
+    if (!actionButton) {
+      return;
+    }
+
+    const review = getReviewById(actionButton.dataset.reviewId);
+
+    if (!review) {
+      return;
+    }
+
+    if (actionButton.dataset.reviewAction === "edit") {
+      openReviewEditModal(review);
+      return;
+    }
+
+    if (actionButton.dataset.reviewAction === "delete") {
+      openReviewDeleteModal(review);
+    }
+  });
 }
 
 function displayPlaceSummary(place) {
@@ -2538,13 +3204,49 @@ function displayPlaceSummary(place) {
     translatePlaceTitle(place.title || place.name || t("dynamic.selectedStay")),
   );
   const price = Number(place.price) || 0;
+  const reviewSummary = APP_STATE.currentReviewSummary;
+  const currentReview = APP_STATE.currentUserReview;
 
   placeSummarySection.innerHTML = `
     <p class="section-kicker">${t("dynamic.selectedStay")}</p>
     <h2>${t("dynamic.placeSummaryTitle")}</h2>
-    <p><strong>${t("dynamic.labelName")}</strong> ${title}</p>
-    <p><strong>${t("dynamic.labelHost")}</strong> ${escapeHtml(getHostName(place))}</p>
-    <p><strong>${t("dynamic.labelPrice")}</strong> ${formatPriceInline(price)}</p>
+
+    <div class="place-summary-meta">
+      <div class="place-summary-row">
+        <span>${t("dynamic.labelName")}</span>
+        <strong>${title}</strong>
+      </div>
+      <div class="place-summary-row">
+        <span>${t("dynamic.labelHost")}</span>
+        <strong>${escapeHtml(getHostName(place))}</strong>
+      </div>
+      <div class="place-summary-row">
+        <span>${t("dynamic.labelPrice")}</span>
+        <strong>${formatPriceInline(price)}</strong>
+      </div>
+    </div>
+
+    <div class="place-summary-rating-box">
+      <div class="place-summary-rating-top">
+        <span class="place-summary-rating-value">${
+          reviewSummary ? reviewSummary.averageLabel : "—"
+        }</span>
+        <span class="place-summary-rating-scale">/ 5</span>
+      </div>
+      <div class="review-summary-stars">
+        ${reviewSummary ? renderStarRating(reviewSummary.average) : renderStarRating(0)}
+      </div>
+      <p class="review-summary-count">
+        ${reviewSummary ? reviewSummary.countLabel : t("dynamic.noReviewsYetShort")}
+      </p>
+    </div>
+
+    <div class="place-summary-tags">
+      <span class="place-summary-chip">
+        ${currentReview ? t("dynamic.reviewAlreadySharedChip") : t("dynamic.reviewReadyChip")}
+      </span>
+      <span class="place-summary-chip">${escapeHtml(getHostName(place))}</span>
+    </div>
   `;
 }
 
@@ -2683,6 +3385,8 @@ function renderAddReviewAccess(token, placeId) {
     return;
   }
 
+  const currentReview = APP_STATE.currentUserReview;
+
   if (!token) {
     addReviewSection.innerHTML = `
       <p class="section-kicker">${t("place.addreview.kicker")}</p>
@@ -2693,6 +3397,38 @@ function renderAddReviewAccess(token, placeId) {
       <a href="login.html" class="details-button">${t("dynamic.addReviewLoginCta")}</a>
       <p class="add-review-note">
         ${t("dynamic.addReviewLoginNote")}
+      </p>
+    `;
+    return;
+  }
+
+  if (currentReview) {
+    addReviewSection.innerHTML = `
+      <p class="section-kicker">${t("place.addreview.kicker")}</p>
+      <h2>${t("dynamic.manageYourReview")}</h2>
+      <p class="add-review-text">
+        ${t("dynamic.reviewAlreadySharedText")}
+      </p>
+      <div class="add-review-actions">
+        <button
+          type="button"
+          class="review-action-button review-action-button--primary"
+          data-review-action="edit"
+          data-review-id="${escapeHtml(currentReview.id)}"
+        >
+          ${t("dynamic.editReview")}
+        </button>
+        <button
+          type="button"
+          class="review-action-button review-action-button--ghost"
+          data-review-action="delete"
+          data-review-id="${escapeHtml(currentReview.id)}"
+        >
+          ${t("dynamic.deleteReview")}
+        </button>
+      </div>
+      <p class="add-review-note">
+        ${t("dynamic.reviewAlreadySharedNote")}
       </p>
     `;
     return;
@@ -2778,6 +3514,11 @@ async function handleReviewSubmit(event, token, placeId, reviewForm) {
 
   resetFormMessage(reviewMessage);
 
+  if (APP_STATE.currentUserReview) {
+    setFormMessage(reviewMessage, t("dynamic.reviewLockedHelper"), "error");
+    return;
+  }
+
   if (!reviewText) {
     setFormMessage(reviewMessage, t("dynamic.reviewEmpty"), "error");
     return;
@@ -2821,7 +3562,7 @@ async function handleReviewSubmit(event, token, placeId, reviewForm) {
     setButtonLoading(submitButton, false);
 
     if (response.ok) {
-      reviewForm.reset();
+      await refreshReviewExperience(placeId, token);
       setFormMessage(reviewMessage, t("dynamic.reviewSuccess"), "success");
       return;
     }
