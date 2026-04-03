@@ -762,6 +762,7 @@ function displayPlaceDetails(place) {
   renderHostCard(place);
   renderReviewSummaryCard(null);
   setupRevealAnimations();
+  updateHeaderPlaceContext(place);
 }
 
 function createPlaceInfoBlock(titleText, contentText) {
@@ -2137,6 +2138,21 @@ function ensurePlaceImageLightbox() {
 
   document.body.appendChild(lightbox);
   return lightbox;
+}
+
+function updateHeaderPlaceContext(place) {
+  const target = document.getElementById("header-place-context");
+
+  if (!target || !place) {
+    return;
+  }
+
+  const title = place.title || place.name || "";
+  const match = title.match(/\bin\s+(.+)$/i);
+  const location =
+    place.city || place.location || (match ? match[1] : "Brittany");
+
+  target.textContent = `${location} · refined coastal stay`;
 }
 
 function updatePlaceImageLightbox() {
