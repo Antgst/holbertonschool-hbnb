@@ -1,13 +1,4 @@
-"""
-HBnB API — Suite de tests complète
-Couvre : Auth, Users, Amenities, Places, Reviews
-         Validations, Contrôle d'accès JWT, Cas limites, Intégration
-
-Lancement (depuis part3/hbnb/ avec le venv activé) :
-    source ../.venv/bin/activate
-    python3 -m pytest Test/test_hbnb_api.py -v
-    python3 -m unittest discover -s Test -p "test_*.py" -v
-"""
+"""Comprehensive API tests covering auth, users, amenities, places, and reviews."""
 
 import unittest
 import json
@@ -20,9 +11,10 @@ from app import create_app, db
 
 
 class BaseTestCase(unittest.TestCase):
-    """Classe de base — chaque test repart d'une DB SQLite in-memory vide."""
+    """Base test case that recreates an empty in-memory database per test."""
 
     def setUp(self):
+        """Create the Flask test client and reset the database."""
         self.app = create_app("config.TestingConfig")
         self.client = self.app.test_client()
         with self.app.app_context():
@@ -30,6 +22,7 @@ class BaseTestCase(unittest.TestCase):
             db.create_all()
 
     def tearDown(self):
+        """Clean the SQLAlchemy session and drop every test table."""
         with self.app.app_context():
             db.session.remove()
             db.drop_all()
@@ -39,19 +32,23 @@ class BaseTestCase(unittest.TestCase):
     # ------------------------------------------------------------------ #
 
     def post_json(self, url, data, headers=None):
+        """Send a POST request with a JSON body."""
         return self.client.post(url, data=json.dumps(data),
                                 content_type='application/json',
                                 headers=headers or {})
 
     def put_json(self, url, data, headers=None):
+        """Send a PUT request with a JSON body."""
         return self.client.put(url, data=json.dumps(data),
                                content_type='application/json',
                                headers=headers or {})
 
     def delete(self, url, headers=None):
+        """Send a DELETE request."""
         return self.client.delete(url, headers=headers or {})
 
     def get(self, url, headers=None):
+        """Send a GET request."""
         return self.client.get(url, headers=headers or {})
 
     # ------------------------------------------------------------------ #
@@ -59,19 +56,22 @@ class BaseTestCase(unittest.TestCase):
     # ------------------------------------------------------------------ #
 
     def get_token(self, email, password):
+        """Authenticate a user and extract the returned JWT token."""
         resp = self.post_json('/api/v1/auth/login',
                               {"email": email, "password": password})
         return resp.get_json().get('access_token')
 
     def auth_header(self, token):
+        """Build a Bearer authorization header from a JWT token."""
         return {"Authorization": f"Bearer {token}"}
 
     # ------------------------------------------------------------------ #
-    # DB helpers — insertion directe sans passer par l'API
+    # DB helpers used when a scenario is easier to prepare without the API.
     # ------------------------------------------------------------------ #
 
     def _insert_user(self, email="user@test.com", password="userpass",
                      first_name="John", last_name="Doe", is_admin=False):
+        """Insert a user directly in the database and return its token."""
         from app.models.user import User
         with self.app.app_context():
             user = User(first_name=first_name, last_name=last_name,
@@ -83,6 +83,7 @@ class BaseTestCase(unittest.TestCase):
         return user_id, token
 
     def create_admin_and_token(self, email="admin@test.com", password="adminpass"):
+        """Create an admin user for role-based API tests."""
         return self._insert_user(email=email, password=password,
                                   first_name="Admin", last_name="Root",
                                   is_admin=True)
@@ -90,6 +91,7 @@ class BaseTestCase(unittest.TestCase):
     def create_regular_user_and_token(self, email="user@test.com",
                                        password="userpass",
                                        first_name="John", last_name="Doe"):
+        """Create a regular user for authenticated API tests."""
         return self._insert_user(email=email, password=password,
                                   first_name=first_name, last_name=last_name,
                                   is_admin=False)
@@ -101,18 +103,21 @@ class BaseTestCase(unittest.TestCase):
     def create_user_via_api(self, admin_token, email="john@example.com",
                              password="pass123", first_name="John",
                              last_name="Doe"):
+        """Create a user through the public API as an admin."""
         return self.post_json('/api/v1/users/',
                               {"first_name": first_name, "last_name": last_name,
                                "email": email, "password": password},
                               headers=self.auth_header(admin_token))
 
     def create_amenity(self, admin_token, name="WiFi"):
+        """Create an amenity through the public API as an admin."""
         return self.post_json('/api/v1/amenities/', {"name": name},
                                headers=self.auth_header(admin_token))
 
     def create_place(self, owner_token, owner_id, title="Nice Place",
                      description="A great spot", price=99.9,
                      latitude=48.8566, longitude=2.3522, amenity_ids=None):
+        """Create a place through the public API as its owner."""
         return self.post_json('/api/v1/places/',
                               {"title": title, "description": description,
                                "price": price, "latitude": latitude,
@@ -122,6 +127,7 @@ class BaseTestCase(unittest.TestCase):
 
     def create_review(self, reviewer_token, reviewer_id, place_id,
                        text="Great!", rating=5):
+        """Create a review through the public API as an authenticated guest."""
         return self.post_json('/api/v1/reviews/',
                               {"text": text, "rating": rating,
                                "user_id": reviewer_id, "place_id": place_id},
@@ -132,12 +138,14 @@ class BaseTestCase(unittest.TestCase):
     # ------------------------------------------------------------------ #
 
     def setup_owner_and_place(self, owner_email="owner@t.com"):
+        """Create a complete owner plus place scenario for tests."""
         owner_id, owner_token = self.create_regular_user_and_token(
             email=owner_email)
         place_id = self.create_place(owner_token, owner_id).get_json()['id']
         return owner_id, owner_token, place_id
 
     def setup_review_scenario(self):
+        """Create an owner, a place, and a reviewer with one saved review."""
         owner_id, owner_token, place_id = self.setup_owner_and_place()
         reviewer_id, reviewer_token = self.create_regular_user_and_token(
             email="reviewer@t.com")
@@ -1258,7 +1266,7 @@ class TestIntegration(BaseTestCase):
         for i in range(5):
             self.create_user_via_api(admin_token, email=f"user{i}@ex.com",
                                       first_name=f"U{i}", last_name="T")
-        # 5 créés + 1 admin
+        # 5 regular users plus 1 admin
         self.assertEqual(len(self.get('/api/v1/users/').get_json()), 6)
 
     def test_different_places_have_independent_reviews(self):

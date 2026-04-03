@@ -15,6 +15,7 @@
   </head>
 
   <body data-page-title="titles.login">
+    <!-- Shared site header with navigation and display toggles. -->
     <header>
       <div class="header-inner">
         <a
@@ -80,14 +81,14 @@
                 class="theme-toggle-icon theme-toggle-icon--sun"
                 aria-hidden="true"
               >
-                <!-- ton SVG soleil -->
+                <!-- Sun icon placeholder -->
               </span>
               <span class="theme-toggle-thumb"></span>
               <span
                 class="theme-toggle-icon theme-toggle-icon--moon"
                 aria-hidden="true"
               >
-                <!-- ton SVG lune -->
+                <!-- Moon icon placeholder -->
               </span>
             </span>
           </label>
@@ -118,6 +119,7 @@
     </header>
 
     <main class="auth-page">
+      <!-- Intro copy explains why authentication is useful to the guest. -->
       <section class="auth-page-intro">
         <p class="section-kicker" data-i18n="login.intro.kicker">
           Member access
@@ -146,6 +148,7 @@
         </div>
       </section>
 
+      <!-- Login form handled in scripts.js and backed by the auth API. -->
       <form id="login-form" class="auth-form">
         <h2 data-i18n="login.form.title">Login</h2>
         <p id="login-message" class="form-message" aria-live="polite"></p>
@@ -175,6 +178,7 @@
     </main>
 
     <footer class="site-footer">
+      <!-- Shared footer used across the frontend pages. -->
       <div class="footer-top">
         <div class="footer-brand">
           <span class="footer-brand-name">HBNB</span>

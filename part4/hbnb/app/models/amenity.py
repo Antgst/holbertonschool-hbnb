@@ -3,11 +3,13 @@ from app import db
 
 
 class Amenity(BaseModel):
+    """Amenity entity used to tag places with available features."""
     __tablename__ = 'amenities'
 
     name = db.Column(db.String(50), nullable=False, unique=True)
 
     def __init__(self, name):
+        """Validate and store the amenity name."""
         super().__init__()
         if not name or not str(name).strip():
             raise ValueError("'name' is required and cannot be empty")

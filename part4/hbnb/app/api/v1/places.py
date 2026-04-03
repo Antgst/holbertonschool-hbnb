@@ -3,6 +3,7 @@ from app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 api = Namespace('places', description='Place operations')
+PLACE_MUTABLE_FIELDS = {'title', 'description', 'price', 'latitude', 'longitude'}
 
 amenity_model = api.model('PlaceAmenity', {
     'id': fields.String(description='Amenity ID'),
@@ -37,7 +38,7 @@ place_update_model = api.model('PlaceUpdate', {
 
 
 def marshal_place(place):
-    """Sérialise un objet Place en dict JSON."""
+    """Serialize a place with its owner, amenities, and images."""
     return {
         "id": place.id,
         "title": place.title,
@@ -60,7 +61,7 @@ def marshal_place(place):
 class PlaceList(Resource):
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
-        """Retrieve a list of all places"""
+        """Return all places available on the platform."""
         return [marshal_place(p) for p in facade.get_all_places()], 200
 
     @jwt_required()
@@ -71,12 +72,11 @@ class PlaceList(Resource):
     @api.response(401, 'Authentication required')
     @api.response(403, 'Unauthorized action')
     def post(self):
-        """Register a new place"""
+        """Create a place for the authenticated owner or an admin."""
         current_user_id = get_jwt_identity()
         claims = get_jwt()
-        data = api.payload
+        data = api.payload or {}
 
-        # L'owner_id doit correspondre à l'utilisateur connecté (sauf admin)
         if data.get('owner_id') != current_user_id and not claims.get('is_admin', False):
             return {'error': 'Unauthorized action — owner_id must match your user ID'}, 403
 
@@ -92,7 +92,7 @@ class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
-        """Get place details by ID"""
+        """Return one place by id."""
         place = facade.get_place(place_id)
         if not place:
             api.abort(404, "Place not found")
@@ -107,7 +107,7 @@ class PlaceResource(Resource):
     @api.response(403, 'Unauthorized action')
     @api.response(404, 'Place not found')
     def put(self, place_id):
-        """Update a place's information"""
+        """Update a place when the caller owns it or is admin."""
         current_user_id = get_jwt_identity()
         claims = get_jwt()
 
@@ -118,8 +118,10 @@ class PlaceResource(Resource):
         if place.owner.id != current_user_id and not claims.get('is_admin', False):
             return {'error': 'Unauthorized action'}, 403
 
-        allowed_fields = {'title', 'description', 'price', 'latitude', 'longitude'}
-        data = {key: value for key, value in api.payload.items() if key in allowed_fields}
+        data = {
+            key: value for key, value in (api.payload or {}).items()
+            if key in PLACE_MUTABLE_FIELDS
+        }
 
         try:
             updated_place = facade.update_place(place_id, data)
@@ -136,7 +138,7 @@ class PlaceResource(Resource):
     @api.response(403, 'Unauthorized action')
     @api.response(404, 'Place not found')
     def delete(self, place_id):
-        """Delete a place — only the owner or admin"""
+        """Delete a place when the caller owns it or is admin."""
         current_user_id = get_jwt_identity()
         claims = get_jwt()
 
@@ -156,7 +158,7 @@ class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
-        """Get all reviews for a specific place"""
+        """Return all reviews attached to one place."""
         if not facade.get_place(place_id):
             api.abort(404, "Place not found")
         reviews = facade.get_reviews_by_place(place_id)

@@ -6,6 +6,7 @@ from app.services import facade
 api = Namespace('users', description='User operations')
 
 email_validation = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+NAME_FIELDS = ('first_name', 'last_name')
 
 
 # ---------------------------------------------------------------------------
@@ -13,6 +14,7 @@ email_validation = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
 # ---------------------------------------------------------------------------
 
 def validate_create_payload(data):
+    """Validate the payload used to create a new user."""
     if not data:
         return "Payload is empty"
     for field in ('first_name', 'last_name', 'email', 'password'):
@@ -25,14 +27,14 @@ def validate_create_payload(data):
 
 
 def validate_self_update_payload(data):
-    """Utilisateur normal — uniquement first/last name."""
+    """Restrict self-service updates to non-sensitive profile fields."""
     if not data:
         return "Payload is empty"
     if 'email' in data:
         return "You cannot modify your email address"
     if 'password' in data:
         return "You cannot modify your password here"
-    for field in ('first_name', 'last_name'):
+    for field in NAME_FIELDS:
         value = data.get(field)
         if value is not None and not str(value).strip():
             return f"'{field}' cannot be empty"
@@ -40,7 +42,7 @@ def validate_self_update_payload(data):
 
 
 def validate_admin_update_payload(data):
-    """Admin — email et password autorisés."""
+    """Allow admins to update both profile and credential fields."""
     if not data:
         return "Payload is empty"
     if 'email' in data:
@@ -51,7 +53,7 @@ def validate_admin_update_payload(data):
     if 'password' in data:
         if not data['password'] or not str(data['password']).strip():
             return "'password' cannot be empty"
-    for field in ('first_name', 'last_name'):
+    for field in NAME_FIELDS:
         value = data.get(field)
         if value is not None and not str(value).strip():
             return f"'{field}' cannot be empty"
@@ -62,7 +64,7 @@ def validate_admin_update_payload(data):
 # API models
 # ---------------------------------------------------------------------------
 
-# Création — admin only, is_admin peut être True ou False
+# Creation payload used by admins, including the optional admin flag.
 user_model = api.model('User', {
     'first_name': fields.String(required=True,  description='First name'),
     'last_name':  fields.String(required=True,  description='Last name'),
@@ -72,13 +74,13 @@ user_model = api.model('User', {
                                  description='Admin flag — only honoured when sent by an admin'),
 })
 
-# Mise à jour par l'utilisateur lui-même (first/last name seulement)
+# Self-update payload limited to public profile fields.
 user_update_model = api.model('UserUpdate', {
     'first_name': fields.String(description='First name'),
     'last_name':  fields.String(description='Last name'),
 })
 
-# Mise à jour complète par un admin (email + password inclus)
+# Admin update payload that may include credentials.
 admin_update_model = api.model('AdminUserUpdate', {
     'first_name': fields.String(description='First name'),
     'last_name':  fields.String(description='Last name'),
@@ -86,7 +88,7 @@ admin_update_model = api.model('AdminUserUpdate', {
     'password':   fields.String(description='New password (will be hashed)'),
 })
 
-# Réponse (jamais de password)
+# Public user response that never exposes the password hash.
 user_response_model = api.model('UserResponse', {
     'id':         fields.String(description='User ID'),
     'first_name': fields.String(description='First name'),
@@ -96,7 +98,7 @@ user_response_model = api.model('UserResponse', {
 
 
 def user_to_dict(user):
-    """Sérialise un User SANS exposer le password."""
+    """Serialize a user without ever exposing the password."""
     return {
         'id':         user.id,
         'first_name': user.first_name,
@@ -119,7 +121,7 @@ class UserList(Resource):
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Admin privileges required')
     def post(self):
-        """Create a new user — admin only."""
+        """Create a new user and reserve that action to admins."""
         claims = get_jwt()
         if not claims.get('is_admin', False):
             return {'error': 'Admin privileges required'}, 403
@@ -142,7 +144,7 @@ class UserList(Resource):
 
     @api.response(200, 'List of users retrieved successfully')
     def get(self):
-        """Retrieve all users (public)."""
+        """Return the public list of users."""
         return [user_to_dict(u) for u in facade.get_all_users()], 200
 
 
@@ -152,7 +154,7 @@ class UserResource(Resource):
     @api.response(200, 'User details retrieved successfully', user_response_model)
     @api.response(404, 'User not found')
     def get(self, user_id):
-        """Get user details by ID (public)."""
+        """Return a single user by id."""
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
@@ -179,7 +181,6 @@ class UserResource(Resource):
             return {'error': 'Unauthorized action'}, 403
 
         user_data = dict(api.payload)
-        # is_admin ne peut pas être changé via ce endpoint
         user_data.pop('is_admin', None)
 
         if is_admin:

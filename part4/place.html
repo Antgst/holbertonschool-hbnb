@@ -15,6 +15,7 @@
   </head>
 
   <body data-page-title="titles.place">
+    <!-- Shared site header with navigation and display toggles. -->
     <header>
       <div class="header-inner">
         <a
@@ -84,14 +85,14 @@
                 class="theme-toggle-icon theme-toggle-icon--sun"
                 aria-hidden="true"
               >
-                <!-- ton SVG soleil -->
+                <!-- Sun icon placeholder -->
               </span>
               <span class="theme-toggle-thumb"></span>
               <span
                 class="theme-toggle-icon theme-toggle-icon--moon"
                 aria-hidden="true"
               >
-                <!-- ton SVG lune -->
+                <!-- Moon icon placeholder -->
               </span>
             </span>
           </label>
@@ -122,6 +123,7 @@
     </header>
 
     <main class="place-page">
+      <!-- Main layout for the selected place and its sidebar information. -->
       <div class="place-layout">
         <section id="place-details" class="place-details">
           <!-- Place details will be inserted here dynamically -->
@@ -183,6 +185,7 @@
         </aside>
       </div>
 
+      <!-- Reviews are rendered after the place details have been loaded. -->
       <section id="reviews" class="reviews-section">
         <div class="reviews-section-header">
           <p class="section-kicker" data-i18n="place.reviews.kicker">
@@ -195,6 +198,7 @@
     </main>
 
     <footer class="site-footer">
+      <!-- Shared footer used across the frontend pages. -->
       <div class="footer-top">
         <div class="footer-brand">
           <span class="footer-brand-name">HBNB</span>

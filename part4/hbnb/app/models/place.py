@@ -1,7 +1,7 @@
 from app.models.base_model import BaseModel
 from app import db
 
-# Table d'association many-to-many entre Place et Amenity
+# Many-to-many association table between places and amenities.
 place_amenity = db.Table(
     'place_amenity',
     db.Column('place_id',   db.String(36), db.ForeignKey('places.id'),   primary_key=True),
@@ -10,6 +10,7 @@ place_amenity = db.Table(
 
 
 class Place(BaseModel):
+    """Place entity with business validation for geography and pricing."""
     __tablename__ = 'places'
 
     title = db.Column(db.String(100), nullable=False)
@@ -19,7 +20,7 @@ class Place(BaseModel):
     longitude = db.Column(db.Float, nullable=False)
     owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
 
-    # Relations
+    # Relationships
     owner = db.relationship(
         'User',
         back_populates='places',
@@ -45,6 +46,7 @@ class Place(BaseModel):
     )
 
     def __init__(self, title, description, price, latitude, longitude, owner):
+        """Validate place data before linking it to its owner."""
         self._validate_title(title)
         self.validate_place_data(price, latitude, longitude)
         super().__init__()
@@ -57,6 +59,7 @@ class Place(BaseModel):
 
     @staticmethod
     def _validate_title(title):
+        """Ensure each place has a short non-empty title."""
         if not title or not str(title).strip():
             raise ValueError("'title' is required and cannot be empty")
         if len(str(title)) > 100:
@@ -65,7 +68,7 @@ class Place(BaseModel):
     @staticmethod
     def validate_place_data(price, latitude, longitude):
         """
-        Méthode de validation pour garantir l'intégrité des données métier
+        Validate price and coordinates before saving a place.
         """
         if price <= 0:
             raise ValueError("Price must be a positive value.")
@@ -76,10 +79,9 @@ class Place(BaseModel):
 
     def update(self, data):
         """
-        Surcharge de la méthode update pour inclure la
-        validation lors de la modif
+        Revalidate sensitive fields before applying an update.
         """
-        # Vérifier si les données sensibles sont présentes pour les valider
+        # Reuse current values when a field is not part of the payload.
         new_title = data.get('title', self.title)
         new_price = data.get('price', self.price)
         new_lat = data.get('latitude', self.latitude)
@@ -88,13 +90,15 @@ class Place(BaseModel):
         self._validate_title(new_title)
         self.validate_place_data(new_price, new_lat, new_long)
 
-        # Appel de la méthode parente pour mettre à jour les autres champs
+        # Delegate the actual attribute update to the shared base helper.
         super().update(data)
 
     def add_amenity(self, amenity):
+        """Link an amenity only once to avoid duplicates."""
         if amenity not in self.amenities:
             self.amenities.append(amenity)
 
     def add_review(self, review):
+        """Link a review only once to avoid duplicates."""
         if review not in self.reviews:
             self.reviews.append(review)

@@ -3,6 +3,7 @@ from app import db
 
 
 class PlaceImage(BaseModel):
+    """Image entity attached to a single place."""
     __tablename__ = 'place_images'
 
     url = db.Column(db.String(255), nullable=False)
@@ -15,6 +16,7 @@ class PlaceImage(BaseModel):
     )
 
     def __init__(self, url, place):
+        """Store the image URL and link it to its place."""
         super().__init__()
         self.url = url
         self.place = place

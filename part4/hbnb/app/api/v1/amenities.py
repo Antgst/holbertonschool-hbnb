@@ -9,13 +9,25 @@ amenity_model = api.model('Amenity', {
 })
 
 
+def validate_amenity_payload(data):
+    """Ensure the amenity payload contains a non-empty name."""
+    if not data or not data.get('name') or not str(data['name']).strip():
+        return "'name' is required and cannot be empty"
+    return None
+
+
+def amenity_to_dict(amenity):
+    """Serialize an amenity without repeating the same mapping."""
+    return {'id': amenity.id, 'name': amenity.name}
+
+
 @api.route('/')
 class AmenityList(Resource):
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
         """Retrieve a list of all amenities"""
         amenities = facade.get_all_amenities()
-        return [{'id': a.id, 'name': a.name} for a in amenities], 200
+        return [amenity_to_dict(amenity) for amenity in amenities], 200
 
     @jwt_required()
     @api.doc(security='BearerAuth')
@@ -28,10 +40,10 @@ class AmenityList(Resource):
         if not claims.get('is_admin', False):
             return {'error': 'Admin privileges required'}, 403
 
-        amenity_data = api.payload
-        if (not amenity_data or not amenity_data.get('name') or
-                not str(amenity_data['name']).strip()):
-            return {'error': "'name' is required and cannot be empty"}, 400
+        amenity_data = api.payload or {}
+        error = validate_amenity_payload(amenity_data)
+        if error:
+            return {'error': error}, 400
 
         if facade.get_amenity_by_name(amenity_data['name']):
             return {'error': 'Amenity already registered'}, 400
@@ -41,7 +53,7 @@ class AmenityList(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
-        return {'id': new_amenity.id, 'name': new_amenity.name}, 201
+        return amenity_to_dict(new_amenity), 201
 
 
 @api.route('/<amenity_id>')
@@ -53,7 +65,7 @@ class AmenityResource(Resource):
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             api.abort(404, f"Amenity {amenity_id} not found")
-        return {"id": amenity.id, "name": amenity.name}, 200
+        return amenity_to_dict(amenity), 200
 
     @jwt_required()
     @api.doc(security='BearerAuth')
@@ -69,10 +81,10 @@ class AmenityResource(Resource):
         if not claims.get('is_admin', False):
             return {'error': 'Admin privileges required'}, 403
 
-        amenity_data = api.payload
-        if (not amenity_data or not amenity_data.get('name') or
-                not str(amenity_data['name']).strip()):
-            return {'error': "'name' is required and cannot be empty"}, 400
+        amenity_data = api.payload or {}
+        error = validate_amenity_payload(amenity_data)
+        if error:
+            return {'error': error}, 400
 
         try:
             updated_amenity = facade.update_amenity(amenity_id, amenity_data)
@@ -81,4 +93,4 @@ class AmenityResource(Resource):
 
         if not updated_amenity:
             api.abort(404, f"Amenity {amenity_id} not found")
-        return {"id": updated_amenity.id, "name": updated_amenity.name}, 200
+        return amenity_to_dict(updated_amenity), 200

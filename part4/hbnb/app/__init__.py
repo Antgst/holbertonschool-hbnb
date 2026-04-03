@@ -5,14 +5,18 @@ from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
+# Shared Flask extensions are created once and initialized inside create_app.
 jwt = JWTManager()
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
 
 def create_app(config_class="config.DevelopmentConfig"):
+    """Build and configure the Flask application instance."""
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Only local frontend origins are allowed to call the API during development.
     CORS(app, resources={r"/api/*": {"origins": [
         "http://127.0.0.1:5500",
         "http://127.0.0.1:5501",
@@ -20,12 +24,12 @@ def create_app(config_class="config.DevelopmentConfig"):
         "http://localhost:5501"
     ]}})
 
-    # Initialise Flask-Bcrypt avec l'app et initialise JWT manager mais aussi la database
+    # Initialize every Flask extension against the same application instance.
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)
 
-    # Imports déférés — évite les imports circulaires au niveau module
+    # Deferred imports prevent circular imports during module loading.
     from app.api.v1.users import api as users_ns
     from app.api.v1.amenities import api as amenities_ns
     from app.api.v1.places import api as places_ns
@@ -53,10 +57,8 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(auth_ns, path='/api/v1/auth')
 
-    # Crée les tables SQLAlchemy si elles n'existent pas encore
+    # Import models before create_all so SQLAlchemy registers every table.
     with app.app_context():
-        # Import explicite de tous les modèles avant db.create_all()
-        # pour que SQLAlchemy enregistre leurs tables dans les métadonnées
         from app.models import user, place, review, amenity, place_image
         db.create_all()
 

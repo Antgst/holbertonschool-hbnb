@@ -5,9 +5,11 @@ app = create_app()
 
 
 def seed_demo_data():
+    """Reset the database and populate it with a presentation-friendly demo."""
     with app.app_context():
         from app.models.place_image import PlaceImage
 
+        # Rebuild the database from scratch so the demo always starts clean.
         db.drop_all()
         db.create_all()
 
@@ -83,6 +85,7 @@ def seed_demo_data():
             },
         ]
 
+        # Keep references by key so later demo objects can link to each other.
         users = {}
         for user_data in users_data:
             created_user = facade.create_user(
@@ -127,6 +130,7 @@ def seed_demo_data():
             "EV Charger",
         ]
 
+        # Store created amenities by name for easy lookup in place fixtures.
         amenities = {}
         for name in amenity_names:
             amenities[name] = facade.create_amenity({"name": name})
@@ -295,6 +299,7 @@ def seed_demo_data():
             },
         ]
 
+        # Create places after users and amenities so foreign keys can be resolved.
         places = {}
         for place_data in places_data:
             created_place = facade.create_place(

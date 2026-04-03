@@ -4,6 +4,8 @@ from app.services import facade
 
 api = Namespace('reviews', description='Review operations')
 
+REVIEW_MUTABLE_FIELDS = {'text', 'rating'}
+
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
     'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
@@ -17,6 +19,7 @@ review_update_model = api.model('ReviewUpdate', {
 
 
 def marshal_review(review):
+    """Serialize a review for API responses."""
     return {
         "id": review.id,
         "text": review.text,
@@ -28,6 +31,7 @@ def marshal_review(review):
 
 
 def validate_review_payload(data):
+    """Validate the fields required to create a review."""
     if not data:
         return "Payload is empty"
 
@@ -48,6 +52,7 @@ def validate_review_payload(data):
 
 
 def validate_review_update_payload(data):
+    """Validate partial review updates without allowing reassignment."""
     if not data:
         return "Payload is empty"
 
@@ -154,8 +159,10 @@ class ReviewResource(Resource):
         if error:
             return {"error": error}, 400
 
-        allowed_fields = {'text', 'rating'}
-        filtered_data = {key: value for key, value in data.items() if key in allowed_fields}
+        filtered_data = {
+            key: value for key, value in data.items()
+            if key in REVIEW_MUTABLE_FIELDS
+        }
 
         try:
             updated_review = facade.update_review(review_id, filtered_data)
