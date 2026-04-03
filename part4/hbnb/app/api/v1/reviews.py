@@ -4,6 +4,11 @@ from app.services import facade
 
 api = Namespace('reviews', description='Review operations')
 
+def serialize_datetime(value):
+    """Serialize datetime values as ISO-8601 strings."""
+    return value.isoformat() if value else None
+
+
 REVIEW_MUTABLE_FIELDS = {'text', 'rating'}
 
 review_model = api.model('Review', {
@@ -26,7 +31,9 @@ def marshal_review(review):
         "rating": review.rating,
         "user": f"{review.user.first_name} {review.user.last_name}".strip(),
         "user_id": review.user.id,
-        "place_id": review.place.id
+        "place_id": review.place.id,
+        "created_at": serialize_datetime(review.created_at),
+        "updated_at": serialize_datetime(review.updated_at)
     }
 
 

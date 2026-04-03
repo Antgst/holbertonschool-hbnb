@@ -28,6 +28,11 @@ place_model = api.model('Place', {
 })
 
 
+def serialize_datetime(value):
+    """Serialize datetime values as ISO-8601 strings."""
+    return value.isoformat() if value else None
+
+
 place_update_model = api.model('PlaceUpdate', {
     'title':       fields.String(description='Title of the place'),
     'description': fields.String(description='Description of the place'),
@@ -168,5 +173,7 @@ class PlaceReviewList(Resource):
             "rating": r.rating,
             "user": f"{r.user.first_name} {r.user.last_name}".strip(),
             "user_id": r.user.id,
-            "place_id": r.place.id
+            "place_id": r.place.id,
+            "created_at": serialize_datetime(r.created_at),
+            "updated_at": serialize_datetime(r.updated_at)
         } for r in reviews], 200

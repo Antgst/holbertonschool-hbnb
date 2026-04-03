@@ -83,6 +83,14 @@ def seed_demo_data():
                 "password": shared_password,
                 "is_admin": False,
             },
+            {
+                "key": "Tess",
+                "first_name": "Tess",
+                "last_name": "Teur",
+                "email": "tess.teur@hbnb.test",
+                "password": shared_password,
+                "is_admin": False,
+            },
         ]
 
         # Keep references by key so later demo objects can link to each other.

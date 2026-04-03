@@ -1599,6 +1599,8 @@ const TRANSLATIONS = {
     "dynamic.reviewSuccess": "Review submitted successfully.",
     "dynamic.reviewFailed": "Failed to submit review.",
     "dynamic.reviewError": "An error occurred while submitting the review.",
+    "dynamic.reviewPostedOn": "Posted on",
+    "dynamic.reviewUpdatedOn": "Updated on",
     "dynamic.yourReviewBadge": "Your review",
     "dynamic.editReview": "Edit review",
     "dynamic.deleteReview": "Delete review",
@@ -1847,6 +1849,8 @@ const TRANSLATIONS = {
     "dynamic.reviewSuccess": "Avis envoyé avec succès.",
     "dynamic.reviewFailed": "Échec de l'envoi de l'avis.",
     "dynamic.reviewError": "Une erreur est survenue lors de l'envoi de l'avis.",
+    "dynamic.reviewPostedOn": "Publié le",
+    "dynamic.reviewUpdatedOn": "Modifié le",
     "dynamic.yourReviewBadge": "Votre avis",
     "dynamic.editReview": "Modifier l'avis",
     "dynamic.deleteReview": "Supprimer l'avis",
@@ -2204,7 +2208,9 @@ async function fetchPlaceReviews(token, placeId) {
   }
 
   const reviews = await parseJsonSafely(response);
-  const safeReviews = Array.isArray(reviews) ? reviews : [];
+  const safeReviews = sortReviewsByNewest(
+    Array.isArray(reviews) ? reviews : [],
+  );
 
   APP_STATE.currentReviews = safeReviews;
   APP_STATE.currentReviewSummary = getReviewSummary(safeReviews);
@@ -2640,6 +2646,139 @@ function getReviewSummary(reviews) {
   };
 }
 
+function normalizeReview(review) {
+  // Ensures reviews expose stable timestamp fields for UI sorting and display.
+  if (!review || typeof review !== "object") {
+    return review;
+  }
+
+  return {
+    ...review,
+    created_at: review.created_at || null,
+    updated_at: review.updated_at || null,
+  };
+}
+
+function getReviewTimestampValue(review, fieldName = "created_at") {
+  // Converts one ISO timestamp into a comparable numeric value.
+  const rawValue = review?.[fieldName];
+
+  if (!rawValue) {
+    return 0;
+  }
+
+  const parsedValue = Date.parse(rawValue);
+  return Number.isNaN(parsedValue) ? 0 : parsedValue;
+}
+
+function sortReviewsByNewest(reviews) {
+  // Keeps the newest posted reviews at the top of the list.
+  if (!Array.isArray(reviews)) {
+    return [];
+  }
+
+  return reviews
+    .map((review) => normalizeReview(review))
+    .slice()
+    .sort((firstReview, secondReview) => {
+      const firstCreatedAt = getReviewTimestampValue(firstReview, "created_at");
+      const secondCreatedAt = getReviewTimestampValue(
+        secondReview,
+        "created_at",
+      );
+
+      if (firstCreatedAt !== secondCreatedAt) {
+        return secondCreatedAt - firstCreatedAt;
+      }
+
+      const firstUpdatedAt = getReviewTimestampValue(firstReview, "updated_at");
+      const secondUpdatedAt = getReviewTimestampValue(
+        secondReview,
+        "updated_at",
+      );
+
+      if (firstUpdatedAt !== secondUpdatedAt) {
+        return secondUpdatedAt - firstUpdatedAt;
+      }
+
+      return String(secondReview.id || "").localeCompare(
+        String(firstReview.id || ""),
+      );
+    });
+}
+
+function formatReviewDateTime(dateValue) {
+  // Formats one review timestamp using the active language locale.
+  if (!dateValue) {
+    return "";
+  }
+
+  const parsedDate = new Date(dateValue);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "";
+  }
+
+  const locale = getCurrentLanguage() === "fr" ? "fr-FR" : "en-GB";
+
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(parsedDate);
+}
+
+function renderReviewMeta(review) {
+  // Builds the publication and edition timestamps shown on review cards.
+  const createdAtLabel = formatReviewDateTime(review?.created_at);
+  const updatedAtLabel = formatReviewDateTime(review?.updated_at);
+
+  if (!createdAtLabel && !updatedAtLabel) {
+    return "";
+  }
+
+  const metaItems = [];
+
+  if (createdAtLabel) {
+    metaItems.push(`
+      <span class="review-meta-item">
+        <span class="review-meta-label">${t("dynamic.reviewPostedOn")}</span>
+        <time datetime="${escapeHtml(review.created_at)}">${escapeHtml(createdAtLabel)}</time>
+      </span>
+    `);
+  }
+
+  const createdAtValue = getReviewTimestampValue(review, "created_at");
+  const updatedAtValue = getReviewTimestampValue(review, "updated_at");
+
+  if (
+    updatedAtLabel &&
+    updatedAtValue &&
+    updatedAtValue > createdAtValue + 1000
+  ) {
+    metaItems.push(`
+      <span class="review-meta-item">
+        <span class="review-meta-label">${t("dynamic.reviewUpdatedOn")}</span>
+        <time datetime="${escapeHtml(review.updated_at)}">${escapeHtml(updatedAtLabel)}</time>
+      </span>
+    `);
+  }
+
+  if (!metaItems.length) {
+    return "";
+  }
+
+  return `<p class="review-card-meta">${metaItems.join('<span class="review-meta-separator">•</span>')}</p>`;
+}
+
+function isOwnReview(review, authContext = APP_STATE.auth) {
+  // Checks whether the authenticated user is the actual author of the review.
+  if (!review || !authContext?.userId) {
+    return false;
+  }
+
+  return String(review.user_id) === String(authContext.userId);
+}
+
 function displayPlaceReviews(reviews) {
   // Renders the review list shown at the bottom of the place page.
   const reviewsSection = document.getElementById("reviews");
@@ -2666,7 +2805,9 @@ function displayPlaceReviews(reviews) {
   const reviewsList = document.createElement("div");
   reviewsList.classList.add("reviews-list");
 
-  for (const review of reviews) {
+  const sortedReviews = sortReviewsByNewest(reviews);
+
+  for (const review of sortedReviews) {
     const reviewCard = document.createElement("article");
     reviewCard.classList.add("review-card");
 
@@ -2675,7 +2816,7 @@ function displayPlaceReviews(reviews) {
     const starsMarkup = renderStarRating(rating);
     const ariaLabel =
       getCurrentLanguage() === "fr" ? `${rating} sur 5` : `${rating} out of 5`;
-    const isOwnedReview = canManageReview(review);
+    const isOwnedReview = isOwnReview(review);
 
     reviewCard.innerHTML = `
       <div class="review-card-header">
@@ -2695,6 +2836,7 @@ function displayPlaceReviews(reviews) {
           <span class="review-rating-value">${rating}/5</span>
         </div>
       </div>
+      ${renderReviewMeta(review)}
       <p class="review-comment">${translateReviewText(review.text || t("dynamic.noComment"))}</p>
       ${renderReviewActionButtons(review)}
     `;
@@ -2707,15 +2849,8 @@ function displayPlaceReviews(reviews) {
 }
 
 function canManageReview(review, authContext = APP_STATE.auth) {
-  // Restricts edit and delete controls to the review owner or an admin.
-  if (!review || !authContext?.userId) {
-    return false;
-  }
-
-  return (
-    String(review.user_id) === String(authContext.userId) ||
-    Boolean(authContext.isAdmin)
-  );
+  // Restricts edit and delete controls to the actual review owner only.
+  return isOwnReview(review, authContext);
 }
 
 function getCurrentUserReview(reviews, authContext = APP_STATE.auth) {
@@ -2799,6 +2934,7 @@ function renderCurrentUserReviewCard(review, showActions = true) {
         </div>
       </div>
 
+      ${renderReviewMeta(review)}
       <p class="review-comment">${translateReviewText(review.text || t("dynamic.noComment"))}</p>
       ${showActions ? renderReviewActionButtons(review, true) : ""}
     </article>
