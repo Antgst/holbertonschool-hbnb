@@ -709,7 +709,22 @@ function displayPlaceDetails(place) {
         }</div>`;
       }
 
-      return `<img src="${imageUrl}" alt="${title}" class="place-gallery-image" loading="lazy">`;
+      return `
+      <button
+        type="button"
+        class="place-gallery-trigger"
+        data-image-src="${escapeHtml(imageUrl)}"
+        data-image-alt="${title}"
+        aria-label="Open image ${index + 1} of ${title}"
+      >
+        <img
+          src="${imageUrl}"
+          alt="${title}"
+          class="place-gallery-image"
+          loading="lazy"
+        >
+      </button>
+    `;
     })
     .join("");
 
@@ -2048,10 +2063,109 @@ async function handleReviewSubmit(event, token, placeId, reviewForm) {
   }
 }
 
+function ensurePlaceImageLightbox() {
+  let lightbox = document.getElementById("place-image-lightbox");
+
+  if (lightbox) {
+    return lightbox;
+  }
+
+  lightbox = document.createElement("div");
+  lightbox.id = "place-image-lightbox";
+  lightbox.className = "place-image-lightbox";
+  lightbox.setAttribute("aria-hidden", "true");
+
+  lightbox.innerHTML = `
+    <div class="place-image-lightbox-backdrop" data-lightbox-close="true"></div>
+
+    <div
+      class="place-image-lightbox-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Expanded place image"
+    >
+      <button
+        type="button"
+        class="place-image-lightbox-close"
+        aria-label="Close image preview"
+        data-lightbox-close="true"
+      >
+        ×
+      </button>
+
+      <img
+        src=""
+        alt=""
+        class="place-image-lightbox-image"
+      >
+    </div>
+  `;
+
+  document.body.appendChild(lightbox);
+  return lightbox;
+}
+
+function openPlaceImageLightbox(src, alt) {
+  if (!src) {
+    return;
+  }
+
+  const lightbox = ensurePlaceImageLightbox();
+  const image = lightbox.querySelector(".place-image-lightbox-image");
+
+  image.src = src;
+  image.alt = alt || "Expanded place image";
+
+  lightbox.classList.add("is-open");
+  lightbox.setAttribute("aria-hidden", "false");
+  document.body.classList.add("is-lightbox-open");
+}
+
+function closePlaceImageLightbox() {
+  const lightbox = document.getElementById("place-image-lightbox");
+
+  if (!lightbox) {
+    return;
+  }
+
+  lightbox.classList.remove("is-open");
+  lightbox.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("is-lightbox-open");
+}
+
+function initializePlaceGalleryLightbox() {
+  ensurePlaceImageLightbox();
+
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest(".place-gallery-trigger");
+
+    if (trigger) {
+      openPlaceImageLightbox(
+        trigger.dataset.imageSrc,
+        trigger.dataset.imageAlt,
+      );
+      return;
+    }
+
+    const closeTarget = event.target.closest("[data-lightbox-close='true']");
+
+    if (closeTarget) {
+      closePlaceImageLightbox();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closePlaceImageLightbox();
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initializeThemeToggle();
   populatePriceFilter();
   setupPriceFilter();
+  initializePlaceGalleryLightbox();
 
   const token = checkAuthentication();
   initializeHeroBackgrounds();
