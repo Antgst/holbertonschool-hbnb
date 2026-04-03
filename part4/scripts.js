@@ -2090,23 +2090,28 @@ function ensurePlaceImageLightbox() {
       aria-label="Expanded place gallery"
     >
       <button
-        type="button"
-        class="place-image-lightbox-nav place-image-lightbox-nav--prev"
-        aria-label="Previous image"
-        data-lightbox-prev="true"
-      >
-        ‹
-      </button>
+  type="button"
+  class="place-image-lightbox-nav place-image-lightbox-nav--prev"
+  aria-label="Previous image"
+  data-lightbox-prev="true"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M15 18L9 12L15 6" />
+  </svg>
+</button>
 
       <div class="place-image-lightbox-figure">
         <button
-          type="button"
-          class="place-image-lightbox-close"
-          aria-label="Close image preview"
-          data-lightbox-close="true"
-        >
-          ×
-        </button>
+  type="button"
+  class="place-image-lightbox-close"
+  aria-label="Close image preview"
+  data-lightbox-close="true"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M6 6L18 18" />
+    <path d="M18 6L6 18" />
+  </svg>
+</button>
 
         <img
           src=""
@@ -2118,13 +2123,15 @@ function ensurePlaceImageLightbox() {
       </div>
 
       <button
-        type="button"
-        class="place-image-lightbox-nav place-image-lightbox-nav--next"
-        aria-label="Next image"
-        data-lightbox-next="true"
-      >
-        ›
-      </button>
+  type="button"
+  class="place-image-lightbox-nav place-image-lightbox-nav--next"
+  aria-label="Next image"
+  data-lightbox-next="true"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M9 18L15 12L9 6" />
+  </svg>
+</button>
     </div>
   `;
 
