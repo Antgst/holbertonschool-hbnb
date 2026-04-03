@@ -922,4 +922,3 @@ function initializeLanguageToggle() {
     });
   }
 }
-

@@ -641,7 +641,6 @@ main {
   letter-spacing: 0.03em;
 }
 
-
 /* Typography */
 h1 {
   font-size: 2.15rem;
@@ -1011,7 +1010,6 @@ p {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-
 
 @keyframes buttonSpin {
   to {

@@ -440,7 +440,6 @@ function setupRevealAnimations() {
   }
 }
 
-
 function renderStateCard(title, text, compact = false) {
   // Returns a reusable state card for loading, empty, or error feedback.
   return `

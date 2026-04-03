@@ -132,7 +132,6 @@ function renderHostPreviewMedia(host) {
   `;
 }
 
-
 function getHostName(place) {
   // Extracts the most user-friendly host name available from the place data.
   if (place.owner && place.owner.first_name && place.owner.last_name) {

@@ -53,7 +53,6 @@ function renderStarRating(rating) {
   }).join("");
 }
 
-
 async function fetchPlaceReviews(token, placeId) {
   // Loads the reviews for one place and syncs the shared client state.
   const response = await fetch(`${API_BASE_URL}/places/${placeId}/reviews`, {
