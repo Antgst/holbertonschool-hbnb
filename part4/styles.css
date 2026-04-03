@@ -3874,6 +3874,17 @@ html[data-theme="dark"] #price-filter {
   color: #f4ede2;
 }
 
+html[data-theme="dark"] .review-form select,
+html[data-theme="dark"] #price-filter {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] .review-form select option,
+html[data-theme="dark"] #price-filter option {
+  background: #1f1a21;
+  color: #f4ede2;
+}
+
 html[data-theme="dark"] #login-form input::placeholder,
 html[data-theme="dark"] .review-form textarea::placeholder {
   color: #8f8276;
