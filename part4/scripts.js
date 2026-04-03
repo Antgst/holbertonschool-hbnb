@@ -630,8 +630,8 @@ function displayPlaces(places, reviewSummaryMap = new Map()) {
         : `<div class="place-card-placeholder">Image coming soon</div>`;
 
     const shortDescription = place.description
-      ? escapeHtml(place.description.slice(0, 105)) +
-        (place.description.length > 105 ? "..." : "")
+      ? escapeHtml(translatePlaceDescription(place.description).slice(0, 105)) +
+        (translatePlaceDescription(place.description).length > 105 ? "..." : "")
       : "Elegant stay, premium comfort, and carefully selected amenities.";
 
     const reviewSummary = reviewSummaryMap.get(place.id) || null;
@@ -1087,7 +1087,7 @@ function createAmenitiesPanel(amenities) {
 
   if (amenities && amenities.length > 0) {
     for (const amenity of amenities) {
-      const amenityLabel = amenity.name || amenity;
+      const amenityLabel = translateAmenityName(amenity.name || amenity);
 
       const card = document.createElement("article");
       card.classList.add("amenity-card");
@@ -1130,7 +1130,7 @@ function createAmenitiesPanel(amenities) {
   if (amenities && amenities.length > 0) {
     for (const amenity of amenities) {
       const item = document.createElement("li");
-      item.textContent = amenity.name || amenity;
+      item.textContent = translateAmenityName(amenity.name || amenity);
       list.appendChild(item);
     }
   } else {
@@ -1194,8 +1194,217 @@ function getHostImage(place) {
   return hostImages[hostName] || null;
 }
 
+const SEEDED_CONTENT_TRANSLATIONS = {
+  fr: {
+    amenityNames: {
+      WiFi: "Wi‑Fi",
+      Parking: "Parking",
+      "Sea View": "Vue mer",
+      "City View": "Vue sur la ville",
+      "Mountain View": "Vue sur les montagnes",
+      Spa: "Spa",
+      "Hot Tub": "Jacuzzi",
+      Fireplace: "Cheminée",
+      Workspace: "Espace de travail",
+      Garden: "Jardin",
+      Balcony: "Balcon",
+      Breakfast: "Petit-déjeuner",
+      "Air Conditioning": "Climatisation",
+      Heating: "Chauffage",
+      Kitchen: "Cuisine",
+      Washer: "Lave-linge",
+      TV: "Télévision",
+      Pool: "Piscine",
+      "Pet Friendly": "Animaux acceptés",
+      "Self Check-in": "Arrivée autonome",
+      "Beach Access": "Accès plage",
+      BBQ: "Barbecue",
+      Elevator: "Ascenseur",
+      Accessible: "Accessible",
+      "EV Charger": "Borne de recharge",
+    },
+    placeTitles: {
+      "Rennes City Center Loft": "Loft au centre-ville de Rennes",
+      "Cozy Saint-Malo Studio": "Studio cosy à Saint-Malo",
+      "Sea View House in Cancale": "Maison avec vue mer à Cancale",
+      "Chic Apartment in Vannes": "Appartement chic à Vannes",
+      "Nature Cabin in Broceliande": "Cabane nature en Brocéliande",
+      "Dinard Spa Villa": "Villa spa à Dinard",
+      "Royal Suite at Chambord Castle": "Suite royale au château de Chambord",
+      "Betton Room": "Chambre à Betton",
+    },
+    placeDescriptions: {
+      "A bright and elegant loft in the heart of Rennes, ideal for a premium city break with easy access to restaurants, shops, and the historic center.":
+        "Un loft lumineux et élégant au cœur de Rennes, idéal pour une escapade urbaine premium avec un accès facile aux restaurants, aux boutiques et au centre historique.",
+      "A warm and practical studio near the beach and the old town, perfect for a romantic weekend or a short coastal stay.":
+        "Un studio chaleureux et pratique près de la plage et de la vieille ville, parfait pour un week-end romantique ou un court séjour en bord de mer.",
+      "A spacious house with panoramic sea views, designed for peaceful stays, family gatherings, and refined comfort by the coast.":
+        "Une maison spacieuse avec vue panoramique sur la mer, pensée pour des séjours paisibles, des moments en famille et un confort raffiné sur la côte.",
+      "A stylish apartment with modern decor, premium comfort, and a calm atmosphere, just minutes from the historic center of Vannes.":
+        "Un appartement élégant à la décoration moderne, au confort premium et à l'atmosphère paisible, à quelques minutes du centre historique de Vannes.",
+      "A charming cabin surrounded by nature, offering a cozy retreat for guests looking for silence, forest views, and a unique escape.":
+        "Une charmante cabane entourée de nature, offrant un refuge cosy pour les voyageurs en quête de silence, de vues sur la forêt et d'une parenthèse unique.",
+      "A luxurious villa with spa facilities, generous volumes, and a high-end ambiance for an exceptional seaside experience.":
+        "Une villa luxueuse avec espace spa, de beaux volumes et une ambiance haut de gamme pour une expérience exceptionnelle en bord de mer.",
+      "An exclusive and prestigious suite inspired by French heritage, created for unforgettable luxury stays in a remarkable setting.":
+        "Une suite exclusive et prestigieuse inspirée du patrimoine français, conçue pour des séjours de luxe inoubliables dans un cadre remarquable.",
+      "A simple, clean, and affordable room for short stays, business travel, or practical overnight stops near Rennes.":
+        "Une chambre simple, propre et abordable pour de courts séjours, des déplacements professionnels ou des nuits pratiques près de Rennes.",
+    },
+    reviewTexts: {
+      "Excellent location, elegant decor, and a very comfortable stay. Everything felt premium and well thought out.":
+        "Excellent emplacement, décoration élégante et séjour très confortable. Tout semblait premium et bien pensé.",
+      "Very stylish loft with a great atmosphere. A little lively outside at night, but still a very good experience.":
+        "Loft très stylé avec une belle atmosphère. Un peu animé dehors le soir, mais l'expérience reste très bonne.",
+      "Beautiful loft in the city center, spotless and easy to access. I would definitely stay here again.":
+        "Très beau loft en centre-ville, impeccable et facile d'accès. J'y reviendrais sans hésiter.",
+      "Very good stay overall. The loft is well designed and pleasant, with easy access to central Rennes.":
+        "Très bon séjour dans l'ensemble. Le loft est bien pensé et agréable, avec un accès facile au centre de Rennes.",
+      "The place looks good, but I had trouble sleeping because of outside noise and I expected a calmer stay for the price.":
+        "Le logement est beau, mais j'ai eu du mal à dormir à cause du bruit extérieur et j'attendais un séjour plus calme pour ce prix.",
+      "Nice loft with real character and a comfortable layout. Good choice for a city break.":
+        "Joli loft avec une vraie personnalité et un agencement confortable. Un bon choix pour une escapade urbaine.",
+      "Excellent balance of style, comfort, and location. One of the most polished stays in Rennes.":
+        "Excellent équilibre entre style, confort et emplacement. L'un des séjours les plus aboutis à Rennes.",
+      "Small but very well organized. Great for a short stay near the sea and the old town.":
+        "Petit mais très bien agencé. Idéal pour un court séjour près de la mer et de la vieille ville.",
+      "Lovely and cozy studio, perfect for two people. The location made everything easy and enjoyable.":
+        "Studio charmant et cosy, parfait pour deux personnes. L'emplacement rend tout simple et agréable.",
+      "Very practical and pleasant place. Good value for money and a warm atmosphere.":
+        "Logement très pratique et agréable. Bon rapport qualité-prix et ambiance chaleureuse.",
+      "Charming little studio, well placed and easy to enjoy for a weekend near the sea.":
+        "Charmant petit studio, bien situé et très agréable pour un week-end près de la mer.",
+      "Good location and useful for a short trip, but the space felt a bit limited once luggage was inside.":
+        "Bon emplacement et pratique pour un court voyage, mais l'espace semble vite limité une fois les bagages à l'intérieur.",
+      "Correct for one night, but I found the studio too cramped and less comfortable than expected for a relaxing stay.":
+        "Correct pour une nuit, mais j'ai trouvé le studio trop exigu et moins confortable que prévu pour un séjour reposant.",
+      "Pleasant and well located studio. Simple, but it does the job well for a coastal weekend.":
+        "Studio agréable et bien situé. Simple, mais il remplit bien son rôle pour un week-end sur la côte.",
+      "The sea view is absolutely stunning. Spacious, quiet, and perfect for a relaxing coastal getaway.":
+        "La vue sur mer est absolument superbe. Spacieux, calme et parfait pour une escapade relaxante sur la côte.",
+      "Beautiful property with a peaceful atmosphere. The kitchen could be better equipped, but overall excellent.":
+        "Belle propriété avec une atmosphère paisible. La cuisine pourrait être mieux équipée, mais l'ensemble est excellent.",
+      "A truly relaxing house with an amazing view. It felt refined, spacious, and very comfortable.":
+        "Une maison vraiment reposante avec une vue incroyable. L'ensemble est raffiné, spacieux et très confortable.",
+      "Excellent family house with a strong premium feel. The sea view gives the whole stay real value.":
+        "Excellente maison familiale avec une vraie sensation premium. La vue mer apporte une réelle valeur au séjour.",
+      "Very pleasant and spacious property. Great atmosphere and a strong sense of calm throughout the stay.":
+        "Propriété très agréable et spacieuse. Belle atmosphère et véritable sensation de calme pendant tout le séjour.",
+      "The view is beautiful, but I expected a more modern interior and found some parts of the house less cozy than shown.":
+        "La vue est magnifique, mais j'attendais un intérieur plus moderne et j'ai trouvé certaines parties de la maison moins chaleureuses qu'annoncé.",
+      "Large, peaceful, and memorable. Excellent choice for a refined stay by the coast.":
+        "Spacieux, paisible et mémorable. Un excellent choix pour un séjour raffiné sur la côte.",
+      "Modern, elegant, and very comfortable. The apartment was spotless and beautifully decorated.":
+        "Moderne, élégant et très confortable. L'appartement était impeccable et joliment décoré.",
+      "Very nice apartment with a calm and stylish atmosphere. Great base for visiting Vannes.":
+        "Très bel appartement avec une atmosphère calme et soignée. Une excellente base pour visiter Vannes.",
+      "Clean, bright, and well located. The decor gives the place a refined and welcoming character.":
+        "Propre, lumineux et bien situé. La décoration donne au lieu un caractère raffiné et accueillant.",
+      "Elegant apartment, very clean, and perfectly suited for a comfortable city stay.":
+        "Appartement élégant, très propre et parfaitement adapté à un séjour urbain confortable.",
+      "Beautiful decor, calm atmosphere, and a very polished overall experience.":
+        "Belle décoration, ambiance calme et expérience globale très soignée.",
+      "Bright, stylish, and well located. It felt premium from arrival to departure.":
+        "Lumineux, stylé et bien situé. L'expérience semblait premium du début à la fin.",
+      "Very pleasant stay with a clean and modern feel. Easy place to recommend.":
+        "Séjour très agréable avec une impression de propreté et de modernité. Facile à recommander.",
+      "A peaceful and unique cabin surrounded by nature. Ideal for disconnecting and slowing down.":
+        "Une cabane paisible et unique entourée de nature. Idéale pour déconnecter et ralentir.",
+      "Warm and charming place with a beautiful natural setting. Very relaxing and cozy.":
+        "Lieu chaleureux et charmant dans un très beau cadre naturel. Très reposant et cosy.",
+      "Excellent experience in the forest. Quiet, original, and perfect for a restful weekend.":
+        "Excellente expérience en pleine forêt. Calme, originale et parfaite pour un week-end reposant.",
+      "Lovely natural escape with a cozy interior. A very good choice for slowing down.":
+        "Très belle parenthèse nature avec un intérieur cosy. Un très bon choix pour ralentir.",
+      "Peaceful setting and authentic cabin feel. Very pleasant if you want calm and nature.":
+        "Cadre paisible et vraie ambiance cabane. Très agréable si l'on cherche le calme et la nature.",
+      "The location is beautiful, but the isolation was too strong for me and the rustic setup felt less comfortable than expected.":
+        "L'emplacement est magnifique, mais l'isolement était trop marqué pour moi et l'installation rustique m'a semblé moins confortable qu'attendu.",
+      "A memorable cabin with real charm. Great atmosphere for a quiet weekend away.":
+        "Une cabane mémorable avec un vrai charme. Excellente atmosphère pour un week-end au calme.",
+      "A high-end villa with outstanding comfort. The spa area made the stay feel truly special.":
+        "Une villa haut de gamme au confort remarquable. L'espace spa rend le séjour vraiment spécial.",
+      "Spacious, elegant, and perfectly maintained. One of the best premium stays I have had.":
+        "Spacieuse, élégante et parfaitement entretenue. L'un des meilleurs séjours premium que j'ai connus.",
+      "Very beautiful villa with excellent amenities. The spa and overall ambiance were top quality.":
+        "Très belle villa avec d'excellents équipements. Le spa et l'ambiance générale étaient de grande qualité.",
+      "Outstanding villa with a premium feel throughout. Spacious, relaxing, and very well maintained.":
+        "Villa remarquable avec une vraie sensation premium partout. Spacieuse, relaxante et très bien entretenue.",
+      "Top-level comfort and excellent amenities. The spa area is a real strength of this property.":
+        "Confort de très haut niveau et excellents équipements. L'espace spa est un véritable point fort de cette propriété.",
+      "A luxurious and polished stay with excellent comfort. Everything felt high-end and carefully prepared.":
+        "Un séjour luxueux et très soigné avec un excellent confort. Tout semblait haut de gamme et préparé avec attention.",
+      "Very refined villa with a relaxing atmosphere. A little formal in style for me, but clearly high quality.":
+        "Villa très raffinée avec une atmosphère relaxante. Un peu formelle dans le style à mon goût, mais clairement de grande qualité.",
+      "An exceptional suite with a true luxury feel. The atmosphere was elegant and unforgettable.":
+        "Une suite exceptionnelle avec une vraie sensation de luxe. L'atmosphère était élégante et inoubliable.",
+      "Beautiful and impressive suite in a unique setting. Expensive, but clearly a premium experience.":
+        "Suite belle et impressionnante dans un cadre unique. C'est cher, mais l'expérience est clairement premium.",
+      "Refined, spacious, and memorable. Everything about this suite felt exclusive and luxurious.":
+        "Raffinée, spacieuse et mémorable. Tout dans cette suite semblait exclusif et luxueux.",
+      "Magnificent suite with a truly exceptional atmosphere. It felt elegant, memorable, and unique.":
+        "Magnifique suite avec une atmosphère vraiment exceptionnelle. Le lieu paraît élégant, mémorable et unique.",
+      "Very impressive stay. The place combines luxury, comfort, and a remarkable setting.":
+        "Séjour très impressionnant. Le lieu combine luxe, confort et cadre remarquable.",
+      "A refined and unforgettable experience. The suite feels exclusive without losing comfort.":
+        "Une expérience raffinée et inoubliable. La suite semble exclusive sans perdre en confort.",
+      "Exceptional property with a real prestige feel. Easily one of the most memorable stays in the dataset.":
+        "Propriété exceptionnelle avec une vraie sensation de prestige. Facilement l'un des séjours les plus mémorables du jeu de données.",
+      "Simple, clean, and practical. A very good option for a short and affordable stay.":
+        "Simple, propre et pratique. Une très bonne option pour un séjour court et abordable.",
+      "Basic room, but correct for the price. Good for one night and easy to access.":
+        "Chambre basique, mais correcte pour le prix. Bien pour une nuit et facile d'accès.",
+      "Clean and functional room with everything needed for a quick stop near Rennes.":
+        "Chambre propre et fonctionnelle avec tout le nécessaire pour une halte rapide près de Rennes.",
+      "Simple but clean and efficient. Good option for a short stay close to Rennes.":
+        "Simple mais propre et efficace. Bonne option pour un court séjour près de Rennes.",
+      "Functional room with the basics covered. A practical and honest budget-friendly stay.":
+        "Chambre fonctionnelle avec l'essentiel. Un séjour pratique et honnête pour petit budget.",
+      "Useful in a pinch, but the room felt too basic for me and lacked the comfort I wanted, even at this price level.":
+        "Utile en dépannage, mais la chambre m'a semblé trop basique et manquait du confort que j'attendais, même à ce prix.",
+      "Correct for one or two nights. Nothing special, but generally functional and easy to reach.":
+        "Correcte pour une ou deux nuits. Rien d'exceptionnel, mais globalement fonctionnelle et facile d'accès.",
+    },
+  },
+};
+
+function translateSeededText(category, value) {
+  const normalizedValue = String(value || "").trim();
+
+  if (!normalizedValue) {
+    return value;
+  }
+
+  const language = getCurrentLanguage();
+  const translations = SEEDED_CONTENT_TRANSLATIONS[language]?.[category];
+
+  if (!translations) {
+    return value;
+  }
+
+  return translations[normalizedValue] || value;
+}
+
+function translatePlaceTitle(title) {
+  return translateSeededText("placeTitles", title);
+}
+
+function translatePlaceDescription(description) {
+  return translateSeededText("placeDescriptions", description);
+}
+
+function translateAmenityName(name) {
+  return translateSeededText("amenityNames", name);
+}
+
+function translateReviewText(text) {
+  return translateSeededText("reviewTexts", text);
+}
+
 function getPlaceDisplayTitle(place) {
-  return place?.title || place?.name || "Selected stay";
+  return translatePlaceTitle(
+    place?.title || place?.name || t("dynamic.selectedStay"),
+  );
 }
 
 function buildReviewsByPlaceMap(reviews) {
@@ -1310,7 +1519,7 @@ function renderHostPreviewMedia(host) {
 
 function renderHostPreviewCard(host) {
   const hostName = escapeHtml(host.name);
-  const leadPlaceTitle = escapeHtml(host.leadPlaceTitle);
+  const leadPlaceTitle = escapeHtml(translatePlaceTitle(host.leadPlaceTitle));
   const listingLabel = `${host.listingCount} stay${host.listingCount > 1 ? "s" : ""}`;
   const reviewLabel = `${host.reviewCount} review${host.reviewCount > 1 ? "s" : ""}`;
   const ratingLabel = host.reviewSummary
@@ -1428,7 +1637,7 @@ function renderHostPreviewMedia(host) {
 
 function renderHostPreviewCard(host) {
   const hostName = escapeHtml(host.name);
-  const leadPlaceTitle = escapeHtml(host.leadPlaceTitle);
+  const leadPlaceTitle = escapeHtml(translatePlaceTitle(host.leadPlaceTitle));
   const listingLabel = `${host.listingCount} stay${host.listingCount > 1 ? "s" : ""}`;
   const reviewLabel = `${host.reviewCount} review${host.reviewCount > 1 ? "s" : ""}`;
   const ratingLabel = host.reviewSummary
@@ -1742,7 +1951,7 @@ function renderHostPreviewMedia(host) {
 
 function renderHostPreviewCard(host) {
   const hostName = escapeHtml(host.name);
-  const leadPlaceTitle = escapeHtml(host.leadPlaceTitle);
+  const leadPlaceTitle = escapeHtml(translatePlaceTitle(host.leadPlaceTitle));
   const listingLabel = `${host.listingCount} stay${host.listingCount > 1 ? "s" : ""}`;
   const reviewLabel = `${host.reviewCount} review${host.reviewCount > 1 ? "s" : ""}`;
   const ratingLabel = host.reviewSummary
@@ -3077,7 +3286,9 @@ function displayPlaces(places, reviewSummaryMap = new Map()) {
     placeCard.style.setProperty("--card-index", index);
 
     const title = escapeHtml(
-      place.title || place.name || t("dynamic.selectedStay"),
+      translatePlaceTitle(
+        place.title || place.name || t("dynamic.selectedStay"),
+      ),
     );
     const price = Number(place.price) || 0;
     placeCard.dataset.price = String(price);
@@ -3090,8 +3301,8 @@ function displayPlaces(places, reviewSummaryMap = new Map()) {
         : `<div class="place-card-placeholder">${t("dynamic.imageComingSoon")}</div>`;
 
     const shortDescription = place.description
-      ? escapeHtml(place.description.slice(0, 105)) +
-        (place.description.length > 105 ? "..." : "")
+      ? escapeHtml(translatePlaceDescription(place.description).slice(0, 105)) +
+        (translatePlaceDescription(place.description).length > 105 ? "..." : "")
       : t("dynamic.defaultDescription");
 
     const reviewSummary = reviewSummaryMap.get(place.id) || null;
@@ -3158,11 +3369,13 @@ function displayPlaceDetails(place) {
   }
 
   const title = escapeHtml(
-    place.title || place.name || t("dynamic.selectedStay"),
+    translatePlaceTitle(place.title || place.name || t("dynamic.selectedStay")),
   );
   const price = Number(place.price) || 0;
   const description = escapeHtml(
-    place.description || t("dynamic.refinedStayDescription"),
+    translatePlaceDescription(
+      place.description || t("dynamic.refinedStayDescription"),
+    ),
   );
 
   const images =
@@ -3269,7 +3482,7 @@ function createAmenitiesPanel(amenities) {
 
   if (amenities && amenities.length > 0) {
     for (const amenity of amenities) {
-      const amenityLabel = amenity.name || amenity;
+      const amenityLabel = translateAmenityName(amenity.name || amenity);
 
       const card = document.createElement("article");
       card.classList.add("amenity-card");
@@ -3498,7 +3711,7 @@ function displayPlaceReviews(reviews) {
           <span class="review-rating-value">${rating}/5</span>
         </div>
       </div>
-      <p class="review-comment">${review.text || t("dynamic.noComment")}</p>
+      <p class="review-comment">${translateReviewText(review.text || t("dynamic.noComment"))}</p>
     `;
 
     reviewsList.appendChild(reviewCard);
@@ -3516,7 +3729,7 @@ function displayPlaceSummary(place) {
   }
 
   const title = escapeHtml(
-    place.title || place.name || t("dynamic.selectedStay"),
+    translatePlaceTitle(place.title || place.name || t("dynamic.selectedStay")),
   );
   const price = Number(place.price) || 0;
 
@@ -3531,7 +3744,7 @@ function displayPlaceSummary(place) {
 
 function renderHostPreviewCard(host) {
   const hostName = escapeHtml(host.name);
-  const leadPlaceTitle = escapeHtml(host.leadPlaceTitle);
+  const leadPlaceTitle = escapeHtml(translatePlaceTitle(host.leadPlaceTitle));
   const listingLabel = formatCountLabel("stay", host.listingCount);
   const reviewLabel = formatCountLabel("review", host.reviewCount);
   const ratingLabel = host.reviewSummary
