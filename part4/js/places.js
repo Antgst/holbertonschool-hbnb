@@ -884,8 +884,10 @@ function updateHeaderPlaceContext(place) {
 
   const title = place.title || place.name || "";
   const match = title.match(/\bin\s+(.+)$/i);
+  const fallbackRegion =
+    getCurrentLanguage() === "fr" ? "Bretagne" : "Brittany";
   const location =
-    place.city || place.location || (match ? match[1] : "Brittany");
+    place.city || place.location || (match ? match[1] : fallbackRegion);
 
   target.textContent = `${location} · ${t("dynamic.refinedStayContext")}`;
 }

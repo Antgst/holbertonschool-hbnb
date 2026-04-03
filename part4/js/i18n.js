@@ -38,6 +38,7 @@ const SEEDED_CONTENT_TRANSLATIONS = {
       "Dinard Spa Villa": "Villa spa à Dinard",
       "Royal Suite at Chambord Castle": "Suite royale au château de Chambord",
       "Betton Room": "Chambre à Betton",
+      "Budget Tent": "Tente petit budget",
     },
     placeDescriptions: {
       "A bright and elegant loft in the heart of Rennes, ideal for a premium city break with easy access to restaurants, shops, and the historic center.":
@@ -56,6 +57,8 @@ const SEEDED_CONTENT_TRANSLATIONS = {
         "Une suite exclusive et prestigieuse inspirée du patrimoine français, conçue pour des séjours de luxe inoubliables dans un cadre remarquable.",
       "A simple, clean, and affordable room for short stays, business travel, or practical overnight stops near Rennes.":
         "Une chambre simple, propre et abordable pour de courts séjours, des déplacements professionnels ou des nuits pratiques près de Rennes.",
+      "It is literally a tent. No luxury, no nonsense, just a cheap place to sleep and a perfect excuse to make the €10 filter useful.":
+        "C'est littéralement une tente. Aucun luxe, aucun superflu, juste un endroit pas cher pour dormir et une excellente raison de rendre le filtre à 10 € enfin utile.",
     },
     reviewTexts: {
       "Excellent location, elegant decor, and a very comfortable stay. Everything felt premium and well thought out.":
