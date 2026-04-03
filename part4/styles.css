@@ -1202,24 +1202,21 @@ p {
 .hero-media-layer {
   position: absolute;
   inset: 0;
-  background-image: var(
-    --hero-image,
-    url("hbnb/images/places/chambord-suite-1.jpg")
-  );
+  background-image: var(--hero-image, url("hbnb/images/places/chambord-suite-1.jpg"));
   background-position: var(--hero-position, center center);
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0;
-  transform: scale(1.03);
+  transform: scale(1.015);
   filter: saturate(1.02) contrast(1.02);
   transition:
-    opacity 900ms var(--ease-premium),
-    transform 1400ms var(--ease-premium);
+    opacity 1000ms var(--ease-premium),
+    transform 1600ms var(--ease-premium);
 }
 
 .hero-media-layer.is-active {
   opacity: 1;
-  transform: scale(1);
+  animation: heroSlowZoom 5000ms linear forwards;
 }
 
 .hero--hosts {
@@ -2710,6 +2707,15 @@ p {
 @keyframes buttonSpin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes heroSlowZoom {
+  from {
+    transform: scale(1.015);
+  }
+  to {
+    transform: scale(1.045);
   }
 }
 

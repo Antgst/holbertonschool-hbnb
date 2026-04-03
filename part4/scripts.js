@@ -4,7 +4,7 @@ const THEME_STORAGE_KEY = "hbnb-theme";
 const LIGHT_THEME = "light";
 const DARK_THEME = "dark";
 
-const HERO_ROTATION_DELAY_MS = 14000;
+const HERO_ROTATION_DELAY_MS = 5000;
 const HERO_IMAGE_LIBRARY = [
   { src: "hbnb/images/places/chambord-suite-1.jpg", position: "center center" },
   { src: "hbnb/images/places/chambord-suite-2.jpg", position: "center center" },
