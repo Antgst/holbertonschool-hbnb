@@ -353,8 +353,8 @@ def seed_demo_data():
             ],
             "budget_tent": [
                 "hbnb/images/places/tent-1.jpg",
-                "hbnb/images/places/tent-1.jpg",
-                "hbnb/images/places/tent-1.jpg",
+                "hbnb/images/places/tent-2.jpg",
+                "hbnb/images/places/tent-3.jpg",
             ],
             "cancale_house": [
                 "hbnb/images/places/cancale-house-1.jpg",
