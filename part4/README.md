@@ -1,9 +1,12 @@
-# 🏡 HBnB — Part 4 : Front-End Web Client, Premium UI & End-to-End API Integration
+# 🏡 HBnB — Part 4: Front-End Web Client, Premium UI & End-to-End API Integration
 
 ## 📚 Table of Contents
 
+- [📌 Holberton HBnB Project Context](#-holberton-hbnb-project-context)
 - [📌 Overview](#-overview)
+- [📊 Project at a Glance](#-project-at-a-glance)
 - [✨ Main Features](#-main-features)
+- [🏗️ Architecture Overview](#️-architecture-overview)
 - [🗂️ Project Structure](#️-project-structure)
 - [🛠️ Tech Stack](#️-tech-stack)
 - [📦 Installation](#-installation)
@@ -27,13 +30,28 @@
 
 ---
 
+## 📌 Holberton HBnB Project Context
+
+**HBnB** is Holberton School’s Airbnb-inspired full-stack project. It is designed to progressively teach software architecture, API design, persistence, authentication, testing, and front-end integration through several successive parts.
+
+At a high level, the project evolves like this:
+
+- **Part 1** lays the application foundations, core domain entities, and business logic.
+- **Part 2** structures the API layer and service orchestration.
+- **Part 3** connects the project to persistence and turns the platform into a real authenticated REST back end.
+- **Part 4** closes the loop by adding a browser client, premium UI work, seeded demo content, and end-to-end integration with the API.
+
+This repository therefore represents the moment where HBnB stops being only a back-end school project and becomes a complete local product demo: browsable catalog, login flow, place pages, host pages, review handling, image galleries, and a testable API-driven front end.
+
+---
+
 ## 📌 Overview
 
 Part 4 turns the HBnB project into a complete **full-stack demo application** by connecting a polished front-end interface to the authenticated REST API built in the previous parts.
 
 This version includes:
 
-- a premium multi-page front-end
+- a premium multi-page front end
 - JWT-based login
 - dynamic place listing
 - detailed place pages with host, amenities, gallery, and reviews
@@ -43,8 +61,34 @@ This version includes:
 - an exhaustive Postman non-regression suite
 
 The application is designed to be run locally with:
+
 - a Flask API on `http://127.0.0.1:5000`
-- a static front-end on `http://127.0.0.1:5500`
+- a static front end on `http://127.0.0.1:5500`
+
+---
+
+## 📊 Project at a Glance
+
+The current Part 4 workspace is no longer a minimal student mockup. It is a fairly dense local application with a meaningful amount of implementation and content.
+
+### Meaningful repository stats
+
+Based on the current exported project snapshot:
+
+- **~97 project files** in the Part 4 workspace
+- **23 Python files** for the API, models, services, persistence, configuration, seeding, and tests
+- **8 JavaScript files** for browser logic and client behavior
+- **6 CSS files** for global styling and page-level UI layers
+- **5 main HTML pages** (`index`, `place`, `login`, `add_review`, `hosts`)
+- **~3,600 lines of Python**
+- **~3,850 lines of JavaScript**
+- **~4,690 lines of CSS**
+- **~1,300 lines of HTML**
+- **40+ visual assets** including host portraits, place images, backgrounds, and icons
+- **9 seeded demo users**
+- **9 seeded places** including premium stays and dedicated test content
+- **dozens of reviews** already available for manual UI testing and API validation
+- **10 core REST route groups / resource entry points** across auth, users, amenities, places, and reviews
 
 ---
 
@@ -59,12 +103,39 @@ The application is designed to be run locally with:
   - review summary
   - full review list
 - **Authenticated review creation**
+- **Review ownership actions** for the connected author
 - **Hosts directory** built from seeded data
-- **Premium UI styling** with premium burgundy / ivory / gold design system
+- **Premium UI styling** with burgundy / ivory / gold design system
 - **Theme toggle**
 - **Reveal animations and smoother visual transitions**
 - **Seeded demo environment** with users, places, amenities, reviews, host photos, and place images
 - **Postman collection** for end-to-end API validation
+
+---
+
+## 🏗️ Architecture Overview
+
+This Part 4 version is organized around a simple but effective separation of concerns:
+
+### Front end
+
+- static HTML pages at the root of `part4/`
+- shared and page-specific styling in `css/`
+- split JavaScript responsibilities in `js/`
+- compatibility layer through root `styles.css` and `scripts.js`
+
+### Back end
+
+- Flask app factory and configuration
+- REST API under `hbnb/app/api/v1/`
+- SQLAlchemy models under `hbnb/app/models/`
+- service layer and facade orchestration
+- persistence abstractions and repositories
+- seeded demo data for repeatable local runs
+
+### Workflow
+
+The front end calls the REST API, the API enforces business rules and authorization, the database persists the state, and `seed_demo.py` makes the whole project instantly demonstrable after reset.
 
 ---
 
@@ -148,7 +219,8 @@ part4/
 
 ## 🛠️ Tech Stack
 
-### Back-end
+### Back end
+
 - Flask
 - Flask-RESTX
 - Flask-JWT-Extended
@@ -157,12 +229,14 @@ part4/
 - Flask-CORS
 - SQLite
 
-### Front-end
+### Front end
+
 - HTML5
 - CSS3
 - Vanilla JavaScript
 
 ### Testing
+
 - unittest / pytest
 - Postman
 
@@ -201,7 +275,7 @@ The easiest way to run the full project is from the `part4/` directory.
 ./hbnb.sh reset
 ```
 
-### Start the API and front-end only
+### Start the API and front end only
 
 ```bash
 ./hbnb.sh start
@@ -259,7 +333,7 @@ Protected endpoints must receive:
 Authorization: Bearer <JWT>
 ```
 
-On the front-end, login is handled through `login.html`, and the token is stored in a cookie for authenticated flows.
+On the front end, login is handled through `login.html`, and the token is stored in a cookie for authenticated flows.
 
 ---
 
@@ -273,32 +347,33 @@ Password: Test1234!
 
 Example accounts:
 
-| Role        | Email                         |
-|-------------|-------------------------------|
-| Admin       | `antoine.gousset@hbnb.test`   |
-| Regular user| `Léa.gousset@hbnb.test`       |
-| Regular user| `sebastien.vallier@hbnb.test` |
-| Regular user| `patricia.lebrun@hbnb.test`   |
-| Regular user| `benjy.guerin@hbnb.test`      |
-| Regular user| `micael.pinho@hbnb.test`      |
-| Regular user| `melissandre.moreau@hbnb.test`|
-| Regular user| `brice.travers@hbnb.test`     |
+| Role         | Email                          |
+| ------------ | ------------------------------ |
+| Admin        | `antoine.gousset@hbnb.test`    |
+| Regular user | `Léa.gousset@hbnb.test`        |
+| Regular user | `sebastien.vallier@hbnb.test`  |
+| Regular user | `patricia.lebrun@hbnb.test`    |
+| Regular user | `benjy.guerin@hbnb.test`       |
+| Regular user | `micael.pinho@hbnb.test`       |
+| Regular user | `melissandre.moreau@hbnb.test` |
+| Regular user | `brice.travers@hbnb.test`      |
+| Test user    | `tess.teur@hbnb.test`          |
 
 ---
 
 ## 🖥️ Front-End Pages
 
-| File              | Purpose |
-|-------------------|---------|
-| `index.html`      | Main catalog of places |
-| `place.html`      | Detailed view of a selected place |
-| `login.html`      | Login form |
-| `add_review.html` | Review submission page |
-| `hosts.html`      | Hosts directory |
-| `js/`            | Front-end logic split by responsibility: core, i18n, auth, hosts, reviews, places, bootstrap |
-| `css/`           | Front-end styles split by responsibility: common, hosts, places, reviews, auth |
-| `scripts.js`      | Legacy manifest pointing to the split JavaScript entry files |
-| `styles.css`      | Legacy manifest pointing to the split CSS entry files |
+| File              | Purpose                                                                                      |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| `index.html`      | Main catalog of places                                                                       |
+| `place.html`      | Detailed view of a selected place                                                            |
+| `login.html`      | Login form                                                                                   |
+| `add_review.html` | Review submission page                                                                       |
+| `hosts.html`      | Hosts directory                                                                              |
+| `js/`             | Front-end logic split by responsibility: core, i18n, auth, hosts, reviews, places, bootstrap |
+| `css/`            | Front-end styles split by responsibility: common, hosts, places, reviews, auth               |
+| `scripts.js`      | Global client script / compatibility entry point                                             |
+| `styles.css`      | Global visual layer / compatibility entry point                                              |
 
 ### Main front-end behaviors
 
@@ -311,6 +386,7 @@ Example accounts:
 - applies theme switching
 - handles form submission and error states
 - manages reveal animations and richer visual feedback
+- supports richer review interactions in the browser
 
 ---
 
@@ -318,48 +394,48 @@ Example accounts:
 
 ### Auth
 
-| Method | Endpoint             | Auth   | Description |
-|--------|----------------------|--------|-------------|
+| Method | Endpoint             | Auth   | Description                        |
+| ------ | -------------------- | ------ | ---------------------------------- |
 | POST   | `/api/v1/auth/login` | Public | Authenticate user and return a JWT |
 
 ### Users
 
-| Method | Endpoint              | Auth          | Description |
-|--------|-----------------------|---------------|-------------|
-| GET    | `/api/v1/users/`      | Public        | List all users |
-| POST   | `/api/v1/users/`      | Admin only    | Create a user |
-| GET    | `/api/v1/users/<id>`  | Public        | Get user by ID |
-| PUT    | `/api/v1/users/<id>`  | Self or admin | Update a user |
+| Method | Endpoint             | Auth          | Description    |
+| ------ | -------------------- | ------------- | -------------- |
+| GET    | `/api/v1/users/`     | Public        | List all users |
+| POST   | `/api/v1/users/`     | Admin only    | Create a user  |
+| GET    | `/api/v1/users/<id>` | Public        | Get user by ID |
+| PUT    | `/api/v1/users/<id>` | Self or admin | Update a user  |
 
 ### Amenities
 
-| Method | Endpoint                  | Auth       | Description |
-|--------|---------------------------|------------|-------------|
-| GET    | `/api/v1/amenities/`      | Public     | List all amenities |
-| POST   | `/api/v1/amenities/`      | Admin only | Create an amenity |
-| GET    | `/api/v1/amenities/<id>`  | Public     | Get amenity by ID |
-| PUT    | `/api/v1/amenities/<id>`  | Admin only | Update an amenity |
+| Method | Endpoint                 | Auth       | Description        |
+| ------ | ------------------------ | ---------- | ------------------ |
+| GET    | `/api/v1/amenities/`     | Public     | List all amenities |
+| POST   | `/api/v1/amenities/`     | Admin only | Create an amenity  |
+| GET    | `/api/v1/amenities/<id>` | Public     | Get amenity by ID  |
+| PUT    | `/api/v1/amenities/<id>` | Admin only | Update an amenity  |
 
 ### Places
 
-| Method | Endpoint                      | Auth           | Description |
-|--------|-------------------------------|----------------|-------------|
-| GET    | `/api/v1/places/`             | Public         | List all places |
-| POST   | `/api/v1/places/`             | JWT required   | Create a place |
-| GET    | `/api/v1/places/<id>`         | Public         | Get place by ID |
-| PUT    | `/api/v1/places/<id>`         | Owner or admin | Update a place |
-| DELETE | `/api/v1/places/<id>`         | Owner or admin | Delete a place |
+| Method | Endpoint                      | Auth           | Description               |
+| ------ | ----------------------------- | -------------- | ------------------------- |
+| GET    | `/api/v1/places/`             | Public         | List all places           |
+| POST   | `/api/v1/places/`             | JWT required   | Create a place            |
+| GET    | `/api/v1/places/<id>`         | Public         | Get place by ID           |
+| PUT    | `/api/v1/places/<id>`         | Owner or admin | Update a place            |
+| DELETE | `/api/v1/places/<id>`         | Owner or admin | Delete a place            |
 | GET    | `/api/v1/places/<id>/reviews` | Public         | Get reviews for one place |
 
 ### Reviews
 
-| Method | Endpoint                 | Auth            | Description |
-|--------|--------------------------|-----------------|-------------|
-| GET    | `/api/v1/reviews/`       | Public          | List all reviews |
-| POST   | `/api/v1/reviews/`       | JWT required    | Create a review |
-| GET    | `/api/v1/reviews/<id>`   | Public          | Get review by ID |
-| PUT    | `/api/v1/reviews/<id>`   | Author or admin | Update a review |
-| DELETE | `/api/v1/reviews/<id>`   | Author or admin | Delete a review |
+| Method | Endpoint               | Auth            | Description      |
+| ------ | ---------------------- | --------------- | ---------------- |
+| GET    | `/api/v1/reviews/`     | Public          | List all reviews |
+| POST   | `/api/v1/reviews/`     | JWT required    | Create a review  |
+| GET    | `/api/v1/reviews/<id>` | Public          | Get review by ID |
+| PUT    | `/api/v1/reviews/<id>` | Author or admin | Update a review  |
+| DELETE | `/api/v1/reviews/<id>` | Author or admin | Delete a review  |
 
 ### Business rules enforced by the API
 
@@ -389,6 +465,7 @@ This Part 4 is not only functional. It also introduces a more polished and visua
 - dark / light theme toggle
 - animated content reveal
 - clearer empty, loading, and form states
+- stronger visual identity than the base Holberton mockup
 
 The goal is to move from a purely technical prototype to a much more convincing product demo.
 
@@ -398,12 +475,13 @@ The goal is to move from a purely technical prototype to a much more convincing 
 
 The seeded dataset includes:
 
-- **8 users**
-- **25 amenities**
-- **8 places**
+- **9 users**
+- **dozens of amenities**
+- **9 places**
 - **3 images per place**
 - **host portraits**
 - **multiple reviews with varied ratings**
+- **dedicated low-cost / test data** for filter and interaction checks
 
 This makes the application immediately usable after reset, without manual data entry.
 
@@ -473,10 +551,10 @@ Expected current result for a clean green run:
 
 The Flask app uses:
 
-| Config class        | DB URI                     | Usage |
-|---------------------|----------------------------|-------|
+| Config class        | DB URI                     | Usage     |
+| ------------------- | -------------------------- | --------- |
 | `DevelopmentConfig` | `sqlite:///development.db` | local run |
-| `TestingConfig`     | `sqlite:///:memory:`       | tests |
+| `TestingConfig`     | `sqlite:///:memory:`       | tests     |
 
 Other important points:
 
@@ -488,9 +566,10 @@ Other important points:
 ## 📎 Notes
 
 - If you change the data model, reset the seeded database before testing again
-- If the front-end appears broken after API changes, verify the JSON shape returned by the endpoints
+- If the front end appears broken after API changes, verify the JSON shape returned by the endpoints
 - Always run a clean Postman test collection after a back-end change
 - `hbnb.sh all` is the most reliable local workflow for this part
+- if you want the exact live Git commit count in the README, compute it from the repository rather than from an exported ZIP
 
 ---
 
@@ -499,5 +578,10 @@ Other important points:
 - **Antoine Gousset** — [GitHub](https://github.com/Antgst)
 - **Gwendal Boisard** — [GitHub](https://github.com/Gwendal-B)
 - **Yonas Houriez** — [GitHub](https://github.com/Ausaryu)
+
+### Contribution scope by part
+
+- **Parts 1, 2, and 3** were completed as a **group project** with **[Gwendal BOISARD](https://github.com/Gwendal-B)** and **[Yonas HOURIEZ](https://github.com/Ausaryu)**.
+- **Part 4** — the front-end client, premium UI direction, integration refinements, seeded demo polishing, and current local product presentation — was completed **by [Antoine GOUSSET](https://github.com/Antgst) alone**.
 
 See `AUTHORS`.
