@@ -32,7 +32,7 @@
 
         <div class="header-actions">
           <nav aria-label="Primary navigation">
-            <a href="index.html">Home</a>
+            <a href="index.html" aria-current="page">Home</a>
             <a href="hosts.html">Hosts</a>
             <a href="login.html" id="login-link" class="login-button">Login</a>
           </nav>
@@ -53,20 +53,94 @@
                 class="theme-toggle-icon theme-toggle-icon--sun"
                 aria-hidden="true"
               >
-                <!-- ton SVG soleil -->
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="4"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M12 2.75V5.1"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M12 18.9V21.25"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M21.25 12H18.9"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M5.1 12H2.75"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M18.54 5.46L16.88 7.12"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M7.12 16.88L5.46 18.54"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M18.54 18.54L16.88 16.88"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M7.12 7.12L5.46 5.46"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
               </span>
+
               <span class="theme-toggle-thumb"></span>
+
               <span
                 class="theme-toggle-icon theme-toggle-icon--moon"
                 aria-hidden="true"
               >
-                <!-- ton SVG lune -->
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.25 14.67A8.75 8.75 0 0 1 9.33 4.75a8.75 8.75 0 1 0 9.92 9.92Z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                  />
+                </svg>
               </span>
             </span>
           </label>
         </div>
       </div>
     </header>
+
     <main class="home-main">
       <section class="hero">
         <div class="hero-media" aria-hidden="true">
@@ -75,6 +149,7 @@
           ></div>
           <div class="hero-media-layer hero-media-layer--secondary"></div>
         </div>
+
         <div class="hero-content">
           <p class="hero-kicker">Curated premium stays</p>
           <h1>Experience refined stays in exceptional places</h1>
@@ -109,10 +184,13 @@
         </div>
 
         <section id="filter" aria-label="Filter places by maximum price">
-          <label for="price-filter">Max Price</label>
-          <select id="price-filter">
-            <!-- Options will be populated dynamically -->
-          </select>
+          <div class="filter-card">
+            <label for="price-filter" class="filter-label">Max price</label>
+            <select id="price-filter">
+              <!-- Options will be populated dynamically -->
+            </select>
+            <p class="filter-help">Refine your stay by nightly rate</p>
+          </div>
         </section>
       </section>
 
@@ -120,7 +198,7 @@
         <!-- List of places will be populated dynamically -->
       </section>
     </main>
-    <script src="scripts.js"></script>
+
     <footer class="site-footer">
       <div class="footer-top">
         <div class="footer-brand">
@@ -150,5 +228,7 @@
         <p>© 2026 HBNB — All rights reserved.</p>
       </div>
     </footer>
+
+    <script src="scripts.js"></script>
   </body>
 </html>
