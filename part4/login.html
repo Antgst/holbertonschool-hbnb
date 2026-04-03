@@ -11,7 +11,11 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/hosts.css" />
+    <link rel="stylesheet" href="css/places.css" />
+    <link rel="stylesheet" href="css/reviews.css" />
+    <link rel="stylesheet" href="css/auth.css" />
   </head>
 
   <body data-page-title="titles.login">
@@ -148,7 +152,7 @@
         </div>
       </section>
 
-      <!-- Login form handled in scripts.js and backed by the auth API. -->
+      <!-- Login form handled by the split JS entrypoints in /js and backed by the auth API. -->
       <form id="login-form" class="auth-form">
         <h2 data-i18n="login.form.title">Login</h2>
         <p id="login-message" class="form-message" aria-live="polite"></p>
@@ -211,6 +215,12 @@
         </p>
       </div>
     </footer>
-    <script src="scripts.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/hosts.js"></script>
+    <script src="js/reviews.js"></script>
+    <script src="js/places.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>

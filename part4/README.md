@@ -79,6 +79,20 @@ part4/
 ├── index.html
 ├── login.html
 ├── place.html
+├── css/
+│   ├── auth.css
+│   ├── common.css
+│   ├── hosts.css
+│   ├── places.css
+│   └── reviews.css
+├── js/
+│   ├── auth.js
+│   ├── core.js
+│   ├── hosts.js
+│   ├── i18n.js
+│   ├── main.js
+│   ├── places.js
+│   └── reviews.js
 ├── scripts.js
 ├── styles.css
 ├── hbnb.sh
@@ -281,8 +295,10 @@ Example accounts:
 | `login.html`      | Login form |
 | `add_review.html` | Review submission page |
 | `hosts.html`      | Hosts directory |
-| `scripts.js`      | Front-end logic, API calls, UI rendering, auth, animations |
-| `styles.css`      | Global visual system and responsive styling |
+| `js/`            | Front-end logic split by responsibility: core, i18n, auth, hosts, reviews, places, bootstrap |
+| `css/`           | Front-end styles split by responsibility: common, hosts, places, reviews, auth |
+| `scripts.js`      | Legacy manifest pointing to the split JavaScript entry files |
+| `styles.css`      | Legacy manifest pointing to the split CSS entry files |
 
 ### Main front-end behaviors
 
