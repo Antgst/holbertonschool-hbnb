@@ -1549,6 +1549,28 @@ p {
   margin-bottom: 1rem;
 }
 
+.place-card-media-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-sm, 10px);
+}
+
+.place-card-media-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm, 10px);
+}
+
+.place-card-media-link .place-card-media {
+  margin-bottom: 1rem;
+}
+
+.place-card-media-link:hover .place-card-image,
+.place-card-media-link:focus-visible .place-card-image {
+  transform: scale(1.02);
+}
+
 .place-card-image,
 .place-card-placeholder {
   width: 100%;
@@ -1558,6 +1580,10 @@ p {
 }
 
 .place-card-image {
+  transition:
+    transform var(--transition-fast, 0.2s ease),
+    box-shadow var(--transition-fast, 0.2s ease),
+    filter var(--transition-fast, 0.2s ease);
   object-fit: cover;
   object-position: center;
   box-shadow:

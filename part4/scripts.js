@@ -622,6 +622,8 @@ function displayPlaces(places, reviewSummaryMap = new Map()) {
     const price = Number(place.price) || 0;
     placeCard.dataset.price = String(price);
 
+    const placeUrl = `place.html?id=${place.id}`;
+
     const firstImage =
       place.images && place.images.length > 0
         ? `<img src="${place.images[0]}" alt="${title}" class="place-card-image" loading="lazy">`
@@ -631,15 +633,22 @@ function displayPlaces(places, reviewSummaryMap = new Map()) {
       ? escapeHtml(place.description.slice(0, 105)) +
         (place.description.length > 105 ? "..." : "")
       : "Elegant stay, premium comfort, and carefully selected amenities.";
+
     const reviewSummary = reviewSummaryMap.get(place.id) || null;
     const ratingBadge = renderPlaceCardRatingBadge(reviewSummary);
 
     placeCard.innerHTML = `
-      <div class="place-card-media">
-        ${firstImage}
-        ${ratingBadge}
-        <span class="place-card-price">€${price} / night</span>
-      </div>
+      <a
+        href="${placeUrl}"
+        class="place-card-media-link"
+        aria-label="View details for ${title}"
+      >
+        <div class="place-card-media">
+          ${firstImage}
+          ${ratingBadge}
+          <span class="place-card-price">€${price} / night</span>
+        </div>
+      </a>
 
       <div class="place-card-body">
         <h2 class="place-card-title">${title}</h2>
@@ -647,7 +656,7 @@ function displayPlaces(places, reviewSummaryMap = new Map()) {
       </div>
 
       <div class="place-card-footer">
-        <a href="place.html?id=${place.id}" class="details-button">View details</a>
+        <a href="${placeUrl}" class="details-button">View details</a>
       </div>
     `;
 
