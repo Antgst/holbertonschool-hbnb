@@ -5,25 +5,24 @@ from app.services import facade
 api = Namespace('reviews', description='Review operations')
 
 review_model = api.model('Review', {
-    'text':     fields.String(required=True,  description='Text of the review'),
-    'rating':   fields.Integer(required=True, description='Rating of the place (1-5)'),
-    'place_id': fields.String(required=True,  description='ID of the place')
+    'text': fields.String(required=True, description='Text of the review'),
+    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
+    'place_id': fields.String(required=True, description='ID of the place')
 })
 
-
 review_update_model = api.model('ReviewUpdate', {
-    'text':   fields.String(description='Text of the review'),
+    'text': fields.String(description='Text of the review'),
     'rating': fields.Integer(description='Rating of the place (1-5)')
 })
 
 
 def marshal_review(review):
     return {
-        "id":       review.id,
-        "text":     review.text,
-        "rating":   review.rating,
-        "user":     f"{review.user.first_name} {review.user.last_name}".strip(),
-        "user_id":  review.user.id,
+        "id": review.id,
+        "text": review.text,
+        "rating": review.rating,
+        "user": f"{review.user.first_name} {review.user.last_name}".strip(),
+        "user_id": review.user.id,
         "place_id": review.place.id
     }
 
@@ -51,14 +50,18 @@ def validate_review_payload(data):
 def validate_review_update_payload(data):
     if not data:
         return "Payload is empty"
+
     if 'text' in data and (not data['text'] or not str(data['text']).strip()):
         return "'text' is required and cannot be empty"
+
     if 'rating' in data:
         rating = data['rating']
         if not isinstance(rating, int) or not (1 <= rating <= 5):
             return "Rating must be an integer between 1 and 5"
-    if any(f in data for f in ('user_id', 'place_id')):
+
+    if any(field in data for field in ('user_id', 'place_id')):
         return "You cannot modify 'user_id' or 'place_id'"
+
     return None
 
 
@@ -79,20 +82,23 @@ class ReviewList(Resource):
     @api.response(404, 'Place not found')
     def post(self):
         """Create a review — authenticated users only"""
-        current_user_id = get_jwt_identity()
-        data = api.payload
+        current_user_id = str(get_jwt_identity())
+        data = api.payload or {}
+
+        # Reject explicit identity spoofing attempts
+        if 'user_id' in data and str(data['user_id']) != current_user_id:
+            return {"error": "Unauthorized action"}, 403
 
         error = validate_review_payload(data)
         if error:
             return {"error": error}, 400
 
         place_id = data.get('place_id')
-
         place = facade.get_place(place_id)
         if not place:
             return {"error": "Place not found"}, 404
 
-        if place.owner.id == current_user_id:
+        if str(place.owner.id) == current_user_id:
             return {"error": "You cannot review your own place"}, 400
 
         if facade.get_review_by_user_and_place(current_user_id, place_id):
@@ -133,17 +139,17 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     def put(self, review_id):
         """Update a review — only the author or admin"""
-        current_user_id = get_jwt_identity()
+        current_user_id = str(get_jwt_identity())
         claims = get_jwt()
 
         review = facade.get_review(review_id)
         if not review:
             api.abort(404, "Review not found")
 
-        if review.user.id != current_user_id and not claims.get('is_admin', False):
-            return {'error': 'Unauthorized action'}, 403
+        if str(review.user.id) != current_user_id and not claims.get('is_admin', False):
+            return {"error": "Unauthorized action"}, 403
 
-        data = api.payload
+        data = api.payload or {}
         error = validate_review_update_payload(data)
         if error:
             return {"error": error}, 400
@@ -155,8 +161,10 @@ class ReviewResource(Resource):
             updated_review = facade.update_review(review_id, filtered_data)
         except ValueError as e:
             return {"error": str(e)}, 400
+
         if not updated_review:
             api.abort(404, "Review not found")
+
         return marshal_review(updated_review), 200
 
     @jwt_required()
@@ -167,15 +175,15 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     def delete(self, review_id):
         """Delete a review — only the author or admin"""
-        current_user_id = get_jwt_identity()
+        current_user_id = str(get_jwt_identity())
         claims = get_jwt()
 
         review = facade.get_review(review_id)
         if not review:
             api.abort(404, "Review not found")
 
-        if review.user.id != current_user_id and not claims.get('is_admin', False):
-            return {'error': 'Unauthorized action'}, 403
+        if str(review.user.id) != current_user_id and not claims.get('is_admin', False):
+            return {"error": "Unauthorized action"}, 403
 
         facade.delete_review(review_id)
         return {"message": f"Review {review_id} deleted"}, 200
