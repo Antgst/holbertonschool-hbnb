@@ -2063,6 +2063,11 @@ async function handleReviewSubmit(event, token, placeId, reviewForm) {
   }
 }
 
+let placeGalleryLightboxState = {
+  images: [],
+  currentIndex: 0,
+};
+
 function ensurePlaceImageLightbox() {
   let lightbox = document.getElementById("place-image-lightbox");
 
@@ -2082,22 +2087,44 @@ function ensurePlaceImageLightbox() {
       class="place-image-lightbox-dialog"
       role="dialog"
       aria-modal="true"
-      aria-label="Expanded place image"
+      aria-label="Expanded place gallery"
     >
       <button
         type="button"
-        class="place-image-lightbox-close"
-        aria-label="Close image preview"
-        data-lightbox-close="true"
+        class="place-image-lightbox-nav place-image-lightbox-nav--prev"
+        aria-label="Previous image"
+        data-lightbox-prev="true"
       >
-        ×
+        ‹
       </button>
 
-      <img
-        src=""
-        alt=""
-        class="place-image-lightbox-image"
+      <div class="place-image-lightbox-figure">
+        <button
+          type="button"
+          class="place-image-lightbox-close"
+          aria-label="Close image preview"
+          data-lightbox-close="true"
+        >
+          ×
+        </button>
+
+        <img
+          src=""
+          alt=""
+          class="place-image-lightbox-image"
+        >
+
+        <p class="place-image-lightbox-counter" aria-live="polite"></p>
+      </div>
+
+      <button
+        type="button"
+        class="place-image-lightbox-nav place-image-lightbox-nav--next"
+        aria-label="Next image"
+        data-lightbox-next="true"
       >
+        ›
+      </button>
     </div>
   `;
 
@@ -2105,17 +2132,35 @@ function ensurePlaceImageLightbox() {
   return lightbox;
 }
 
-function openPlaceImageLightbox(src, alt) {
-  if (!src) {
+function updatePlaceImageLightbox() {
+  const lightbox = ensurePlaceImageLightbox();
+  const image = lightbox.querySelector(".place-image-lightbox-image");
+  const counter = lightbox.querySelector(".place-image-lightbox-counter");
+
+  const { images, currentIndex } = placeGalleryLightboxState;
+
+  if (!images.length || !images[currentIndex]) {
     return;
   }
 
+  const currentImage = images[currentIndex];
+
+  image.src = currentImage.src;
+  image.alt = currentImage.alt || "Expanded place image";
+  counter.textContent = `${currentIndex + 1} / ${images.length}`;
+}
+
+function openPlaceImageLightbox(images, startIndex = 0) {
+  if (!images || !images.length) {
+    return;
+  }
+
+  placeGalleryLightboxState.images = images;
+  placeGalleryLightboxState.currentIndex = startIndex;
+
+  updatePlaceImageLightbox();
+
   const lightbox = ensurePlaceImageLightbox();
-  const image = lightbox.querySelector(".place-image-lightbox-image");
-
-  image.src = src;
-  image.alt = alt || "Expanded place image";
-
   lightbox.classList.add("is-open");
   lightbox.setAttribute("aria-hidden", "false");
   document.body.classList.add("is-lightbox-open");
@@ -2133,6 +2178,46 @@ function closePlaceImageLightbox() {
   document.body.classList.remove("is-lightbox-open");
 }
 
+function showPreviousPlaceImage() {
+  const { images, currentIndex } = placeGalleryLightboxState;
+
+  if (!images.length) {
+    return;
+  }
+
+  placeGalleryLightboxState.currentIndex =
+    (currentIndex - 1 + images.length) % images.length;
+
+  updatePlaceImageLightbox();
+}
+
+function showNextPlaceImage() {
+  const { images, currentIndex } = placeGalleryLightboxState;
+
+  if (!images.length) {
+    return;
+  }
+
+  placeGalleryLightboxState.currentIndex = (currentIndex + 1) % images.length;
+
+  updatePlaceImageLightbox();
+}
+
+function getPlaceGalleryImages(trigger) {
+  const gallery = trigger.closest(".place-gallery");
+
+  if (!gallery) {
+    return [];
+  }
+
+  const triggers = [...gallery.querySelectorAll(".place-gallery-trigger")];
+
+  return triggers.map((item) => ({
+    src: item.dataset.imageSrc,
+    alt: item.dataset.imageAlt || "Expanded place image",
+  }));
+}
+
 function initializePlaceGalleryLightbox() {
   ensurePlaceImageLightbox();
 
@@ -2140,23 +2225,51 @@ function initializePlaceGalleryLightbox() {
     const trigger = event.target.closest(".place-gallery-trigger");
 
     if (trigger) {
-      openPlaceImageLightbox(
-        trigger.dataset.imageSrc,
-        trigger.dataset.imageAlt,
-      );
+      const gallery = trigger.closest(".place-gallery");
+      const triggers = gallery
+        ? [...gallery.querySelectorAll(".place-gallery-trigger")]
+        : [];
+      const images = getPlaceGalleryImages(trigger);
+      const startIndex = triggers.indexOf(trigger);
+
+      openPlaceImageLightbox(images, startIndex >= 0 ? startIndex : 0);
       return;
     }
 
-    const closeTarget = event.target.closest("[data-lightbox-close='true']");
-
-    if (closeTarget) {
+    if (event.target.closest("[data-lightbox-close='true']")) {
       closePlaceImageLightbox();
+      return;
+    }
+
+    if (event.target.closest("[data-lightbox-prev='true']")) {
+      showPreviousPlaceImage();
+      return;
+    }
+
+    if (event.target.closest("[data-lightbox-next='true']")) {
+      showNextPlaceImage();
     }
   });
 
   document.addEventListener("keydown", (event) => {
+    const lightbox = document.getElementById("place-image-lightbox");
+
+    if (!lightbox || !lightbox.classList.contains("is-open")) {
+      return;
+    }
+
     if (event.key === "Escape") {
       closePlaceImageLightbox();
+      return;
+    }
+
+    if (event.key === "ArrowLeft") {
+      showPreviousPlaceImage();
+      return;
+    }
+
+    if (event.key === "ArrowRight") {
+      showNextPlaceImage();
     }
   });
 }
