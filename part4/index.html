@@ -184,12 +184,21 @@
         </div>
 
         <section id="filter" aria-label="Filter places by maximum price">
-          <div class="filter-card">
-            <label for="price-filter" class="filter-label">Max price</label>
-            <select id="price-filter">
-              <!-- Options will be populated dynamically -->
-            </select>
-            <p class="filter-help">Refine your stay by nightly rate</p>
+          <div class="filter-compact">
+            <label for="price-filter" class="filter-compact-label"
+              >Max price</label
+            >
+
+            <div class="filter-select-shell">
+              <select id="price-filter">
+                <!-- Options will be populated dynamically -->
+              </select>
+              <span class="filter-select-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M6 9L12 15L18 9" />
+                </svg>
+              </span>
+            </div>
           </div>
         </section>
       </section>

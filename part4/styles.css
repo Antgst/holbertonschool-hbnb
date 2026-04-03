@@ -1439,65 +1439,65 @@ p {
 #filter {
   display: flex;
   justify-content: flex-end;
-  align-items: stretch;
-  margin-bottom: 0;
+  align-items: center;
+  margin: 0;
 }
 
-.filter-card {
-  width: min(100%, 420px);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem 1.1rem 0.95rem;
-  border-radius: 22px;
+.filter-compact {
+  width: min(100%, 360px);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.95rem;
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.96),
     rgba(249, 246, 241, 0.98)
   );
-  border: 1px solid rgba(201, 169, 110, 0.22);
+  border: 1px solid rgba(201, 169, 110, 0.2);
   box-shadow:
     0 10px 24px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(3px);
   transition:
-    box-shadow 0.25s ease,
     border-color 0.25s ease,
+    box-shadow 0.25s ease,
     transform 0.25s ease;
 }
 
-.filter-card:hover {
+.filter-compact:hover {
   border-color: rgba(201, 169, 110, 0.3);
   box-shadow:
     0 16px 30px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+    inset 0 1px 0 rgba(255, 255, 255, 0.76);
   transform: translateY(-1px);
 }
 
-.filter-label {
+.filter-compact-label {
   margin: 0;
   color: var(--primary);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
   line-height: 1;
 }
 
-.filter-help {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.88rem;
-  line-height: 1.45;
+.filter-select-shell {
+  position: relative;
+  min-width: 0;
 }
 
 #price-filter {
   width: 100%;
   min-width: 0;
-  min-height: 48px;
-  padding: 0.9rem 3rem 0.9rem 1rem;
-  border: 1px solid rgba(201, 169, 110, 0.26);
-  border-radius: 16px;
+  min-height: 46px;
+  padding: 0.85rem 2.8rem 0.85rem 1rem;
+  border: 1px solid rgba(201, 169, 110, 0.22);
+  border-radius: 14px;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.98),
@@ -1506,6 +1506,7 @@ p {
   color: var(--text);
   font-size: 0.98rem;
   font-weight: 700;
+  font-family: inherit;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -1513,18 +1514,6 @@ p {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.72),
     0 4px 10px rgba(0, 0, 0, 0.04);
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.98),
-      rgba(249, 246, 241, 0.98)
-    ),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235c1f24' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat, no-repeat;
-  background-position:
-    center,
-    right 1rem center;
-  background-size: auto, 14px;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
@@ -1542,6 +1531,30 @@ p {
   box-shadow:
     var(--focus-ring),
     inset 0 1px 0 rgba(255, 255, 255, 0.76);
+}
+
+.filter-select-icon {
+  position: absolute;
+  top: 50%;
+  right: 0.95rem;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--primary);
+  opacity: 0.82;
+}
+
+.filter-select-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* Places list layout */
@@ -3170,8 +3183,8 @@ nav a:focus-visible,
     justify-content: flex-start;
   }
 
-  .filter-card {
-    width: min(100%, 460px);
+  .filter-compact {
+    width: min(100%, 420px);
   }
 
   .place-gallery {
@@ -3294,15 +3307,22 @@ nav a:focus-visible,
   }
 
   #filter {
-    align-items: stretch;
     justify-content: stretch;
   }
 
-  .filter-card {
+  .filter-compact {
     width: 100%;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    align-items: stretch;
+  }
+
+  .filter-compact-label {
+    white-space: normal;
   }
 
   #price-filter {
+    width: 100%;
     min-width: 100%;
   }
 
@@ -3853,7 +3873,6 @@ html[data-theme="dark"] .hero::after {
   );
 }
 
-html[data-theme="dark"] #filter,
 html[data-theme="dark"] #price-filter,
 html[data-theme="dark"] .place-card,
 html[data-theme="dark"] .review-card,
@@ -3885,7 +3904,6 @@ html[data-theme="dark"] .amenity-card {
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-html[data-theme="dark"] #filter:hover,
 html[data-theme="dark"] .place-card:hover,
 html[data-theme="dark"] .review-card:hover,
 html[data-theme="dark"] .place-details:hover,
@@ -4000,7 +4018,8 @@ html[data-theme="dark"] #price-filter option {
   background: #1f1a21;
   color: #f4ede2;
 }
-html[data-theme="dark"] .filter-card {
+
+html[data-theme="dark"] .filter-compact {
   background: linear-gradient(
     180deg,
     rgba(28, 23, 30, 0.98),
@@ -4012,19 +4031,19 @@ html[data-theme="dark"] .filter-card {
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-html[data-theme="dark"] .filter-card:hover {
+html[data-theme="dark"] .filter-compact:hover {
   border-color: rgba(216, 185, 124, 0.28);
   box-shadow:
     0 22px 38px rgba(0, 0, 0, 0.34),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-html[data-theme="dark"] .filter-label {
+html[data-theme="dark"] .filter-compact-label {
   color: #e4c58a;
 }
 
-html[data-theme="dark"] .filter-help {
-  color: #c5b8a8;
+html[data-theme="dark"] .filter-select-icon {
+  color: #e4c58a;
 }
 
 html[data-theme="dark"] #login-form input::placeholder,
@@ -4032,7 +4051,6 @@ html[data-theme="dark"] .review-form textarea::placeholder {
   color: #8f8276;
 }
 
-html[data-theme="dark"] #price-filter,
 html[data-theme="dark"] .review-form select {
   background-image:
     linear-gradient(180deg, rgba(31, 26, 33, 0.98), rgba(22, 18, 26, 0.98)),
