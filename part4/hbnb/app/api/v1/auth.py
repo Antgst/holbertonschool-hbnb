@@ -10,6 +10,7 @@ login_model = api.model('Login', {
     'password': fields.String(required=True, description='User password')
 })
 
+
 def get_login_credentials():
     """Read login credentials safely from the request payload."""
     credentials = api.payload or {}
