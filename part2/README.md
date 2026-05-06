@@ -1,12 +1,12 @@
-# ðŸ“˜ HBnB - BL and API
+# 📘 HBnB - BL and API
 
-## ðŸ“Œ Description
+## 📌 Description
 
 ### Part 2: Implementation of Business Logic and API Endpoints
 
 
 
-In this part of the HBnB Project, you will begin the implementation phase of the application based on the design developed in the previous part. The focus of this phase is to build the Presentation and Business Logic layers of the application using Python and Flask. You will implement the core functionality by defining the necessary classes, methods, and endpoints that will serve as the foundation for the applicationâ€™s operation.
+In this part of the HBnB Project, you will begin the implementation phase of the application based on the design developed in the previous part. The focus of this phase is to build the Presentation and Business Logic layers of the application using Python and Flask. You will implement the core functionality by defining the necessary classes, methods, and endpoints that will serve as the foundation for the application’s operation.
 
 
 
@@ -14,7 +14,7 @@ In this part, you will create the structure of the project, develop the classes 
 
 
 
-Itâ€™s important to note that, at this stage, you will focus only on implementing the core functionality of the API. JWT authentication and role-based access control will be addressed in the next part. The services layer will be built using Flask and the `flask-restx` extension to create RESTful APIs.
+It’s important to note that, at this stage, you will focus only on implementing the core functionality of the API. JWT authentication and role-based access control will be addressed in the next part. The services layer will be built using Flask and the `flask-restx` extension to create RESTful APIs.
 
 
 
@@ -50,7 +50,7 @@ By the end of this project, you should be able to:
 
    - Use `flask-restx` to define and document the API, ensuring a clear and consistent structure.
 
-   - Implement data serialization to return extended attributes for related objects. For example, when retrieving a Place, the API should include details such as the ownerâ€™s `first_name`, `last_name`, and relevant amenities.
+   - Implement data serialization to return extended attributes for related objects. For example, when retrieving a Place, the API should include details such as the owner’s `first_name`, `last_name`, and relevant amenities.
 
 
 
@@ -70,15 +70,15 @@ The implementation in this part is focused on creating a functional and scalable
 
 
 
-- **Presentation Layer:** Defining the services and API endpoints using Flask and `flask-restx`. Youâ€™ll structure the endpoints logically, ensuring clear paths and parameters for each operation.
+- **Presentation Layer:** Defining the services and API endpoints using Flask and `flask-restx`. You’ll structure the endpoints logically, ensuring clear paths and parameters for each operation.
 
 
 
-- **Business Logic Layer:** Building the core models and logic that drive the applicationâ€™s functionality. This includes defining relationships, handling data validation, and managing interactions between different components.
+- **Business Logic Layer:** Building the core models and logic that drive the application’s functionality. This includes defining relationships, handling data validation, and managing interactions between different components.
 
 
 
-At this stage, you wonâ€™t need to worry about user authentication or access control. However, you should ensure that the code is modular and organized, making it easy to integrate these features in Part 3.
+At this stage, you won’t need to worry about user authentication or access control. However, you should ensure that the code is modular and organized, making it easy to integrate these features in Part 3.
 
 
 
@@ -140,38 +140,38 @@ This introduction sets the stage for the implementation phase of the project, wh
 
 ---
 
-## ðŸ“š Resources
+## 📚 Resources
 
 _No resources detected._
 
 ---
 
-## ðŸŽ¯ Learning Objectives
+## 🎯 Learning Objectives
 
 _No learning objectives detected._
 
 ---
 
-## âœ… Requirements
+## ✅ Requirements
 
 _No requirements detected._
 
 ---
 
-## âš™ï¸ Setup
+## ⚙️ Setup
 
 _No specific setup detected._
 
 ---
 
-## ðŸ§  Quiz
+## 🧠 Quiz
 
 _No quiz detected in the exported HTML._
 
 
 ---
 
-## ðŸ§© Tasks
+## 🧩 Tasks
 
 <details>
 <summary>0. Project Setup and Package Initialization</summary>
@@ -187,18 +187,18 @@ _No quiz detected in the exported HTML._
 Objective
 Set up the initial project structure for the HBnB application, ensuring the codebase is organized according to best practices for a modular Python application. The focus is on creating the necessary folders, packages, and files for the Presentation, Business Logic, and Persistence layers while preparing the code to integrate the Facade pattern. Although the Persistence layer will be fully implemented in Part 3 using SQL Alchemy, this task includes setting up the structure and providing the complete implementation of an in-memory repository to handle object storage and validation.
 Context
-Before diving into the implementation of the business logic and API endpoints, itâ€™s essential to have a well-organized project structure. A clear and modular organization will help maintain the codebase, make it easier to integrate new features, and ensure that your application is scalable. Additionally, to simplify the implementation, you are provided with the complete in-memory repository code. This repository will later be replaced by a database-backed solution in Part 3.
+Before diving into the implementation of the business logic and API endpoints, it’s essential to have a well-organized project structure. A clear and modular organization will help maintain the codebase, make it easier to integrate new features, and ensure that your application is scalable. Additionally, to simplify the implementation, you are provided with the complete in-memory repository code. This repository will later be replaced by a database-backed solution in Part 3.
 In this task, you will:
 Set up the structure for the Presentation, Business Logic, and Persistence layers.
 Prepare the project to use the Facade pattern for communication between layers.
 Implement the in-memory repository to handle object storage and validation.
-Plan for future integration of the Persistence layer, even though it wonâ€™t be fully implemented in this part.
+Plan for future integration of the Persistence layer, even though it won’t be fully implemented in this part.
 Instructions
 ->
 Find the detailed instructions for this task here
 <-
 Expected Outcome
-By the end of this task, you should have a well-organized project structure that accommodates the Presentation, Business Logic, and Persistence layers. The codebase should be modular and easy to maintain, with a clear separation of concerns. Youâ€™ll also have a functional Flask application that is ready to integrate API endpoints, business logic, and persistence in the upcoming tasks.
+By the end of this task, you should have a well-organized project structure that accommodates the Presentation, Business Logic, and Persistence layers. The codebase should be modular and easy to maintain, with a clear separation of concerns. You’ll also have a functional Flask application that is ready to integrate API endpoints, business logic, and persistence in the upcoming tasks.
 The in-memory repository and Facade pattern are now set up to streamline communication between layers. While the persistence layer is only using in-memory storage at this stage, it is designed to be easily replaced with a database-backed solution in Part 3.
 Resources
 Flask Documentation:
@@ -222,7 +222,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 0. Project Setup and Package Initialization
 Commit used:
 User:
@@ -237,7 +237,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "0. Project Setup and Package Initialization"
 ```
 
@@ -288,7 +288,7 @@ https://docs.python.org/3/tutorial/classes.html
 Why You Should Use UUIDs:
 https://datatracker.ietf.org/doc/html/rfc4122
 Expected Outcome
-By the end of this task, you should have fully implemented core business logic classes (User, Place, Review, Amenity) with the appropriate attributes, methods, and relationships. With these components in place, you will be ready to proceed to implementing the API endpoints in the next task. The implemented classes should support the necessary validation, relationships, and data integrity checks required for the applicationâ€™s core functionality. Additionally, the relationships between entities should be fully operational, allowing seamless interactions like linking reviews to places or associating amenities with places.
+By the end of this task, you should have fully implemented core business logic classes (User, Place, Review, Amenity) with the appropriate attributes, methods, and relationships. With these components in place, you will be ready to proceed to implementing the API endpoints in the next task. The implemented classes should support the necessary validation, relationships, and data integrity checks required for the application’s core functionality. Additionally, the relationships between entities should be fully operational, allowing seamless interactions like linking reviews to places or associating amenities with places.
 With this solid foundation in place, the business logic will be prepared for further integration with the Presentation and Persistence layers in subsequent tasks.
 Repo:
 GitHub repository:
@@ -303,7 +303,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 1. Core Business Logic Classes
 Commit used:
 User:
@@ -318,7 +318,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "1. Core Business Logic Classes"
 ```
 
@@ -383,7 +383,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 2. User Endpoints
 Commit used:
 User:
@@ -398,7 +398,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "2. User Endpoints"
 ```
 
@@ -457,7 +457,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 3. Amenity Endpoints
 Commit used:
 User:
@@ -472,7 +472,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "3. Amenity Endpoints"
 ```
 
@@ -501,7 +501,7 @@ entity has relationships with other entities, such as
 User
 (owner) and
 Amenity
-, youâ€™ll need to handle these relationships carefully while maintaining the integrity of the application logic. The
+, you’ll need to handle these relationships carefully while maintaining the integrity of the application logic. The
 Review
 entity will be implemented in the next task, so it should not be included in this task.
 In this task, you will:
@@ -554,7 +554,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 4. Place Endpoints
 Commit used:
 User:
@@ -569,7 +569,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "4. Place Endpoints"
 ```
 
@@ -636,7 +636,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 5. Review Endpoints
 Commit used:
 User:
@@ -651,7 +651,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "5. Review Endpoints"
 ```
 
@@ -707,7 +707,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 6. Testing and Validation
 Commit used:
 User:
@@ -722,7 +722,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "6. Testing and Validation"
 ```
 
@@ -731,13 +731,13 @@ Students who are done with "6. Testing and Validation"
 
 ---
 
-## ðŸ§ª Testing
+## 🧪 Testing
 
 Use the provided task examples and Holberton checker to validate the project.
 
 ---
 
-## ðŸ‘¤ Author
+## 👤 Author
 
 Project from Holberton School.
 

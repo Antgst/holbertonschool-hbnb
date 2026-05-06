@@ -1,6 +1,6 @@
-# ðŸ“˜ HBnB - Auth & DB
+# 📘 HBnB - Auth & DB
 
-## ðŸ“Œ Description
+## 📌 Description
 
 ### Part 3: Enhanced Backend with Authentication and Database Integration
 
@@ -92,7 +92,7 @@ In this part of the project, the tasks are organized in a way that builds progre
 
 5. **Map Entities Using SQLAlchemy**: Map existing entities (`User`, `Place`, `Review`, `Amenity`) to the database using SQLAlchemy and ensure relationships are well-defined.
 
-6. **Prepare for MySQL in Production**: Towards the end of this phase, youâ€™ll configure the application to use **MySQL** in production and **SQLite** for development.
+6. **Prepare for MySQL in Production**: Towards the end of this phase, you’ll configure the application to use **MySQL** in production and **SQLite** for development.
 
 7. **Database Design and Visualization**: Use **mermaid.js** to create entity-relationship diagrams for your database schema.
 
@@ -106,38 +106,38 @@ By the end of Part 3, you will have a backend that not only stores data in a per
 
 ---
 
-## ðŸ“š Resources
+## 📚 Resources
 
 _No resources detected._
 
 ---
 
-## ðŸŽ¯ Learning Objectives
+## 🎯 Learning Objectives
 
 _No learning objectives detected._
 
 ---
 
-## âœ… Requirements
+## ✅ Requirements
 
 _No requirements detected._
 
 ---
 
-## âš™ï¸ Setup
+## ⚙️ Setup
 
 _No specific setup detected._
 
 ---
 
-## ðŸ§  Quiz
+## 🧠 Quiz
 
 _No quiz detected in the exported HTML._
 
 
 ---
 
-## ðŸ§© Tasks
+## 🧩 Tasks
 
 <details>
 <summary>0. Modify the Application Factory to Include the Configuration</summary>
@@ -186,7 +186,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 0. Modify the Application Factory to Include the Configuration
 Commit used:
 User:
@@ -201,7 +201,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "0. Modify the Application Factory to Include the Configuration"
 ```
 
@@ -272,7 +272,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 1.  Modify the User Model to Include Password Hashing
 Commit used:
 User:
@@ -287,7 +287,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "1.  Modify the User Model to Include Password Hashing"
 ```
 
@@ -309,7 +309,7 @@ Set up JWT-based authentication for the HBnB application, enabling secure login 
 flask-jwt-extended
 extension. Tokens will be issued upon successful login and required for accessing protected endpoints.
 Context
-JWT (JSON Web Token) allows secure authentication by providing a token that clients can use to access protected resources without having to re-authenticate on every request. JWT is stateless, meaning the server doesnâ€™t need to store user sessions, making it ideal for scalable applications. JWT tokens also allow embedding additional claims (such as user roles), which is useful for authorization.
+JWT (JSON Web Token) allows secure authentication by providing a token that clients can use to access protected resources without having to re-authenticate on every request. JWT is stateless, meaning the server doesn’t need to store user sessions, making it ideal for scalable applications. JWT tokens also allow embedding additional claims (such as user roles), which is useful for authorization.
 In this task, we will set up user login, issue JWT tokens, and use these tokens to protect specific API endpoints.
 Instructions
 ->
@@ -340,7 +340,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 2. Implement JWT Authentication with `flask-jwt-extended`
 Commit used:
 User:
@@ -355,7 +355,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "2. Implement JWT Authentication with `flask-jwt-extended`"
 ```
 
@@ -410,7 +410,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 3. Implement Authenticated User Access Endpoints
 Commit used:
 User:
@@ -425,7 +425,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "3. Implement Authenticated User Access Endpoints"
 ```
 
@@ -464,7 +464,7 @@ Flask-Bcrypt
 Expected Outcome
 By the end of this task, admins will be able to:
 Create new users.
-Modify any userâ€™s data, including email and password (with validation for unique emails).
+Modify any user’s data, including email and password (with validation for unique emails).
 Add and modify amenities.
 Bypass ownership restrictions on places and reviews.
 Repo:
@@ -480,7 +480,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 4. Implement Administrator Access Endpoints
 Commit used:
 User:
@@ -495,7 +495,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "4. Implement Administrator Access Endpoints"
 ```
 
@@ -550,7 +550,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 5. Implement SQLAlchemy Repository
 Commit used:
 User:
@@ -565,7 +565,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "5. Implement SQLAlchemy Repository"
 ```
 
@@ -658,7 +658,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 6. Map the User Entity to SQLAlchemy Model
 Commit used:
 User:
@@ -673,7 +673,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "6. Map the User Entity to SQLAlchemy Model"
 ```
 
@@ -756,7 +756,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 7. Map the Place, Review, and Amenity Entities
 Commit used:
 User:
@@ -771,7 +771,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "7. Map the Place, Review, and Amenity Entities"
 ```
 
@@ -808,7 +808,7 @@ Place
 can have many
 Reviews
 ). Defining relationships in the database ensures that related data can be easily queried and manipulated in a structured way.
-In this task, you will define relationships between the entities, using SQLAlchemyâ€™s ORM capabilities. Relationships like "one-to-many" and "many-to-many" allow for a clear and efficient organization of data, enforcing the logical structure of the database.
+In this task, you will define relationships between the entities, using SQLAlchemy’s ORM capabilities. Relationships like "one-to-many" and "many-to-many" allow for a clear and efficient organization of data, enforcing the logical structure of the database.
 Instructions
 ->
 Find the detailed instructions for this task here
@@ -839,7 +839,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 8. Map Relationships Between Entities Using SQLAlchemy
 Commit used:
 User:
@@ -854,7 +854,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "8. Map Relationships Between Entities Using SQLAlchemy"
 ```
 
@@ -872,7 +872,7 @@ Students who are done with "8. Map Relationships Between Entities Using SQLAlche
 ```text
 9. SQL Scripts for Table Generation and Initial Data
 Objective
-Create SQL scripts to generate the entire database schema for the HBnB project and populate it with initial data. The scripts should include all tables and relationships necessary to reflect the projectâ€™s model and insert the required initial data.
+Create SQL scripts to generate the entire database schema for the HBnB project and populate it with initial data. The scripts should include all tables and relationships necessary to reflect the project’s model and insert the required initial data.
 Context
 In this task, you will focus on designing the database schema using raw SQL to generate tables and insert initial data. This includes creating tables for
 User
@@ -909,7 +909,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 9. SQL Scripts for Table Generation and Initial Data
 Commit used:
 User:
@@ -924,7 +924,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "9. SQL Scripts for Table Generation and Initial Data"
 ```
 
@@ -993,7 +993,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 10. Generate Database Diagrams
 Commit used:
 User:
@@ -1008,7 +1008,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "10. Generate Database Diagrams"
 ```
 
@@ -1017,13 +1017,13 @@ Students who are done with "10. Generate Database Diagrams"
 
 ---
 
-## ðŸ§ª Testing
+## 🧪 Testing
 
 Use the provided task examples and Holberton checker to validate the project.
 
 ---
 
-## ðŸ‘¤ Author
+## 👤 Author
 
 Project from Holberton School.
 

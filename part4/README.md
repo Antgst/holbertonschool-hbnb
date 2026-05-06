@@ -1,6 +1,6 @@
-# ðŸ“˜ HBnB - Simple Web Client
+# 📘 HBnB - Simple Web Client
 
-## ðŸ“Œ Description
+## 📌 Description
 
 ### Part 4 - Simple Web Client
 
@@ -116,38 +116,38 @@ In this phase, you'll be focusing on the front-end development of your applicati
 
 ---
 
-## ðŸ“š Resources
+## 📚 Resources
 
 _No resources detected._
 
 ---
 
-## ðŸŽ¯ Learning Objectives
+## 🎯 Learning Objectives
 
 _No learning objectives detected._
 
 ---
 
-## âœ… Requirements
+## ✅ Requirements
 
 _No requirements detected._
 
 ---
 
-## âš™ï¸ Setup
+## ⚙️ Setup
 
 _No specific setup detected._
 
 ---
 
-## ðŸ§  Quiz
+## 🧠 Quiz
 
 _No quiz detected in the exported HTML._
 
 
 ---
 
-## ðŸ§© Tasks
+## 🧩 Tasks
 
 <details>
 <summary>0. Design</summary>
@@ -299,7 +299,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 0. Design
 Commit used:
 User:
@@ -314,7 +314,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "0. Design"
 ```
 
@@ -499,7 +499,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 1. Login
 Commit used:
 User:
@@ -514,7 +514,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "1. Login"
 ```
 
@@ -707,7 +707,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 2. Index
 Commit used:
 User:
@@ -722,7 +722,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "2. Index"
 ```
 
@@ -892,7 +892,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 3. Place details
 Commit used:
 User:
@@ -907,7 +907,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "3. Place details"
 ```
 
@@ -1121,7 +1121,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 4. Add Review form
 Commit used:
 User:
@@ -1136,7 +1136,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "4. Add Review form"
 ```
 
@@ -1145,13 +1145,13 @@ Students who are done with "4. Add Review form"
 
 ---
 
-## ðŸ§ª Testing
+## 🧪 Testing
 
 Use the provided task examples and Holberton checker to validate the project.
 
 ---
 
-## ðŸ‘¤ Author
+## 👤 Author
 
 Project from Holberton School.
 

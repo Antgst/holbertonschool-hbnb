@@ -1,6 +1,6 @@
-# ðŸ“˜ HBnB - UML
+# 📘 HBnB - UML
 
-## ðŸ“Œ Description
+## 📌 Description
 
 ### Part 1: Technical Documentation
 
@@ -218,38 +218,38 @@ Good luck, and remember to leverage the provided resources and your own research
 
 ---
 
-## ðŸ“š Resources
+## 📚 Resources
 
 _No resources detected._
 
 ---
 
-## ðŸŽ¯ Learning Objectives
+## 🎯 Learning Objectives
 
 _No learning objectives detected._
 
 ---
 
-## âœ… Requirements
+## ✅ Requirements
 
 _No requirements detected._
 
 ---
 
-## âš™ï¸ Setup
+## ⚙️ Setup
 
 _No specific setup detected._
 
 ---
 
-## ðŸ§  Quiz
+## 🧠 Quiz
 
 _No quiz detected in the exported HTML._
 
 
 ---
 
-## ðŸ§© Tasks
+## 🧩 Tasks
 
 <details>
 <summary>0. High-Level Package Diagram</summary>
@@ -324,7 +324,7 @@ Recommendations
 Start Simple:
 Begin with a basic structure, then refine it as you understand the relationships and components better.
 Use Mermaid.js:
-If you are comfortable with coding, Mermaid.js is a great option for creating diagrams as part of your project documentation. Itâ€™s especially useful for version control and iterative development.
+If you are comfortable with coding, Mermaid.js is a great option for creating diagrams as part of your project documentation. It’s especially useful for version control and iterative development.
 Seek Feedback:
 Once your diagram is drafted, get feedback from peers or tutors to ensure clarity and accuracy.
 Document As You Go:
@@ -342,7 +342,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 0. High-Level Package Diagram
 Commit used:
 User:
@@ -357,7 +357,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "0. High-Level Package Diagram"
 ```
 
@@ -390,7 +390,7 @@ Begin by outlining the entities as classes, specifying their attributes and meth
 Represent relationships between entities using appropriate UML notation (e.g., associations, generalizations, compositions).
 Include multiplicity where relevant.
 Refine and Review
-Review the diagram to ensure that it accurately represents the business logic and adheres to the projectâ€™s requirements.
+Review the diagram to ensure that it accurately represents the business logic and adheres to the project’s requirements.
 Refine the diagram as needed to improve clarity and completeness.
 Example of a generic class diagram using Mermaid.js:
 classDiagram
@@ -421,7 +421,7 @@ If you are comfortable with coding, consider using Mermaid.js for creating and m
 Consider Relationships Carefully:
 Pay close attention to how entities are related, especially when defining associations and compositions. Ensure that these relationships are accurately represented in your diagram.
 Iterate and Improve:
-Donâ€™t hesitate to revise your diagram as you refine your understanding of the system. Continuous improvement will lead to a more accurate and comprehensive representation.
+Don’t hesitate to revise your diagram as you refine your understanding of the system. Continuous improvement will lead to a more accurate and comprehensive representation.
 Repo:
 GitHub repository:
 holbertonschool-hbnb
@@ -435,7 +435,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 1. Detailed Class Diagram for Business Logic Layer
 Commit used:
 User:
@@ -450,7 +450,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "1. Detailed Class Diagram for Business Logic Layer"
 ```
 
@@ -540,7 +540,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 2. Sequence Diagrams for API Calls
 Commit used:
 User:
@@ -555,7 +555,7 @@ Subject:
 ---
 Date:
 ---
-Ã—
+×
 Students who are done with "2. Sequence Diagrams for API Calls"
 ```
 
@@ -573,7 +573,7 @@ Students who are done with "2. Sequence Diagrams for API Calls"
 ```text
 3. Documentation Compilation
 Objective
-Compile all the diagrams and explanatory notes created in the previous tasks into a comprehensive technical document. This document will serve as a detailed blueprint for the HBnB project, guiding the implementation phases and providing a clear reference for the systemâ€™s architecture and design.
+Compile all the diagrams and explanatory notes created in the previous tasks into a comprehensive technical document. This document will serve as a detailed blueprint for the HBnB project, guiding the implementation phases and providing a clear reference for the system’s architecture and design.
 Description
 In this task, you will bring together the high-level package diagram, detailed class diagram for the Business Logic layer, and sequence diagrams for API calls into a single, well-organized document. The goal is to create a cohesive and comprehensive technical document that not only includes the diagrams but also provides explanatory notes that clarify design decisions, describe interactions, and outline the overall architecture of the application.
 The final document should be clear, professional, and structured in a way that makes it easy to follow and understand. It will be used as a reference throughout the project, so accuracy and completeness are critical.
@@ -647,7 +647,7 @@ pts
 0
 correction requests
 QA Review
-Ã—
+×
 3. Documentation Compilation
 Commit used:
 User:
@@ -666,7 +666,7 @@ Add URLs here:
 Save
 https://github.com/Antgst/holbertonschool-hbnb
 Remove
-Ã—
+×
 Students who are done with "3. Documentation Compilation"
 ```
 
@@ -675,13 +675,13 @@ Students who are done with "3. Documentation Compilation"
 
 ---
 
-## ðŸ§ª Testing
+## 🧪 Testing
 
 Use the provided task examples and Holberton checker to validate the project.
 
 ---
 
-## ðŸ‘¤ Author
+## 👤 Author
 
 Project from Holberton School.
 
