@@ -5,13 +5,10 @@
 ### Part 3: Enhanced Backend with Authentication and Database Integration
 
 
-
 Welcome to Part 3 of the **HBnB Project**, where you will extend the backend of the application by introducing **user authentication**, **authorization**, and **database integration** using **SQLAlchemy** and **SQLite** for development. Later, you'll configure **MySQL** for production environments. In this part, you will secure the backend, introduce persistent storage, and prepare the application for a scalable, real-world deployment.
 
 
-
 #### Objectives of the Project
-
 
 
 1. **Authentication and Authorization**: Implement JWT-based user authentication using **Flask-JWT-Extended** and role-based access control with the `is_admin` attribute for specific endpoints.
@@ -25,13 +22,10 @@ Welcome to Part 3 of the **HBnB Project**, where you will extend the backend of 
 5. **Data Consistency and Validation**: Ensure that data validation and constraints are properly enforced in the models.
 
 
-
 #### Learning Objectives
 
 
-
 By the end of this part, you will:
-
 
 
 - Implement **JWT authentication** to secure your API and manage user sessions.
@@ -45,23 +39,18 @@ By the end of this part, you will:
 - Ensure the backend is secure, scalable, and provides reliable data storage for production environments.
 
 
-
 #### Project Context
 
 In the previous parts of the project, you worked with in-memory storage, which is ideal for prototyping but insufficient for production environments. In Part 3, you'll transition to **SQLite**, a lightweight relational database, for development, while preparing the system for **MySQL** in production. This will give you hands-on experience with real-world database systems, allowing your application to scale effectively.
 
 
-
 Additionally, you'll introduce **JWT-based authentication** to secure the API, ensuring that only authenticated users can interact with certain endpoints. You will also implement role-based access control to enforce restrictions based on the user's privileges (regular users vs. administrators).
-
 
 
 #### Project Resources
 
 
-
 Here are some resources that will guide you through this part of the project:
-
 
 
 - **JWT Authentication**: [Flask-JWT-Extended Documentation](https://flask-jwt-extended.readthedocs.io/en/stable/)
@@ -75,11 +64,9 @@ Here are some resources that will guide you through this part of the project:
 - **Mermaid.js for ER Diagrams**: [Mermaid.js Documentation](http://mermaid.js.org/)
 
 
-
 #### Structure of the Project
 
 In this part of the project, the tasks are organized in a way that builds progressively towards a complete, secure, and database-backed backend system:
-
 
 
 1. **Modify the User Model to Include Password**: You will start by modifying the `User` model to store passwords securely using bcrypt2 and update the user registration logic.
@@ -97,9 +84,7 @@ In this part of the project, the tasks are organized in a way that builds progre
 7. **Database Design and Visualization**: Use **mermaid.js** to create entity-relationship diagrams for your database schema.
 
 
-
 Each task is carefully designed to build on previous work and ensure the system transitions smoothly from development to production readiness.
-
 
 
 By the end of Part 3, you will have a backend that not only stores data in a persistent and secure database but also ensures that only authorized users can access and modify specific data. You will have implemented industry-standard authentication and database management practices that are crucial for real-world web applications.
@@ -178,31 +163,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-5
-/5
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 0. Modify the Application Factory to Include the Configuration
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "0. Modify the Application Factory to Include the Configuration"
 ```
 
 </details>
@@ -264,31 +230,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 1.  Modify the User Model to Include Password Hashing
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "1.  Modify the User Model to Include Password Hashing"
 ```
 
 </details>
@@ -332,31 +279,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 2. Implement JWT Authentication with `flask-jwt-extended`
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "2. Implement JWT Authentication with `flask-jwt-extended`"
 ```
 
 </details>
@@ -402,31 +330,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 3. Implement Authenticated User Access Endpoints
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "3. Implement Authenticated User Access Endpoints"
 ```
 
 </details>
@@ -472,31 +381,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 4. Implement Administrator Access Endpoints
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "4. Implement Administrator Access Endpoints"
 ```
 
 </details>
@@ -542,31 +432,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 5. Implement SQLAlchemy Repository
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "5. Implement SQLAlchemy Repository"
 ```
 
 </details>
@@ -650,31 +521,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 6. Map the User Entity to SQLAlchemy Model
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "6. Map the User Entity to SQLAlchemy Model"
 ```
 
 </details>
@@ -748,31 +600,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 7. Map the Place, Review, and Amenity Entities
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "7. Map the Place, Review, and Amenity Entities"
 ```
 
 </details>
@@ -831,31 +664,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 8. Map Relationships Between Entities Using SQLAlchemy
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "8. Map Relationships Between Entities Using SQLAlchemy"
 ```
 
 </details>
@@ -901,31 +715,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 9. SQL Scripts for Table Generation and Initial Data
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "9. SQL Scripts for Table Generation and Initial Data"
 ```
 
 </details>
@@ -985,31 +780,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part3
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 10. Generate Database Diagrams
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "10. Generate Database Diagrams"
 ```
 
 </details>

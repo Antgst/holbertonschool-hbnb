@@ -5,13 +5,10 @@
 ### Part 4 - Simple Web Client
 
 
-
 In this phase, you'll be focusing on the front-end development of your application using HTML5, CSS3, and JavaScript ES6. Your task is to design and implement an interactive user interface that connects with the back-end services you have developed in previous parts of the project.
 
 
-
 #### Objectives
-
 
 
 - Develop a user-friendly interface following provided design specifications.
@@ -23,9 +20,7 @@ In this phase, you'll be focusing on the front-end development of your applicati
 - Apply modern web development practices to create a dynamic web application.
 
 
-
 #### Learning Goals
-
 
 
 - Understand and apply HTML5, CSS3, and JavaScript ES6 in a real-world project.
@@ -37,9 +32,7 @@ In this phase, you'll be focusing on the front-end development of your applicati
 - Use client-side scripting to enhance user experience without page reloads.
 
 
-
 #### Tasks Breakdown
-
 
 
 1. **Design (Task 1)**
@@ -49,13 +42,11 @@ In this phase, you'll be focusing on the front-end development of your applicati
    - Create pages for Login, List of Places, Place Details, and Add Review.
 
 
-
 2. **Login (Task 2)**
 
    - Implement login functionality using the back-end API.
 
    - Store the JWT token returned by the API in a cookie for session management.
-
 
 
 3. **List of Places (Task 3)**
@@ -67,7 +58,6 @@ In this phase, you'll be focusing on the front-end development of your applicati
    - Ensure the page redirects to the login page if the user is not authenticated.
 
 
-
 4. **Place Details (Task 4)**
 
    - Implement the detailed view of a place.
@@ -77,7 +67,6 @@ In this phase, you'll be focusing on the front-end development of your applicati
    - Provide access to the add review form if the user is authenticated.
 
 
-
 5. **Add Review (Task 5)**
 
    - Implement the form to add a review for a place.
@@ -85,15 +74,12 @@ In this phase, you'll be focusing on the front-end development of your applicati
    - Ensure the form is accessible only to authenticated users, redirecting others to the index page.
 
 
-
 > When testing your client against yout API you'll probably get a Cross-Origin Resource Sharing (CORS) error. You'll need to modify your API code to allow your client to fetch data from the API.
 
 > Read [this article](https://medium.com/@mterrano1/cors-in-a-flask-api-38051388f8cc) for a depper understanding about CORS and how to configure your Flask API
 
 
-
 #### Resources
-
 
 
 - [HTML5 Documentation](https://developer.mozilla.org/en-US/docs/Glossary/HTML5)
@@ -109,7 +95,6 @@ In this phase, you'll be focusing on the front-end development of your applicati
 - [Handling Cookies in JavaScript](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie)
 
 - [Client-Side Form Validation](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation)
-
 
 
 ---
@@ -291,31 +276,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part4
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 0. Design
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "0. Design"
 ```
 
 </details>
@@ -491,31 +457,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part4
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 1. Login
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "1. Login"
 ```
 
 </details>
@@ -699,31 +646,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part4
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 2. Index
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "2. Index"
 ```
 
 </details>
@@ -884,31 +812,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part4
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 3. Place details
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "3. Place details"
 ```
 
 </details>
@@ -1113,31 +1022,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part4
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 4. Add Review form
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "4. Add Review form"
 ```
 
 </details>

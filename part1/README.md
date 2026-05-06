@@ -5,23 +5,16 @@
 ### Part 1: Technical Documentation
 
 
-
 #### Context and Objective
-
 
 
 In this initial phase, you will focus on creating comprehensive technical documentation that will serve as the foundation for the development of the HBnB Evolution application. This documentation will help in understanding the overall architecture, the detailed design of the business logic, and the interactions within the system.
 
 
-
-
-
 #### Problem Description
 
 
-
 You are tasked with documenting the architecture and design of a simplified version of an AirBnB-like application, named HBnB Evolution. The application will allow users to perform the following primary operations:
-
 
 
 1. **User Management**: Users can register, update their profiles, and be identified as either regular users or administrators.
@@ -33,9 +26,7 @@ You are tasked with documenting the architecture and design of a simplified vers
 4. **Amenity Management**: The application will manage amenities that can be associated with places.
 
 
-
 #### Business Rules and Requirements
-
 
 
 1. **User Entity**
@@ -45,7 +36,6 @@ You are tasked with documenting the architecture and design of a simplified vers
    - Users can be identified as administrators through a `boolean` attribute.
 
    - Users should be able to register, update their profile information, and be deleted.
-
 
 
 2. **Place Entity**
@@ -59,13 +49,11 @@ You are tasked with documenting the architecture and design of a simplified vers
    - Places can be created, updated, deleted, and listed.
 
 
-
 3. **Review Entity**
 
    - Each review is associated with a specific `place` and `user`, and includes a `rating` and `comment`.
 
    - Reviews can be created, updated, deleted, and listed by place.
-
 
 
 4. **Amenity Entity**
@@ -75,17 +63,12 @@ You are tasked with documenting the architecture and design of a simplified vers
    - Amenities can be created, updated, deleted, and listed.
 
 
-
 > - Each object should be uniquely identified by a ID.
 
 > - For audit reasons, the creation and update datetime should be registered for all entities.
 
 
-
-
-
 #### **Architecture and Layers**
-
 
 
 - The application follows a layered architecture divided into:
@@ -97,17 +80,13 @@ You are tasked with documenting the architecture and design of a simplified vers
     - **Persistence Layer**: This is responsible for storing and retrieving data from the database.
 
 
-
 #### **Persistence**
-
 
 
 - All data will be persisted in a database, which will be specified and implemented in Part 3 of the project.
 
 
-
 #### Tasks
-
 
 
 1. **High-Level Package Diagram**
@@ -115,11 +94,9 @@ You are tasked with documenting the architecture and design of a simplified vers
    - Create a high-level package diagram that illustrates the three-layer architecture of the application and the communication between these layers via the facade pattern.
 
 
-
 2. **Detailed Class Diagram for Business Logic Layer**
 
    - Design a detailed class diagram for the Business Logic layer, focusing on the User, Place, Review, and Amenity entities, including their attributes, methods, and relationships. Ensure to include the relationships between Places and Amenities.
-
 
 
 3. **Sequence Diagrams for API Calls**
@@ -127,15 +104,12 @@ You are tasked with documenting the architecture and design of a simplified vers
    - Develop sequence diagrams for at least four different API calls to show the interaction between the layers and the flow of information. Suggested API calls include user registration, place creation, review submission, and fetching a list of places.
 
 
-
 4. **Documentation Compilation**
 
    - Compile all diagrams and explanatory notes into a comprehensive technical document.
 
 
-
 #### Conditions and Constraints
-
 
 
 - The documentation must clearly represent the interactions and flow of data between the different layers of the application.
@@ -147,23 +121,16 @@ You are tasked with documenting the architecture and design of a simplified vers
 - Ensure that the diagrams are detailed enough to guide the implementation phase in the next parts of the project.
 
 
-
-
-
 #### Resources:
-
 
 
 - UML Basics
 
 
-
     - [[Concept Page] OOP - Introduction to UML](https://intranet.hbtn.io/concepts/1166)
 
 
-
 - Package Diagrams
-
 
 
     - [UML Package Diagram Overview](https://www.uml-diagrams.org/package-diagrams.html)
@@ -171,9 +138,7 @@ You are tasked with documenting the architecture and design of a simplified vers
     - [UML Package Diagrams Guide](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/what-is-package-diagram/)
 
 
-
 - Class Diagrams
-
 
 
     - [UML Class Diagram Tutorial](https://creately.com/blog/software-teams/class-diagram-tutorial/)
@@ -181,9 +146,7 @@ You are tasked with documenting the architecture and design of a simplified vers
     - [How to Draw UML Class Diagrams](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/what-is-class-diagram/)
 
 
-
 - Sequence Diagrams
-
 
 
     - [UML Sequence Diagram Tutorial](https://creately.com/guides/sequence-diagram-tutorial/)
@@ -191,9 +154,7 @@ You are tasked with documenting the architecture and design of a simplified vers
     - [Understanding Sequence Diagrams](https://www.uml-diagrams.org/sequence-diagrams.html)
 
 
-
 - General Diagram Tools
-
 
 
     - [Mermaid.js Documentation](http://mermaid.js.org/)
@@ -201,17 +162,10 @@ You are tasked with documenting the architecture and design of a simplified vers
     - [draw.io](https://www.drawio.com/)
 
 
-
-
-
-
-
 #### Expected Outcome
 
 
-
 By the end of this part, you should have a complete set of technical documentation that provides a clear and detailed blueprint for the HBnB Evolution application. This documentation will not only guide you through the implementation phases but also ensure that you have a solid understanding of the application's design and architecture.
-
 
 
 Good luck, and remember to leverage the provided resources and your own research to overcome any challenges you encounter!
@@ -334,31 +288,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part1
-Score of the task
-7.5
-/10
-pts
-75.0%
-0
-correction requests
-QA Review
-×
 0. High-Level Package Diagram
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "0. High-Level Package Diagram"
 ```
 
 </details>
@@ -427,31 +362,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part1
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 1. Detailed Class Diagram for Business Logic Layer
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "1. Detailed Class Diagram for Business Logic Layer"
 ```
 
 </details>
@@ -532,31 +448,12 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part1
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 2. Sequence Diagrams for API Calls
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
-×
-Students who are done with "2. Sequence Diagrams for API Calls"
 ```
 
 </details>
@@ -639,35 +536,16 @@ GitHub repository:
 holbertonschool-hbnb
 Directory:
 part1
-Score of the task
-10
-/10
-pts
-100.0%
-0
-correction requests
-QA Review
-×
 3. Documentation Compilation
-Commit used:
-User:
 ---
-URL:
-Click here
-ID:
 ---
-Author:
 ---
-Subject:
 ---
-Date:
 ---
 Add URLs here:
 Save
 https://github.com/Antgst/holbertonschool-hbnb
 Remove
-×
-Students who are done with "3. Documentation Compilation"
 ```
 
 </details>
