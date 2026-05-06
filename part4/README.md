@@ -1,587 +1,1158 @@
-# 🏡 HBnB — Part 4: Front-End Web Client, Premium UI & End-to-End API Integration
+# ðŸ“˜ HBnB - Simple Web Client
 
-## 📚 Table of Contents
+## ðŸ“Œ Description
 
-- [📌 Holberton HBnB Project Context](#-holberton-hbnb-project-context)
-- [📌 Overview](#-overview)
-- [📊 Project at a Glance](#-project-at-a-glance)
-- [✨ Main Features](#-main-features)
-- [🏗️ Architecture Overview](#️-architecture-overview)
-- [🗂️ Project Structure](#️-project-structure)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [📦 Installation](#-installation)
-- [🚀 Running the Application](#-running-the-application)
-- [🔐 Authentication](#-authentication)
-- [👤 Demo Accounts](#-demo-accounts)
-- [🖥️ Front-End Pages](#️-front-end-pages)
-- [🌐 API Endpoints](#-api-endpoints)
-  - [Auth](#auth)
-  - [Users](#users)
-  - [Amenities](#amenities)
-  - [Places](#places)
-  - [Reviews](#reviews)
-- [🎨 UI / UX Highlights](#-ui--ux-highlights)
-- [🗃️ Demo Data](#️-demo-data)
-- [🧪 Running the Tests](#-running-the-tests)
-- [📮 Postman Test Suite](#-postman-test-suite)
-- [⚙️ Configuration](#️-configuration)
-- [📎 Notes](#-notes)
-- [👥 Authors](#-authors)
+### Part 4 - Simple Web Client
 
----
 
-## 📌 Holberton HBnB Project Context
 
-**HBnB** is Holberton School’s Airbnb-inspired full-stack project. It is designed to progressively teach software architecture, API design, persistence, authentication, testing, and front-end integration through several successive parts.
+In this phase, you'll be focusing on the front-end development of your application using HTML5, CSS3, and JavaScript ES6. Your task is to design and implement an interactive user interface that connects with the back-end services you have developed in previous parts of the project.
 
-At a high level, the project evolves like this:
 
-- **Part 1** lays the application foundations, core domain entities, and business logic.
-- **Part 2** structures the API layer and service orchestration.
-- **Part 3** connects the project to persistence and turns the platform into a real authenticated REST back end.
-- **Part 4** closes the loop by adding a browser client, premium UI work, seeded demo content, and end-to-end integration with the API.
 
-This repository therefore represents the moment where HBnB stops being only a back-end school project and becomes a complete local product demo: browsable catalog, login flow, place pages, host pages, review handling, image galleries, and a testable API-driven front end.
+#### Objectives
 
----
 
-## 📌 Overview
 
-Part 4 turns the HBnB project into a complete **full-stack demo application** by connecting a polished front-end interface to the authenticated REST API built in the previous parts.
+- Develop a user-friendly interface following provided design specifications.
 
-This version includes:
+- Implement client-side functionality to interact with the back-end API.
 
-- a premium multi-page front end
-- JWT-based login
-- dynamic place listing
-- detailed place pages with host, amenities, gallery, and reviews
-- review submission for authenticated users
-- a hosts directory
-- seeded demo data with real images
-- an exhaustive Postman non-regression suite
+- Ensure secure and efficient data handling using JavaScript.
 
-The application is designed to be run locally with:
+- Apply modern web development practices to create a dynamic web application.
 
-- a Flask API on `http://127.0.0.1:5000`
-- a static front end on `http://127.0.0.1:5500`
 
----
 
-## 📊 Project at a Glance
+#### Learning Goals
 
-The current Part 4 workspace is no longer a minimal student mockup. It is a fairly dense local application with a meaningful amount of implementation and content.
 
-### Meaningful repository stats
 
-Based on the current exported project snapshot:
+- Understand and apply HTML5, CSS3, and JavaScript ES6 in a real-world project.
 
-- **~97 project files** in the Part 4 workspace
-- **23 Python files** for the API, models, services, persistence, configuration, seeding, and tests
-- **8 JavaScript files** for browser logic and client behavior
-- **6 CSS files** for global styling and page-level UI layers
-- **5 main HTML pages** (`index`, `place`, `login`, `add_review`, `hosts`)
-- **~3,600 lines of Python**
-- **~3,850 lines of JavaScript**
-- **~4,690 lines of CSS**
-- **~1,300 lines of HTML**
-- **40+ visual assets** including host portraits, place images, backgrounds, and icons
-- **9 seeded demo users**
-- **9 seeded places** including premium stays and dedicated test content
-- **dozens of reviews** already available for manual UI testing and API validation
-- **10 core REST route groups / resource entry points** across auth, users, amenities, places, and reviews
+- Learn to interact with back-end services using AJAX/Fetch API.
 
----
+- Implement authentication mechanisms and manage user sessions.
 
-## ✨ Main Features
+- Use client-side scripting to enhance user experience without page reloads.
 
-- **JWT authentication** with login endpoint and protected actions
-- **Public catalog of places**
-- **Detailed place pages** with:
-  - host card
-  - amenities panel with icons
-  - image gallery / lightbox
-  - review summary
-  - full review list
-- **Authenticated review creation**
-- **Review ownership actions** for the connected author
-- **Hosts directory** built from seeded data
-- **Premium UI styling** with burgundy / ivory / gold design system
-- **Theme toggle**
-- **Reveal animations and smoother visual transitions**
-- **Seeded demo environment** with users, places, amenities, reviews, host photos, and place images
-- **Postman collection** for end-to-end API validation
 
----
 
-## 🏗️ Architecture Overview
+#### Tasks Breakdown
 
-This Part 4 version is organized around a simple but effective separation of concerns:
 
-### Front end
 
-- static HTML pages at the root of `part4/`
-- shared and page-specific styling in `css/`
-- split JavaScript responsibilities in `js/`
-- compatibility layer through root `styles.css` and `scripts.js`
+1. **Design (Task 1)**
 
-### Back end
+   - Complete provided HTML and CSS files to match the given design specifications.
 
-- Flask app factory and configuration
-- REST API under `hbnb/app/api/v1/`
-- SQLAlchemy models under `hbnb/app/models/`
-- service layer and facade orchestration
-- persistence abstractions and repositories
-- seeded demo data for repeatable local runs
+   - Create pages for Login, List of Places, Place Details, and Add Review.
 
-### Workflow
 
-The front end calls the REST API, the API enforces business rules and authorization, the database persists the state, and `seed_demo.py` makes the whole project instantly demonstrable after reset.
+
+2. **Login (Task 2)**
+
+   - Implement login functionality using the back-end API.
+
+   - Store the JWT token returned by the API in a cookie for session management.
+
+
+
+3. **List of Places (Task 3)**
+
+   - Implement the main page to display a list of all places.
+
+   - Fetch places data from the API and implement client-side filtering based on country selection.
+
+   - Ensure the page redirects to the login page if the user is not authenticated.
+
+
+
+4. **Place Details (Task 4)**
+
+   - Implement the detailed view of a place.
+
+   - Fetch place details from the API using the place ID.
+
+   - Provide access to the add review form if the user is authenticated.
+
+
+
+5. **Add Review (Task 5)**
+
+   - Implement the form to add a review for a place.
+
+   - Ensure the form is accessible only to authenticated users, redirecting others to the index page.
+
+
+
+> When testing your client against yout API you'll probably get a Cross-Origin Resource Sharing (CORS) error. You'll need to modify your API code to allow your client to fetch data from the API.
+
+> Read [this article](https://medium.com/@mterrano1/cors-in-a-flask-api-38051388f8cc) for a depper understanding about CORS and how to configure your Flask API
+
+
+
+#### Resources
+
+
+
+- [HTML5 Documentation](https://developer.mozilla.org/en-US/docs/Glossary/HTML5)
+
+- [CSS3 Documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS3)
+
+- [JavaScript ES6 Features](https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/ECMAScript_2015)
+
+- [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+
+- [Responsive Web Design Basics](https://web.dev/articles/responsive-web-design-basics?hl=fr)
+
+- [Handling Cookies in JavaScript](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie)
+
+- [Client-Side Form Validation](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation)
+
+
 
 ---
 
-## 🗂️ Project Structure
+---
 
-```bash
-part4/
-├── AUTHORS
-├── README.md
-├── add_review.html
-├── hosts.html
-├── index.html
-├── login.html
-├── place.html
-├── css/
-│   ├── auth.css
-│   ├── common.css
-│   ├── hosts.css
-│   ├── places.css
-│   └── reviews.css
-├── js/
-│   ├── auth.js
-│   ├── core.js
-│   ├── hosts.js
-│   ├── i18n.js
-│   ├── main.js
-│   ├── places.js
-│   └── reviews.js
-├── scripts.js
-├── styles.css
-├── hbnb.sh
-├── docs/
-│   └── readme.md
-├── postman/
-│   ├── HBnB_API_Exhaustive_Postman_Collection.json
-│   ├── HBnB_API_Local_Environment.json
-│   └── README.md
-└── hbnb/
-    ├── app/
-    │   ├── __init__.py
-    │   ├── api/
-    │   │   └── v1/
-    │   │       ├── auth.py
-    │   │       ├── users.py
-    │   │       ├── amenities.py
-    │   │       ├── places.py
-    │   │       └── reviews.py
-    │   ├── models/
-    │   │   ├── __init__.py
-    │   │   ├── base_model.py
-    │   │   ├── user.py
-    │   │   ├── amenity.py
-    │   │   ├── place.py
-    │   │   ├── place_image.py
-    │   │   └── review.py
-    │   ├── persistence/
-    │   │   ├── __init__.py
-    │   │   └── repository.py
-    │   └── services/
-    │       ├── __init__.py
-    │       └── facade.py
-    ├── Scripts/
-    │   ├── Schema.sql
-    │   ├── Initial_data.sql
-    │   └── Test_crud.sql
-    ├── Test/
-    │   └── test_hbnb_api.py
-    ├── instance/
-    │   └── development.db
-    ├── images/
-    │   ├── backgrounds/
-    │   ├── hosts/
-    │   └── places/
-    ├── config.py
-    ├── requirements.txt
-    ├── run.py
-    └── seed_demo.py
-```
+## ðŸ“š Resources
+
+_No resources detected._
 
 ---
 
-## 🛠️ Tech Stack
+## ðŸŽ¯ Learning Objectives
 
-### Back end
-
-- Flask
-- Flask-RESTX
-- Flask-JWT-Extended
-- Flask-Bcrypt
-- Flask-SQLAlchemy
-- Flask-CORS
-- SQLite
-
-### Front end
-
-- HTML5
-- CSS3
-- Vanilla JavaScript
-
-### Testing
-
-- unittest / pytest
-- Postman
+_No learning objectives detected._
 
 ---
 
-## 📦 Installation
+## âœ… Requirements
 
-### 1. Go to the back-end directory
-
-```bash
-cd part4/hbnb
-```
-
-### 2. Create and activate a virtual environment
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
+_No requirements detected._
 
 ---
 
-## 🚀 Running the Application
+## âš™ï¸ Setup
 
-The easiest way to run the full project is from the `part4/` directory.
+_No specific setup detected._
 
-### Reset demo data only
+---
 
-```bash
-./hbnb.sh reset
-```
+## ðŸ§  Quiz
 
-### Start the API and front end only
+_No quiz detected in the exported HTML._
 
-```bash
-./hbnb.sh start
-```
 
-### Reset demo data and start everything
+---
 
-```bash
-./hbnb.sh all
-```
+## ðŸ§© Tasks
 
-### Stop running servers
+<details>
+<summary>0. Design</summary>
 
-```bash
-./hbnb.sh stop
-```
+**Repository:** `holbertonschool-hbnb`
 
-### Local URLs
+**Directory:** `part4`
+
+**Task details:**
 
 ```text
-Front-end: http://127.0.0.1:5500/index.html
-API:       http://127.0.0.1:5000/api/v1/
-Swagger:   http://127.0.0.1:5000/api/v1/
+0. Design
+Objectives
+Complete the provided HTML and CSS files to match the given design specifications.
+Create the following pages:
+Login Form
+List of Places
+Place Details
+Add Review Form
+Requirements
+Use the provided HTML and CSS files as a starting point.
+Follow the design specifications closely to achieve the intended look and feel.
+Instructions
+Download the Provided Files
+:
+Obtain the HTML and CSS files provided as the starting point for this task.
+->
+Base Files
+Complete the HTML Structure
+:
+Use semantic HTML5 elements to structure the content of each page.
+Ensure the structure matches the design specifications provided below.
+Apply CSS Styles
+:
+Use the provided CSS file and add necessary styles to achieve the desired design.
+Pages to Complete
+:
+Login Form
+: Create a login form with fields for email and password.
+List of Places
+: Design a page to display a list of places with basic information.
+Place Details
+: Create a detailed view for a specific place including detailed information.
+Add Review Form
+: Design a form for adding a review to a place, accessible only to authenticated users.
+Instructions for Styles and Structure
+Required Structure
+:
+Header
+:
+Must include the application logo (
+logo.png
+) with the class
+logo
+.
+Must include the login button or link with the class
+login-button
+.
+Footer
+:
+Must include text indicating all rights reserved.
+Navigation Bar
+:
+Must include relevant navigation links (e.g.,
+index.html
+and
+login.html
+).
+Data to Display
+:
+Index (index.html)
+:
+Display a list of places as "cards" using the class
+place-card
+.
+Each card must include the name, the price per night and a "View Details" button with the class
+details-button
+.
+Place Details (place.html)
+:
+Display extended information about the place, including the host, price, description, and amenities using the classes
+place-details
+, and
+place-info
+.
+List reviews if they exist, each displayed as a card with the comment, user name, and rating using the class
+review-card
+.
+Include a button to navigate to the
+add_review.html
+page if the user is logged in.
+Optional: Substitute the previous button with a form to add a new review if the user is logged in, using the classes
+add-review
+and
+form
+.
+Fixed Parameters
+:
+Margin
+: Use a margin of
+20px
+for place and review cards.
+Padding
+: Use a padding of
+10px
+within place and review cards.
+Border
+: Use a border of
+1px solid #ddd
+for place and review cards.
+Border Radius
+: Use a border radius of
+10px
+for place and review cards.
+Flexible Parameters
+:
+Color Palette
+: Students can choose their color palette.
+Font
+: Students can choose their font.
+Images
+: Students can choose the images to use. Some sample images already provided with the base code.
+FavIcon
+: Students can add a custom
+favicon
+or use the already provided
+icon.png
+.
+All pages MUST be valid on
+W3C Validator page
+.
+Sample Design
+Check this link to see sample images
+This is to be used as a reference, they were made by someone with no design skills. :)
+Resources
+HTML5 Documentation
+CSS3 Documentation
+HTML Semantic Elements
+Repo:
+GitHub repository:
+holbertonschool-hbnb
+Directory:
+part4
+Score of the task
+10
+/10
+pts
+100.0%
+0
+correction requests
+QA Review
+Ã—
+0. Design
+Commit used:
+User:
+---
+URL:
+Click here
+ID:
+---
+Author:
+---
+Subject:
+---
+Date:
+---
+Ã—
+Students who are done with "0. Design"
 ```
 
----
+</details>
 
-## 🔐 Authentication
+<details>
+<summary>1. Login</summary>
 
-The API uses **JWT tokens** for protected operations.
+**Repository:** `holbertonschool-hbnb`
 
-### Login request
+**Directory:** `part4`
 
-```http
-POST /api/v1/auth/login
-Content-Type: application/json
+**Task details:**
 
+```text
+1. Login
+Objectives
+Implement login functionality using the back-end API.
+Store the JWT token returned by the API in a cookie for session management.
+Requirements
+Use the existing login form provided in
+login.html
+.
+Make an AJAX request to the login endpoint of your API when the user submits the login form.
+If the login is successful,
+store the JWT token in a cookie
+.
+Redirect the user to the main page (
+index.html
+) after a successful login.
+Display an error message if the login fails.
+Instructions
+Setup Event Listener for Login Form
+:
+Add an
+event listener
+to the login form to handle the form submission.
+Use
+preventDefault
+to prevent the default form submission behavior.
+Make AJAX Request to API
+:
+Use the Fetch API to send a POST request to the login endpoint with the email and password entered by the user.
+Set the
+Content-Type
+header to
+application/json
+.
+Send the email and password in the request body as a JSON object.
+Handle API Response
+:
+If the login is successful, store the returned JWT token in a cookie.
+Redirect the user to the main page (
+index.html
+).
+If the login fails, display an error message to the user.
+Example Guidance
+:
+scripts.js
+Add an event listener for the form submission:
+document
+.
+addEventListener
+(
+'DOMContentLoaded'
+,
+() =>
 {
-  "email": "antoine.gousset@hbnb.test",
-  "password": "Test1234!"
+const
+loginForm =
+document
+.
+getElementById
+(
+'login-form'
+);
+if
+(loginForm) {
+          loginForm.
+addEventListener
+(
+'submit'
+,
+async
+(event) => {
+              event.
+preventDefault
+();
+// Your code to handle form submission
+});
+      }
+  });
+Make the AJAX request to the API:
+async
+function
+loginUser
+(
+email, password
+) {
+const
+response =
+await
+fetch
+(
+'https://your-api-url/login'
+, {
+method
+:
+'POST'
+,
+headers
+: {
+'Content-Type'
+:
+'application/json'
+},
+body
+:
+JSON
+.
+stringify
+({ email, password })
+      });
+// Handle the response
 }
-```
-
-### Login response
-
-```json
+Handle the API response and store the token in a cookie:
+if
+(response.
+ok
+) {
+const
+data =
+await
+response.
+json
+();
+document
+.
+cookie
+=
+`token=
+${data.access_token}
+; path=/`
+;
+window
+.
+location
+.
+href
+=
+'index.html'
+;
+  }
+else
 {
-  "access_token": "<JWT>"
+alert
+(
+'Login failed: '
++ response.
+statusText
+);
+  }
+Testing
+:
+Test the login functionality with valid and invalid credentials to ensure it works as expected.
+Verify that the JWT token is stored in the cookie after a successful login.
+Ensure that the user is redirected to the main page after login.
+Resources
+Fetch API
+Handling Cookies in JavaScript
+HTML5 Form Validation
+Repo:
+GitHub repository:
+holbertonschool-hbnb
+Directory:
+part4
+Score of the task
+10
+/10
+pts
+100.0%
+0
+correction requests
+QA Review
+Ã—
+1. Login
+Commit used:
+User:
+---
+URL:
+Click here
+ID:
+---
+Author:
+---
+Subject:
+---
+Date:
+---
+Ã—
+Students who are done with "1. Login"
+```
+
+</details>
+
+<details>
+<summary>2. Index</summary>
+
+**Repository:** `holbertonschool-hbnb`
+
+**Directory:** `part4`
+
+**Task details:**
+
+```text
+2. Index
+Objectives
+Implement the main page to display a list of all places.
+Fetch places data from the API and implement client-side filtering based on price.
+Show the login link only if the user is not authenticated.
+Requirements
+Use the provided HTML structure in
+index.html
+to display the list of places.
+Make an AJAX request to the API to fetch the list of places.
+Populate the places list dynamically using JavaScript.
+Implement a client-side filter to allow users to filter places by price without reloading the page.
+Show or hide the login link based on user authentication.
+Instructions
+Check User Authentication
+:
+On page load, check if the user is authenticated by verifying the presence of the JWT token in cookies.
+If the token is not found, show the login link.
+If the token is found, hide the login link.
+Tip: Use a function to get the value of a cookie by its name.
+Fetch Places Data
+:
+Use the Fetch API to send a GET request to the endpoint that returns the list of places.
+Ensure the request includes the JWT token for authentication if available.
+Tip: Include the token in the
+Authorization
+header of your request.
+Populate Places List
+:
+Dynamically create HTML elements to display each place's information (e.g., name, description, location).
+Append these elements to the
+#places-list
+section.
+Tip: Use
+document.createElement
+and
+element.innerHTML
+to build the place elements.
+Implement Client-Side Filtering
+:
+Add an event listener to the price filter dropdown.
+Filter the displayed places based on the selected price.
+Ensure the filtering works without reloading the page.
+Tip: Use
+element.style.display
+to show or hide places based on the filter.
+Example Guidance
+scripts.js
+Check user authentication
+:
+Create a function to check for the JWT token in cookies and control the visibility of the login link.
+function
+checkAuthentication
+(
+) {
+const
+token =
+getCookie
+(
+'token'
+);
+const
+loginLink =
+document
+.
+getElementById
+(
+'login-link'
+);
+if
+(!token) {
+          loginLink.
+style
+.
+display
+=
+'block'
+;
+      }
+else
+{
+          loginLink.
+style
+.
+display
+=
+'none'
+;
+// Fetch places data if the user is authenticated
+fetchPlaces
+(token);
+      }
+  }
+function
+getCookie
+(
+name
+) {
+// Function to get a cookie value by its name
+// Your code here
 }
-```
-
-Protected endpoints must receive:
-
-```http
-Authorization: Bearer <JWT>
-```
-
-On the front end, login is handled through `login.html`, and the token is stored in a cookie for authenticated flows.
-
+Fetch places data
+:
+Use the Fetch API to get the list of places and handle the response.
+async
+function
+fetchPlaces
+(
+token
+) {
+// Make a GET request to fetch places data
+// Include the token in the Authorization header
+// Handle the response and pass the data to displayPlaces function
+}
+Populate places list
+:
+Create HTML elements for each place and append them to the
+#places-list
+.
+function
+displayPlaces
+(
+places
+) {
+// Clear the current content of the places list
+// Iterate over the places data
+// For each place, create a div element and set its content
+// Append the created element to the places list
+}
+Implement client-side filtering
+:
+Add an event listener to the price filter dropdown to filter places based on the selected price.
+The filter will set the top price for the places to be shown.
+The dropdown must be loaded with the following options:
+10
+50
+100
+All
+document
+.
+getElementById
+(
+'price-filter'
+).
+addEventListener
+(
+'change'
+,
+(
+event
+) =>
+{
+// Get the selected price value
+// Iterate over the places and show/hide them based on the selected price
+});
+Testing
+:
+Test the functionality by logging in and viewing the list of places.
+Verify that the client-side filter works as expected.
+Ensure the login link appears only when the user is not authenticated.
+Resources
+Fetch API
+Handling Cookies in JavaScript
+DOM Manipulation
+Repo:
+GitHub repository:
+holbertonschool-hbnb
+Directory:
+part4
+Score of the task
+10
+/10
+pts
+100.0%
+0
+correction requests
+QA Review
+Ã—
+2. Index
+Commit used:
+User:
 ---
+URL:
+Click here
+ID:
+---
+Author:
+---
+Subject:
+---
+Date:
+---
+Ã—
+Students who are done with "2. Index"
+```
 
-## 👤 Demo Accounts
+</details>
 
-The seeded environment provides a shared password for all demo users:
+<details>
+<summary>3. Place details</summary>
+
+**Repository:** `holbertonschool-hbnb`
+
+**Directory:** `part4`
+
+**Task details:**
 
 ```text
-Password: Test1234!
+3. Place details
+Objectives
+Implement the detailed view of a place.
+Fetch place details from the API using the place ID.
+Display detailed information about the place, including name, description, price, amenities and reviews.
+If the user is authenticated, provide access to the form for adding a review.
+Requirements
+Use the provided HTML structure in
+place.html
+to display the detailed information of a place.
+Make an AJAX request to the API to fetch the details of the selected place.
+Populate the place details dynamically using JavaScript.
+Show the add review form only if the user is authenticated.
+Instructions
+Get Place ID from URL
+:
+Extract the place ID from the URL query parameters.
+Tip: Use
+window.location.search
+to get the query string.
+Check User Authentication
+:
+On page load, check if the user is authenticated by verifying the presence of the JWT token in cookies.
+Store the token in a variable for later use in API requests.
+Fetch Place Details
+:
+Use the Fetch API to send a GET request to the endpoint that returns the details of the place.
+Ensure the request includes the JWT token for authentication if available.
+Tip: Include the token in the
+Authorization
+header of your request.
+Populate Place Details
+:
+Dynamically create HTML elements to display the place's detailed information (e.g., name, description, price, amenities and reviews).
+Append these elements to the
+#place-details
+section.
+Show Add Review Form
+:
+If the user is authenticated, display the add review form.
+Hide the form if the user is not authenticated.
+Example Guidance
+scripts.js
+Get place ID from URL
+:
+Create a function to extract the place ID from the query parameters.
+function
+getPlaceIdFromURL
+(
+) {
+// Extract the place ID from window.location.search
+// Your code here
+}
+Check user authentication
+:
+Create a function to check for the JWT token in cookies and store it in a variable.
+function
+checkAuthentication
+(
+) {
+const
+token =
+getCookie
+(
+'token'
+);
+const
+addReviewSection =
+document
+.
+getElementById
+(
+'add-review'
+);
+if
+(!token) {
+          addReviewSection.
+style
+.
+display
+=
+'none'
+;
+      }
+else
+{
+          addReviewSection.
+style
+.
+display
+=
+'block'
+;
+// Store the token for later use
+fetchPlaceDetails
+(token, placeId);
+      }
+  }
+function
+getCookie
+(
+name
+) {
+// Function to get a cookie value by its name
+// Your code here
+}
+Fetch place details
+:
+Use the Fetch API to get the details of the place and handle the response.
+async
+function
+fetchPlaceDetails
+(
+token, placeId
+) {
+// Make a GET request to fetch place details
+// Include the token in the Authorization header
+// Handle the response and pass the data to displayPlaceDetails function
+}
+Populate place details
+:
+Create HTML elements for the place details and append them to the
+#place-details
+section.
+function
+displayPlaceDetails
+(
+place
+) {
+// Clear the current content of the place details section
+// Create elements to display the place details (name, description, price, amenities and reviews)
+// Append the created elements to the place details section
+}
+Testing
+:
+Test the functionality by navigating to the place details page and verifying the displayed information.
+Ensure that the add review form appears only when the user is authenticated.
+Resources
+Fetch API
+Handling Cookies in JavaScript
+DOM Manipulation
+Repo:
+GitHub repository:
+holbertonschool-hbnb
+Directory:
+part4
+Score of the task
+10
+/10
+pts
+100.0%
+0
+correction requests
+QA Review
+Ã—
+3. Place details
+Commit used:
+User:
+---
+URL:
+Click here
+ID:
+---
+Author:
+---
+Subject:
+---
+Date:
+---
+Ã—
+Students who are done with "3. Place details"
 ```
 
-Example accounts:
+</details>
 
-| Role         | Email                          |
-| ------------ | ------------------------------ |
-| Admin        | `antoine.gousset@hbnb.test`    |
-| Regular user | `Léa.gousset@hbnb.test`        |
-| Regular user | `sebastien.vallier@hbnb.test`  |
-| Regular user | `patricia.lebrun@hbnb.test`    |
-| Regular user | `benjy.guerin@hbnb.test`       |
-| Regular user | `micael.pinho@hbnb.test`       |
-| Regular user | `melissandre.moreau@hbnb.test` |
-| Regular user | `brice.travers@hbnb.test`      |
-| Test user    | `tess.teur@hbnb.test`          |
+<details>
+<summary>4. Add Review form</summary>
 
----
+**Repository:** `holbertonschool-hbnb`
 
-## 🖥️ Front-End Pages
+**Directory:** `part4`
 
-| File              | Purpose                                                                                      |
-| ----------------- | -------------------------------------------------------------------------------------------- |
-| `index.html`      | Main catalog of places                                                                       |
-| `place.html`      | Detailed view of a selected place                                                            |
-| `login.html`      | Login form                                                                                   |
-| `add_review.html` | Review submission page                                                                       |
-| `hosts.html`      | Hosts directory                                                                              |
-| `js/`             | Front-end logic split by responsibility: core, i18n, auth, hosts, reviews, places, bootstrap |
-| `css/`            | Front-end styles split by responsibility: common, hosts, places, reviews, auth               |
-| `scripts.js`      | Global client script / compatibility entry point                                             |
-| `styles.css`      | Global visual layer / compatibility entry point                                              |
-
-### Main front-end behaviors
-
-- fetches places from the API
-- displays ratings and review summaries
-- builds place cards dynamically
-- builds host cards dynamically
-- renders place galleries and lightbox
-- conditionally shows review actions depending on authentication
-- applies theme switching
-- handles form submission and error states
-- manages reveal animations and richer visual feedback
-- supports richer review interactions in the browser
-
----
-
-## 🌐 API Endpoints
-
-### Auth
-
-| Method | Endpoint             | Auth   | Description                        |
-| ------ | -------------------- | ------ | ---------------------------------- |
-| POST   | `/api/v1/auth/login` | Public | Authenticate user and return a JWT |
-
-### Users
-
-| Method | Endpoint             | Auth          | Description    |
-| ------ | -------------------- | ------------- | -------------- |
-| GET    | `/api/v1/users/`     | Public        | List all users |
-| POST   | `/api/v1/users/`     | Admin only    | Create a user  |
-| GET    | `/api/v1/users/<id>` | Public        | Get user by ID |
-| PUT    | `/api/v1/users/<id>` | Self or admin | Update a user  |
-
-### Amenities
-
-| Method | Endpoint                 | Auth       | Description        |
-| ------ | ------------------------ | ---------- | ------------------ |
-| GET    | `/api/v1/amenities/`     | Public     | List all amenities |
-| POST   | `/api/v1/amenities/`     | Admin only | Create an amenity  |
-| GET    | `/api/v1/amenities/<id>` | Public     | Get amenity by ID  |
-| PUT    | `/api/v1/amenities/<id>` | Admin only | Update an amenity  |
-
-### Places
-
-| Method | Endpoint                      | Auth           | Description               |
-| ------ | ----------------------------- | -------------- | ------------------------- |
-| GET    | `/api/v1/places/`             | Public         | List all places           |
-| POST   | `/api/v1/places/`             | JWT required   | Create a place            |
-| GET    | `/api/v1/places/<id>`         | Public         | Get place by ID           |
-| PUT    | `/api/v1/places/<id>`         | Owner or admin | Update a place            |
-| DELETE | `/api/v1/places/<id>`         | Owner or admin | Delete a place            |
-| GET    | `/api/v1/places/<id>/reviews` | Public         | Get reviews for one place |
-
-### Reviews
-
-| Method | Endpoint               | Auth            | Description      |
-| ------ | ---------------------- | --------------- | ---------------- |
-| GET    | `/api/v1/reviews/`     | Public          | List all reviews |
-| POST   | `/api/v1/reviews/`     | JWT required    | Create a review  |
-| GET    | `/api/v1/reviews/<id>` | Public          | Get review by ID |
-| PUT    | `/api/v1/reviews/<id>` | Author or admin | Update a review  |
-| DELETE | `/api/v1/reviews/<id>` | Author or admin | Delete a review  |
-
-### Business rules enforced by the API
-
-- only admins can create users
-- only admins can create or update amenities
-- a regular user can only update their own profile
-- a place can only be updated or deleted by its owner or an admin
-- a user cannot review their own place
-- a user cannot review the same place twice
-- a review author cannot be spoofed through `user_id` in the payload
-- `user_id` and `place_id` are immutable in review updates
-
----
-
-## 🎨 UI / UX Highlights
-
-This Part 4 is not only functional. It also introduces a more polished and visually coherent user experience.
-
-### Notable UI choices
-
-- premium color palette
-- dynamic hero background system
-- host profile cards with photos
-- place rating badge / review summary blocks
-- amenities displayed with dedicated iconography
-- gallery lightbox on place pages
-- dark / light theme toggle
-- animated content reveal
-- clearer empty, loading, and form states
-- stronger visual identity than the base Holberton mockup
-
-The goal is to move from a purely technical prototype to a much more convincing product demo.
-
----
-
-## 🗃️ Demo Data
-
-The seeded dataset includes:
-
-- **9 users**
-- **dozens of amenities**
-- **9 places**
-- **3 images per place**
-- **host portraits**
-- **multiple reviews with varied ratings**
-- **dedicated low-cost / test data** for filter and interaction checks
-
-This makes the application immediately usable after reset, without manual data entry.
-
----
-
-## 🧪 Running the Tests
-
-The project includes a back-end test suite.
-
-From `part4/hbnb`:
-
-```bash
-python3 -m pytest Test/test_hbnb_api.py -v
-```
-
-Or:
-
-```bash
-python3 -m unittest Test/test_hbnb_api.py -v
-```
-
-The tests cover the main API behavior, validation rules, authorization logic, and business constraints.
-
----
-
-## 📮 Postman Test Suite
-
-A dedicated Postman folder is included:
+**Task details:**
 
 ```text
-postman/
-├── HBnB_API_Exhaustive_Postman_Collection.json
-├── HBnB_API_Local_Environment.json
-└── README.md
+4. Add Review form
+Objectives
+Implement the form to add a review for a place.
+Ensure only authenticated users can submit reviews.
+Redirect unauthenticated users to the index page.
+Send the review data to the API endpoint and handle the response.
+Requirements
+Use the provided HTML structure in
+add_review.html
+to create the review form.
+Make an AJAX request to the API to submit the review data.
+If the user is not authenticated, redirect them to the index page.
+Display a success message upon successful submission and handle errors appropriately.
+Instructions
+Check User Authentication
+:
+On page load, check if the user is authenticated by verifying the presence of the JWT token in cookies.
+If the token is not found, redirect the user to the index page.
+Store the token in a variable for later use in API requests.
+Get Place ID from URL
+:
+Extract the place ID from the URL query parameters.
+Tip: Use
+window.location.search
+to get the query string.
+Setup Event Listener for Review Form
+:
+Add an event listener to the review form to handle the form submission.
+Use
+preventDefault
+to prevent the default form submission behavior.
+Make AJAX Request to Submit Review
+:
+Use the Fetch API to send a POST request to the endpoint that submits the review data.
+Include the JWT token in the
+Authorization
+header.
+Send the review text and place ID in the request body as a JSON object.
+Handle API Response
+:
+If the submission is successful, display a success message and clear the form.
+If the submission fails, display an error message to the user.
+Example Guidance
+scripts.js
+Check user authentication
+:
+Create a function to check for the JWT token in cookies and redirect unauthenticated users.
+function
+checkAuthentication
+(
+) {
+const
+token =
+getCookie
+(
+'token'
+);
+if
+(!token) {
+window
+.
+location
+.
+href
+=
+'index.html'
+;
+      }
+return
+token;
+  }
+function
+getCookie
+(
+name
+) {
+// Function to get a cookie value by its name
+// Your code here
+}
+Get place ID from URL
+:
+Create a function to extract the place ID from the query parameters.
+function
+getPlaceIdFromURL
+(
+) {
+// Extract the place ID from window.location.search
+// Your code here
+}
+Setup event listener for review form
+:
+Add an event listener for the form submission to handle the review data.
+document
+.
+addEventListener
+(
+'DOMContentLoaded'
+,
+() =>
+{
+const
+reviewForm =
+document
+.
+getElementById
+(
+'review-form'
+);
+const
+token =
+checkAuthentication
+();
+const
+placeId =
+getPlaceIdFromURL
+();
+if
+(reviewForm) {
+          reviewForm.
+addEventListener
+(
+'submit'
+,
+async
+(event) => {
+              event.
+preventDefault
+();
+// Get review text from form
+// Make AJAX request to submit review
+// Handle the response
+});
+      }
+  });
+Make AJAX request to submit review
+:
+Use the Fetch API to send a POST request with the review data.
+async
+function
+submitReview
+(
+token, placeId, reviewText
+) {
+// Make a POST request to submit review data
+// Include the token in the Authorization header
+// Send placeId and reviewText in the request body
+// Handle the response
+}
+Handle API response
+:
+Display a success message if the submission is successful and clear the form.
+Display an error message if the submission fails.
+function
+handleResponse
+(
+response
+) {
+if
+(response.
+ok
+) {
+alert
+(
+'Review submitted successfully!'
+);
+// Clear the form
+}
+else
+{
+alert
+(
+'Failed to submit review'
+);
+      }
+  }
+Testing
+:
+Test the functionality by submitting reviews for a place as an authenticated user.
+Verify that unauthenticated users are redirected to the index page.
+Ensure that success and error messages are displayed appropriately.
+Resources
+Fetch API
+Handling Cookies in JavaScript
+DOM Manipulation
+FormData API
+Repo:
+GitHub repository:
+holbertonschool-hbnb
+Directory:
+part4
+Score of the task
+10
+/10
+pts
+100.0%
+0
+correction requests
+QA Review
+Ã—
+4. Add Review form
+Commit used:
+User:
+---
+URL:
+Click here
+ID:
+---
+Author:
+---
+Subject:
+---
+Date:
+---
+Ã—
+Students who are done with "4. Add Review form"
 ```
 
-This suite is designed to validate:
+</details>
 
-- public endpoints
-- protected endpoints
-- authentication
-- permissions
-- edge cases
-- cascade behavior
-- invalid payload handling
-- core business rules
-
-### Recommended workflow
-
-1. reset the demo data
-2. start the application
-3. import the Postman collection
-4. select the local environment
-5. run the full collection
-
-Expected current result for a clean green run:
-
-```text
-142 passed
-0 failed
-0 errors
-```
 
 ---
 
-## ⚙️ Configuration
+## ðŸ§ª Testing
 
-The Flask app uses:
-
-| Config class        | DB URI                     | Usage     |
-| ------------------- | -------------------------- | --------- |
-| `DevelopmentConfig` | `sqlite:///development.db` | local run |
-| `TestingConfig`     | `sqlite:///:memory:`       | tests     |
-
-Other important points:
-
-- JWT secret and app secret can be overridden with environment variables
-- CORS is enabled for local front-end origins on ports `5500` and `5501`
+Use the provided task examples and Holberton checker to validate the project.
 
 ---
 
-## 📎 Notes
+## ðŸ‘¤ Author
 
-- If you change the data model, reset the seeded database before testing again
-- If the front end appears broken after API changes, verify the JSON shape returned by the endpoints
-- Always run a clean Postman test collection after a back-end change
-- `hbnb.sh all` is the most reliable local workflow for this part
-- if you want the exact live Git commit count in the README, compute it from the repository rather than from an exported ZIP
+Project from Holberton School.
 
----
-
-## 👥 Authors
-
-- **Antoine Gousset** — [GitHub](https://github.com/Antgst)
-- **Gwendal Boisard** — [GitHub](https://github.com/Gwendal-B)
-- **Yonas Houriez** — [GitHub](https://github.com/Ausaryu)
-
-### Contribution scope by part
-
-- **Parts 1, 2, and 3** were completed as a **group project** with **[Gwendal BOISARD](https://github.com/Gwendal-B)** and **[Yonas HOURIEZ](https://github.com/Ausaryu)**.
-- **Part 4** — the front-end client, premium UI direction, integration refinements, seeded demo polishing, and current local product presentation — was completed **by [Antoine GOUSSET](https://github.com/Antgst) alone**.
-
-See `AUTHORS`.
+README generated with Antoine's README Factory workflow.
